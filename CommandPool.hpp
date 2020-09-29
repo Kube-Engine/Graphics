@@ -3,6 +3,8 @@
  * @ Description: CommandPool
  */
 
+#pragma once
+
 #include <vector>
 #include <memory>
 

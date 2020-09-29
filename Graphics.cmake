@@ -54,7 +54,16 @@ target_link_libraries(${PROJECT_NAME}
 PUBLIC
     KubeCore
     Vulkan::Vulkan
+    # glm
+    SDL2
 )
+
+target_include_directories(${PROJECT_NAME}
+PUBLIC
+    ${SDL2_INCLUDE_DIRS}
+)
+
+# target_compile_definitions(${PROJECT_NAME} PUBLIC KUBE_NO_DYNAMIC_RESIZE)
 
 if(${KF_TESTS})
     include(${KubeGraphicsDir}/Tests/GraphicsTests.cmake)

@@ -3,6 +3,8 @@
  * @ Description: Pipeline
  */
 
+#pragma once
+
 #include "VulkanHandler.hpp"
 #include "Shader.hpp"
 #include "LayoutModel.hpp"
