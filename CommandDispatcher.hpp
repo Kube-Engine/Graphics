@@ -10,13 +10,14 @@
 
 #include "QueueHandler.hpp"
 
-namespace kF
+namespace kF::Graphics
 {
+    class CommandPoolInstance;
     class CommandDispatcher;
-    class CommandPoolHandler;
 }
 
-/**
+/** Notes for command pool usage best practises
+ *
  * L * T + N pools
  * (L = the number of buffered frames,
  *  T = the number of threads which record command buffers,
@@ -31,19 +32,24 @@ namespace kF
  *      -> Store an usage flag
  */
 
-class kF::CommandPoolInstance
+/** @brief This class holds an instance of command pool and its associated parent dispatcher */
+class kF::Graphics::CommandPoolInstance
 {
 public:
-    CommandPoolInstance(CommandDispatcher *parent, CommandPool *pool) : _parent(dispatcher), _pool(pool) {}
-    CommandPoolInstance(CommandPoolInstance &&other) { swap(other); }
-    ~CommandPoolInstance(void) {
-        if (_pool)
-            _parent->releaseInstance(_pool);
-    }
+    /** @brief Construct a command pool instance */
+    CommandPoolInstance(CommandDispatcher *parent, CommandPool *pool) noexcept : _parent(parent), _pool(pool) {}
 
-    CommandPoolInstance &operator=(CommandPoolInstance &&other) { swap(other); }
+    /** @brief Move constructor */
+    CommandPoolInstance(CommandPoolInstance &&other) noexcept { swap(other); }
 
-    void swap(CommandPoolInstance &other) { std::swap(_parent, other._parent); std::swap(_pool, other._pool); }
+    /** @brief Destructor, release the command pool instance */
+    ~CommandPoolInstance(void);
+
+    /** @brief Move assignment */
+    CommandPoolInstance &operator=(CommandPoolInstance &&other) noexcept { swap(other); }
+
+    /** @brief Swap two instances */
+    void swap(CommandPoolInstance &other) noexcept { std::swap(_parent, other._parent); std::swap(_pool, other._pool); }
 
 private:
     CommandDispatcher *_parent { nullptr };
@@ -58,20 +64,31 @@ private:
  *  Make one ore more command buffer recorder for each thread
  *
  */
-class kF::CommandDispatcher : public RendererObject
+class kF::Graphics::CommandDispatcher : public RendererObject
 {
 public:
+    /** @brief Construct the command dispatcher */
     CommandDispatcher(Renderer &renderer);
-    CommandDispatcher(CommandDispatcher &&other) { swap(other); }
+
+    /** @brief Move constructor */
+    CommandDispatcher(CommandDispatcher &&other) noexcept { swap(other); }
+
+    /** @brief Destruct the command dispatcher */
     ~CommandDispatcher(void);
 
+    /** @brief Move assignment */
     CommandDispatcher &operator=(CommandDispatcher &&other) noexcept { swap(other); return *this; }
 
-    void swap(CommandDispatcher &other) { _pools.swap(other._pools); }
+    /** @brief Swap two instances */
+    void swap(CommandDispatcher &other) noexcept { _pools.swap(other._pools); }
 
+    /** @brief Reserve a command pool */
     [[nodiscard]] CommandPoolInstance reserveCommandPool(const QueueType type);
+
+    /** @brief Release a command pool */
     void releaseInstance(CommandPool *pool);
 
+    /** @brief Callback on render view size changed */
     void onViewSizeChanged(void);
 
 private:

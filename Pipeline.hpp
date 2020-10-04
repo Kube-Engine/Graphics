@@ -9,23 +9,27 @@
 #include "Shader.hpp"
 #include "LayoutModel.hpp"
 
-namespace kF
+namespace kF::Graphics
 {
     class Pipeline;
     struct PipelineModel;
 
+    /** @brief A vulkan pipeline layout */
     using PipelineLayout = VkPipelineLayout;
 }
 
-struct kF::PipelineModel
+/** @brief Describes how to create a pipeline */
+struct kF::Graphics::PipelineModel
 {
     ShaderModels shaders;
     LayoutModel layoutModel;
 };
 
-class kF::Pipeline final : public VulkanHandler<VkPipeline>
+/** @brief Abstraction of a GPU pipeline */
+class kF::Graphics::Pipeline final : public VulkanHandler<VkPipeline>
 {
 public:
+    /** @brief Various stages structures used to setup the pipeline */
     struct ShaderStage;
     struct InputStage;
     struct OutputStage;
@@ -34,44 +38,69 @@ public:
     struct DynamicStage;
     struct LayoutStage;
 
+    /** @brief Construct a pipeline using a model */
     Pipeline(Renderer &renderer, const PipelineModel &model);
-    Pipeline(Pipeline &&other) : VulkanHandler<VkPipeline>(other.parent()) { swap(other); }
+
+    /** @brief Move constructor */
+    Pipeline(Pipeline &&other) noexcept : VulkanHandler<VkPipeline>(other.parent()) { swap(other); }
+
+    /** @brief Destruct the pipeline */
     ~Pipeline(void);
 
-    Pipeline &operator=(Pipeline &&other) { swap(other); return *this; }
+    /** @brief Move assignment */
+    Pipeline &operator=(Pipeline &&other) noexcept { swap(other); return *this; }
 
+    /** @brief Get the pipeline layout */
     [[nodiscard]] PipelineLayout &getPipelineLayout(void) noexcept { return _pipelineLayout; }
     [[nodiscard]] const PipelineLayout &getPipelineLayout(void) const noexcept { return _pipelineLayout; }
 
+    /** @brief Swap two instances */
     void swap(Pipeline &other) noexcept;
 
 private:
     PipelineLayout _pipelineLayout = VK_NULL_HANDLE;
 
+    /** @brief Create a pipeline layout */
     void createPipelineLayout(const PipelineModel &model);
+
+    /** @brief Create a pipeline */
     void createPipeline(const PipelineModel &model);
 
-    ShaderStage getShaderStage(const PipelineModel &model);
-    InputStage getInputStage(const PipelineModel &model) const;
-    OutputStage getOutputStage(const PipelineModel &model) const;
-    MultisampleStage getMultisampleStage(const PipelineModel &model) const;
-    ColorStage getColorStage(const PipelineModel &model) const;
-    DynamicStage getDynamicStage(const PipelineModel &model) const;
+    /** @brief Build shader stage from model */
+    [[nodiscard]] ShaderStage getShaderStage(const PipelineModel &model) const;
+
+    /** @brief Build input stage from model */
+    [[nodiscard]] InputStage getInputStage(const PipelineModel &model) const noexcept;
+
+    /** @brief Build output stage from model */
+    [[nodiscard]] OutputStage getOutputStage(const PipelineModel &model) const noexcept;
+
+    /** @brief Build multisample stage from model */
+    [[nodiscard]] MultisampleStage getMultisampleStage(const PipelineModel &model) const noexcept;
+
+    /** @brief Build color stage from model */
+    [[nodiscard]] ColorStage getColorStage(const PipelineModel &model) const noexcept;
+
+    /** @brief Build dynamic stage from model */
+    [[nodiscard]] DynamicStage getDynamicStage(const PipelineModel &model) const noexcept;
 };
 
-struct kF::Pipeline::ShaderStage
+/** @brief Describes shader stage of the pipeline */
+struct kF::Graphics::Pipeline::ShaderStage
 {
     std::vector<VkPipelineShaderStageCreateInfo> shaderInfos;
     std::vector<Shader> shaders;
 };
 
-struct kF::Pipeline::InputStage
+/** @brief Describes input stage of the pipeline */
+struct kF::Graphics::Pipeline::InputStage
 {
     VkPipelineVertexInputStateCreateInfo vertexInfo;
     VkPipelineInputAssemblyStateCreateInfo assemblyInfo;
 };
 
-struct kF::Pipeline::OutputStage
+/** @brief Describes output stage of the pipeline */
+struct kF::Graphics::Pipeline::OutputStage
 {
     VkViewport viewport;
     VkRect2D scissor;
@@ -79,18 +108,21 @@ struct kF::Pipeline::OutputStage
     VkPipelineRasterizationStateCreateInfo rasterizerInfo;
 };
 
-struct kF::Pipeline::MultisampleStage
+/** @brief Describes multisample stage of the pipeline */
+struct kF::Graphics::Pipeline::MultisampleStage
 {
     VkPipelineMultisampleStateCreateInfo multisampleInfo;
 };
 
-struct kF::Pipeline::ColorStage
+/** @brief Describes color stage of the pipeline */
+struct kF::Graphics::Pipeline::ColorStage
 {
     VkPipelineColorBlendAttachmentState colorBlend;
     VkPipelineColorBlendStateCreateInfo colorBlendInfo;
 };
 
-struct kF::Pipeline::DynamicStage
+/** @brief Describes dynamic stage of the pipeline */
+struct kF::Graphics::Pipeline::DynamicStage
 {
     std::vector<VkDynamicState> dynamicStates;
     VkPipelineDynamicStateCreateInfo dynamicStatesInfo;

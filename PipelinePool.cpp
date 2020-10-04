@@ -10,12 +10,12 @@
 using namespace kF;
 using namespace kF::Literal;
 
-PipelinePool::PipelinePool(Renderer &renderer)
+Graphics::PipelinePool::PipelinePool(Renderer &renderer)
     : RendererObject(renderer)
 {
 }
 
-PipelineIndex PipelinePool::addPipeline(const PipelineModel &model)
+Graphics::PipelineIndex Graphics::PipelinePool::addPipeline(const PipelineModel &model)
 {
     auto index = 1u;
 
@@ -28,7 +28,7 @@ PipelineIndex PipelinePool::addPipeline(const PipelineModel &model)
     return index;
 }
 
-void PipelinePool::removePipeline(const PipelineIndex index)
+void Graphics::PipelinePool::removePipeline(const PipelineIndex index)
 {
     auto it = findPipeline(index);
 
@@ -41,25 +41,25 @@ void PipelinePool::removePipeline(const PipelineIndex index)
 #endif
 }
 
-Pipeline &PipelinePool::getPipeline(const PipelineIndex index)
+Graphics::Pipeline &Graphics::PipelinePool::getPipeline(const PipelineIndex index)
 {
     auto it = findPipeline(index);
 
     if (it == _pipelineMap.end())
-        throw std::runtime_error("PipelinePool::getPipeline: Couldn't get pipeline of index '" + std::to_string(index) + '\'');
+        throw std::runtime_error("Graphics::PipelinePool::getPipeline: Couldn't get pipeline of index '" + std::to_string(index) + '\'');
     return *it->second;
 }
 
-const Pipeline &PipelinePool::getPipeline(const PipelineIndex index) const
+const Graphics::Pipeline &Graphics::PipelinePool::getPipeline(const PipelineIndex index) const
 {
     auto it = findPipeline(index);
 
     if (it == _pipelineMap.end())
-        throw std::runtime_error("PipelinePool::getPipeline: Couldn't get pipeline of index '" + std::to_string(index) + '\'');
+        throw std::runtime_error("Graphics::PipelinePool::getPipeline: Couldn't get pipeline of index '" + std::to_string(index) + '\'');
     return *it->second;
 }
 
-void PipelinePool::onViewSizeChanged(void)
+void Graphics::PipelinePool::onViewSizeChanged(void)
 {
 #ifdef KUBE_NO_DYNAMIC_RESIZE
     for (auto it = _modelMap.begin(); auto &pair : _pipelineMap) {

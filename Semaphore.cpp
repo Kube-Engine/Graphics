@@ -10,25 +10,25 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Semaphore::Semaphore(Renderer &renderer)
+Graphics::Semaphore::Semaphore(Renderer &renderer)
     : VulkanHandler<VkSemaphore>(renderer)
 {
     createSemaphore();
 }
 
-Semaphore::~Semaphore(void)
+Graphics::Semaphore::~Semaphore(void)
 {
     ::vkDestroySemaphore(parent().getLogicalDevice(), handle(), nullptr);
 }
 
-void Semaphore::createSemaphore(void)
+void Graphics::Semaphore::createSemaphore(void)
 {
     VkSemaphoreCreateInfo semaphoreInfo {
-        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = VkSemaphoreCreateFlags()
+        sType: VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+        pNext: nullptr,
+        flags: VkSemaphoreCreateFlags()
     };
 
     if (auto res = ::vkCreateSemaphore(parent().getLogicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Semaphore::createSemaphore: Couldn't create semaphore '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Semaphore::createSemaphore: Couldn't create semaphore '"_str + ErrorMessage(res) + '\'');
 }

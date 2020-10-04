@@ -7,15 +7,15 @@
 
 using namespace kF;
 
-BufferPool::BufferPool(Renderer &renderer) : RendererObject(renderer)
+Graphics::BufferPool::BufferPool(Renderer &renderer) : RendererObject(renderer)
 {
 }
 
-BufferPool::~BufferPool(void)
+Graphics::BufferPool::~BufferPool(void)
 {
 }
 
-BufferIndex BufferPool::addBuffer(const BufferModel &model)
+Graphics::BufferIndex Graphics::BufferPool::addBuffer(const BufferModel &model)
 {
     auto index = 1u;
 
@@ -25,16 +25,16 @@ BufferIndex BufferPool::addBuffer(const BufferModel &model)
     return index;
 }
 
-void BufferPool::removeBuffer(const BufferIndex index)
+void Graphics::BufferPool::removeBuffer(const BufferIndex index)
 {
     auto it = findBuffer(index);
 
     if (it == _bufferMap.end())
-        throw std::runtime_error("BufferPool::removeBuffer: Coudln't find buffer of index '" + std::to_string(index) + '\'');
+        throw std::runtime_error("Graphics::BufferPool::removeBuffer: Coudln't find buffer of index '" + std::to_string(index) + '\'');
     _bufferMap.erase(it);
 }
 
-std::vector<DeviceBuffer> BufferPool::collectBuffers(const BufferIndexes &indexes)
+Graphics::DeviceBuffers Graphics::BufferPool::collectBuffers(const BufferIndexes &indexes)
 {
     std::vector<DeviceBuffer> buffers;
     auto count = indexes.size();
@@ -50,6 +50,6 @@ std::vector<DeviceBuffer> BufferPool::collectBuffers(const BufferIndexes &indexe
         }
     }
     if (count)
-        throw std::runtime_error("BufferPool::collectBuffers: Could only find " + std::to_string(indexes.size() - count) + " buffers out of " + std::to_string(indexes.size()));
+        throw std::runtime_error("Graphics::BufferPool::collectBuffers: Could only find " + std::to_string(indexes.size() - count) + " buffers out of " + std::to_string(indexes.size()));
     return buffers;
 }

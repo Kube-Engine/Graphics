@@ -9,7 +9,7 @@
 
 #include "VulkanHandler.hpp"
 
-namespace kF
+namespace kF::Graphics
 {
     class Shader;
     struct ShaderModel;
@@ -35,25 +35,36 @@ namespace kF
     };
 }
 
-struct kF::ShaderModel
+/** @brief Describe a shader to load */
+struct kF::Graphics::ShaderModel
 {
     ShaderType type;
     std::string path;
 };
 
-class kF::Shader final : public VulkanHandler<VkShaderModule>
+/** @brief Abstraction of a GPU shader */
+class kF::Graphics::Shader final : public VulkanHandler<VkShaderModule>
 {
 public:
+    /** @brief A vector containing binary data */
     using BinaryCode = std::vector<std::uint32_t>;
 
+    /** @brief Construct a shader from a path */
     Shader(Renderer &renderer, const std::string &path);
-    Shader(Shader &&other) = default;
-    ~Shader(void);
 
-    Shader &operator=(Shader &&other) = default;
+    /** @brief Move constructor */
+    Shader(Shader &&other) noexcept = default;
 
+    /** ^brief Destruct the shader */
+    ~Shader(void) noexcept;
+
+    /** @brief Move assignment */
+    Shader &operator=(Shader &&other) noexcept = default;
+
+    /** @brief Get the binary code of a shader from its path */
     [[nodiscard]] static BinaryCode GetBinaryCode(const std::string &path);
 
 private:
+    /** @brief Create a shader module from a path */
     void createShaderModule(const std::string &path);
 };

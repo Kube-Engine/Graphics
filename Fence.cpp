@@ -10,39 +10,39 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Fence::Fence(Renderer &renderer)
+Graphics::Fence::Fence(Renderer &renderer)
     : VulkanHandler<VkFence>(renderer)
 {
     createFence();
 }
 
-Fence::~Fence(void)
+Graphics::Fence::~Fence(void) noexcept
 {
     ::vkDestroyFence(parent().getLogicalDevice(), handle(), nullptr);
 }
 
-bool Fence::waitToBeSignaled(const std::uint64_t timeout) const
+bool Graphics::Fence::waitToBeSignaled(const std::uint64_t timeout) const
 {
     if (auto res = ::vkWaitForFences(parent().getLogicalDevice(), 1, &handle(), true, timeout); res == VK_TIMEOUT)
         return false;
     else if (res != VK_SUCCESS)
-        throw std::runtime_error("Fence::waitToBeSignaled: Error on waiting fence '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Fence::waitToBeSignaled: Error on waiting fence '"_str + ErrorMessage(res) + '\'');
     return true;
 }
 
-void Fence::resetFence(void)
+void Graphics::Fence::resetFence(void) noexcept
 {
     ::vkResetFences(parent().getLogicalDevice(), 1, &handle());
 }
 
-void Fence::createFence(void)
+void Graphics::Fence::createFence(void)
 {
     VkFenceCreateInfo semaphoreInfo {
-        .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = VK_FENCE_CREATE_SIGNALED_BIT
+        sType: VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+        pNext: nullptr,
+        flags: VK_FENCE_CREATE_SIGNALED_BIT
     };
 
     if (auto res = ::vkCreateFence(parent().getLogicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Fence::createFence: Couldn't create semaphore '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Fence::createFence: Couldn't create semaphore '"_str + ErrorMessage(res) + '\'');
 }

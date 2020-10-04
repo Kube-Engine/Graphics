@@ -7,7 +7,7 @@
 
 #include "RendererObject.hpp"
 
-namespace kF
+namespace kF::Graphics
 {
     class FramebufferHandler;
 
@@ -15,22 +15,32 @@ namespace kF
     using Framebuffers = std::vector<VkFramebuffer>;
 }
 
-class kF::FramebufferHandler final : public RendererObject
+/** @brief A framebuffer handler holds a set of framebuffers */
+class kF::Graphics::FramebufferHandler final : public RendererObject
 {
 public:
+    /** @brief Construct a framebuffer handler */
     FramebufferHandler(Renderer &renderer);
-    FramebufferHandler(FramebufferHandler &&other) = default;
-    virtual ~FramebufferHandler(void);
 
-    FramebufferHandler &operator=(FramebufferHandler &&other) { swap(other); return *this; };
+    /** @brief Move constructor */
+    FramebufferHandler(FramebufferHandler &&other) noexcept = default;
 
+    /** @brief Destoy the handler */
+    ~FramebufferHandler(void);
+
+    /** @brief Move assignment */
+    FramebufferHandler &operator=(FramebufferHandler &&other) noexcept { swap(other); return *this; };
+
+    /** @brief Get the framebuffer list */
     [[nodiscard]] Framebuffers &getFramebuffers(void) noexcept { return _framebuffers; }
     [[nodiscard]] const Framebuffers &getFramebuffers(void) const noexcept { return _framebuffers; }
 
-    void swap(FramebufferHandler &other) { std::swap(_framebuffers, other._framebuffers); }
+    /** @brief Swap two instances */
+    void swap(FramebufferHandler &other) noexcept { std::swap(_framebuffers, other._framebuffers); }
 
 private:
     Framebuffers _framebuffers;
 
+    /** @brief Create a set of framebuffer */
     void createFramebuffers(void);
 };

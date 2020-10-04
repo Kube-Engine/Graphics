@@ -7,7 +7,7 @@
 
 struct SDL_Window;
 
-namespace kF
+namespace kF::Graphics
 {
     using BackendWindow = struct SDL_Window;
 }

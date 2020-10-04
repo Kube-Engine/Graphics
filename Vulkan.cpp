@@ -5,8 +5,9 @@
 
 #include "Vulkan.hpp"
 
+using namespace kF;
 
-const char *kF::ErrorMessage(VkResult res)
+const char *Graphics::ErrorMessage(VkResult res)
 {
     switch (res)
     {

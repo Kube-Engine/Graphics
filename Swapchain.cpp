@@ -12,7 +12,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Swapchain::Swapchain(Renderer &renderer)
+Graphics::Swapchain::Swapchain(Renderer &renderer)
     : VulkanHandler<VkSwapchainKHR>(renderer)
 {
     createSwapchain();
@@ -26,14 +26,14 @@ Swapchain::Swapchain(Renderer &renderer)
 #endif
 }
 
-Swapchain::~Swapchain(void)
+Graphics::Swapchain::~Swapchain(void) noexcept
 {
     for (const auto &imageView : getImageViews())
         ::vkDestroyImageView(parent().getLogicalDevice(), imageView, nullptr);
     ::vkDestroySwapchainKHR(parent().getLogicalDevice(), handle(), nullptr);
 }
 
-void Swapchain::createSwapchain(void)
+void Graphics::Swapchain::createSwapchain(void)
 {
     auto surfaceFormat = parent().getSurface().getSurfaceFormat();
     auto presentMode = parent().getSurface().getPresentMode();
@@ -41,61 +41,61 @@ void Swapchain::createSwapchain(void)
     auto extent = parent().getSurface().getExtent(capabilites);
     auto imageCount = std::min(capabilites.minImageCount + 1, capabilites.maxImageCount ? capabilites.maxImageCount : capabilites.minImageCount);
     VkSwapchainCreateInfoKHR swapchainInfo {
-        .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-        .pNext = nullptr,
-        .flags = VkSwapchainCreateFlagsKHR(),
-        .surface = parent().getSurface(),
-        .minImageCount = imageCount,
-        .imageFormat = surfaceFormat.format,
-        .imageColorSpace = surfaceFormat.colorSpace,
-        .imageExtent = extent,
-        .imageArrayLayers = 1,
-        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
-        .queueFamilyIndexCount = 0,
-        .pQueueFamilyIndices = nullptr,
-        .preTransform = capabilites.currentTransform,
-        .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-        .presentMode = presentMode,
-        .clipped = true,
-        .oldSwapchain = VkSwapchainKHR()
+        sType: VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+        pNext: nullptr,
+        flags: VkSwapchainCreateFlagsKHR(),
+        surface: parent().getSurface(),
+        minImageCount: imageCount,
+        imageFormat: surfaceFormat.format,
+        imageColorSpace: surfaceFormat.colorSpace,
+        imageExtent: extent,
+        imageArrayLayers: 1,
+        imageUsage: VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
+        queueFamilyIndexCount: 0,
+        pQueueFamilyIndices: nullptr,
+        preTransform: capabilites.currentTransform,
+        compositeAlpha: VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+        presentMode: presentMode,
+        clipped: true,
+        oldSwapchain: VkSwapchainKHR()
     };
 
     if (auto res = ::vkCreateSwapchainKHR(parent().getLogicalDevice(), &swapchainInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Swapchain::createSwapchain: Couldn't create swapchain '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Swapchain::createSwapchain: Couldn't create swapchain '"_str + ErrorMessage(res) + '\'');
     getSurfaceFormat() = surfaceFormat;
     getPresentMode() = presentMode;
     getExtent() = extent;
 }
 
-void Swapchain::retreiveImages(void)
+void Graphics::Swapchain::retreiveImages(void)
 {
     if (auto res = FillVkContainer(getImages(), &::vkGetSwapchainImagesKHR, parent().getLogicalDevice(), handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Swapchain::createImageViews: Couldn't retreive swapchain images '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Swapchain::createImageViews: Couldn't retreive swapchain images '"_str + ErrorMessage(res) + '\'');
 }
 
-void Swapchain::createImageViews(void)
+void Graphics::Swapchain::createImageViews(void)
 {
-    auto max = getImages().size();
+    const auto max = getImages().size();
     VkImageViewCreateInfo imageViewInfo {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = VkImageViewCreateFlags(),
-        .image = VkImage(),
-        .viewType = VK_IMAGE_VIEW_TYPE_2D,
-        .format = getSurfaceFormat().format,
-        .components = {
-            .r = VK_COMPONENT_SWIZZLE_IDENTITY,
-            .g = VK_COMPONENT_SWIZZLE_IDENTITY,
-            .b = VK_COMPONENT_SWIZZLE_IDENTITY,
-            .a = VK_COMPONENT_SWIZZLE_IDENTITY
+        sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+        pNext: nullptr,
+        flags: VkImageViewCreateFlags(),
+        image: VkImage(),
+        viewType: VK_IMAGE_VIEW_TYPE_2D,
+        format: getSurfaceFormat().format,
+        components: {
+            r: VK_COMPONENT_SWIZZLE_IDENTITY,
+            g: VK_COMPONENT_SWIZZLE_IDENTITY,
+            b: VK_COMPONENT_SWIZZLE_IDENTITY,
+            a: VK_COMPONENT_SWIZZLE_IDENTITY
         },
-        .subresourceRange = {
-            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-            .baseMipLevel = 0,
-            .levelCount = 1,
-            .baseArrayLayer = 0,
-            .layerCount = 1
+        subresourceRange: {
+            aspectMask: VK_IMAGE_ASPECT_COLOR_BIT,
+            baseMipLevel: 0,
+            levelCount: 1,
+            baseArrayLayer: 0,
+            layerCount: 1
         }
     };
 
@@ -103,11 +103,11 @@ void Swapchain::createImageViews(void)
     for (auto i = 0u; i < max; ++i) {
         imageViewInfo.image = getImages()[i];
         if (auto res = ::vkCreateImageView(parent().getLogicalDevice(), &imageViewInfo, nullptr, &getImageViews()[i]); res != VK_SUCCESS)
-            throw std::runtime_error("Swapchain::createImageViews: Couldn't create image " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
+            throw std::runtime_error("Graphics::Swapchain::createImageViews: Couldn't create image " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
     }
 }
 
-void Swapchain::swap(Swapchain &other)
+void Graphics::Swapchain::swap(Swapchain &other) noexcept
 {
     VulkanHandler<VkSwapchainKHR>::swap(other);
     std::swap(_surfaceFormat, other._surfaceFormat);

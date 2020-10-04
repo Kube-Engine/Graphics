@@ -8,30 +8,52 @@
 #include "BackendWindow.hpp"
 #include "VulkanHandler.hpp"
 
-namespace kF
+namespace kF::Graphics
 {
     class Surface;
 
+    /** @brief Vulkan surface format */
     using SurfaceFormat = VkSurfaceFormatKHR;
+
+    /** @brief Vulkan presentation mode*/
     using PresentMode = VkPresentModeKHR;
+
+    /** @brief Vulkan presentation mode*/
     using SurfaceCapabilities = VkSurfaceCapabilitiesKHR;
+
+    /** @brief Vulkan extent */
     using Extent = VkExtent2D;
 }
 
-class kF::Surface final : public VulkanHandler<VkSurfaceKHR>
+/** @brief Abstraction of a render surface */
+class kF::Graphics::Surface final : public VulkanHandler<VkSurfaceKHR>
 {
 public:
+    /** @brief Construct a surface */
     Surface(Renderer &renderer);
-    Surface(Surface &&other) = default;
-    ~Surface(void);
 
-    Surface &operator=(Surface &&other) = default;
+    /** @brief Move constructor */
+    Surface(Surface &&other) noexcept = default;
 
+    /** @brief Destruct the surface */
+    ~Surface(void) noexcept;
+
+    /** @brief Move assignment */
+    Surface &operator=(Surface &&other) noexcept = default;
+
+    /** @brief Get the surface format */
     [[nodiscard]] SurfaceFormat getSurfaceFormat(void) const;
+
+    /** @brief Get the presentation mode */
     [[nodiscard]] PresentMode getPresentMode(void) const;
+
+    /** @brief Get the surface capabilities */
     [[nodiscard]] SurfaceCapabilities getSurfaceCapabilities(void) const;
+
+    /** @brief Get the extent */
     [[nodiscard]] Extent getExtent(const SurfaceCapabilities &capabilities) const;
 
+    /** @brief Get literal of a 'PresentMode' enumeration */
     [[nodiscard]] static const char *PresentModeName(const PresentMode type) noexcept;
 
 private:

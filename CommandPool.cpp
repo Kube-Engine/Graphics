@@ -13,7 +13,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-CommandPool::CommandPool(Renderer &renderer)
+Graphics::CommandPool::CommandPool(Renderer &renderer)
     : VulkanHandler<VkCommandPool>(renderer)
 {
 #ifndef KUBE_NO_DYNAMIC_RESIZE
@@ -23,12 +23,12 @@ CommandPool::CommandPool(Renderer &renderer)
     onViewSizeChanged();
 }
 
-CommandPool::~CommandPool(void)
+Graphics::CommandPool::~CommandPool(void) noexcept
 {
     ::vkDestroyCommandPool(parent().getLogicalDevice(), handle(), nullptr);
 }
 
-CommandIndex CommandPool::addCommand(const CommandModel &model)
+Graphics::CommandIndex Graphics::CommandPool::addCommand(const CommandModel &model)
 {
     auto index = 1u;
 
@@ -41,7 +41,7 @@ CommandIndex CommandPool::addCommand(const CommandModel &model)
     return index;
 }
 
-void CommandPool::removeCommand(const CommandIndex index)
+void Graphics::CommandPool::removeCommand(const CommandIndex index)
 {
     auto it = findCommand(index);
     auto mit = _modelMap.begin() + std::distance(_commandMap.begin(), it);
@@ -53,25 +53,25 @@ void CommandPool::removeCommand(const CommandIndex index)
     _modelMap.erase(mit);
 }
 
-Commands &CommandPool::getCommands(const CommandIndex index)
+Graphics::Commands &Graphics::CommandPool::getCommands(const CommandIndex index)
 {
     auto it = findCommand(index);
 
     if (it == _commandMap.end())
-        throw std::runtime_error("CommandPool::getCommand: Couldn't get command of index '" + std::to_string(index) + '\'');
+        throw std::runtime_error("Graphics::CommandPool::getCommand: Couldn't get command of index '" + std::to_string(index) + '\'');
     return *it->second;
 }
 
-const Commands &CommandPool::getCommands(const CommandIndex index) const
+const Graphics::Commands &Graphics::CommandPool::getCommands(const CommandIndex index) const
 {
     auto it = findCommand(index);
 
     if (it == _commandMap.end())
-        throw std::runtime_error("CommandPool::getCommands: Couldn't get command of index '" + std::to_string(index) + '\'');
+        throw std::runtime_error("Graphics::CommandPool::getCommands: Couldn't get command of index '" + std::to_string(index) + '\'');
     return *it->second;
 }
 
-void CommandPool::onViewSizeChanged(void)
+void Graphics::CommandPool::onViewSizeChanged(void)
 {
 #ifndef KUBE_NO_DYNAMIC_RESIZE
     auto width = parent().getSwapchain().getExtent().width, height = parent().getSwapchain().getExtent().height;
@@ -88,50 +88,50 @@ void CommandPool::onViewSizeChanged(void)
     }
 }
 
-void CommandPool::createCommandPool(void)
+void Graphics::CommandPool::createCommandPool(void)
 {
     VkCommandPoolCreateInfo commandPoolInfo {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = VkCommandPoolCreateFlags(),
-        .queueFamilyIndex = parent().getQueueHandler().getQueueDescriptor(QueueType::Graphics).queueFamilyIndex
+        sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+        pNext: nullptr,
+        flags: VkCommandPoolCreateFlags(),
+        queueFamilyIndex: parent().getQueueHandler().getQueueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
     if (auto res = ::vkCreateCommandPool(parent().getLogicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("CommandPool::createCommandPool: Couldn't create command pool '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"_str + ErrorMessage(res) + '\'');
 }
 
-void CommandPool::allocateCommands(const CommandModel &model, Commands &commands)
+void Graphics::CommandPool::allocateCommands(const CommandModel &model, Commands &commands)
 {
     VkCommandBufferAllocateInfo commandInfo {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .pNext = nullptr,
-        .commandPool = handle(),
-        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        .commandBufferCount = static_cast<std::uint32_t>(commands.size())
+        sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        pNext: nullptr,
+        commandPool: handle(),
+        level: VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        commandBufferCount: static_cast<std::uint32_t>(commands.size())
     };
 
     if (auto res = ::vkAllocateCommandBuffers(parent().getLogicalDevice(), &commandInfo, commands.data()); res != VK_SUCCESS)
-        throw std::runtime_error("CommandPool::addCommand: Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
 }
 
-void CommandPool::recordCommands(const CommandModel &model, Commands &commands)
+void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &commands)
 {
     static const VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     VkCommandBufferBeginInfo commandBeginInfo {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .pNext = nullptr,
-        .flags = VkCommandBufferUsageFlags(),
-        .pInheritanceInfo = nullptr
+        sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        pNext: nullptr,
+        flags: VkCommandBufferUsageFlags(),
+        pInheritanceInfo: nullptr
     };
     VkRenderPassBeginInfo renderPassBeginInfo {
-        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        .pNext = nullptr,
-        .renderPass = parent().getRenderPass(),
-        .framebuffer = VkFramebuffer(),
-        .renderArea = VkRect2D { { 0, 0 }, parent().getSwapchain().getExtent() },
-        .clearValueCount = 1,
-        .pClearValues = &clearColor
+        sType: VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        pNext: nullptr,
+        renderPass: parent().getRenderPass(),
+        framebuffer: VkFramebuffer(),
+        renderArea: VkRect2D { { 0, 0 }, parent().getSwapchain().getExtent() },
+        clearValueCount: 1,
+        pClearValues: &clearColor
     };
     const auto &framebuffers = parent().getFramebufferHandler().getFramebuffers();
     auto &pipeline = parent().getPipelinePool().getPipeline(model.pipeline);
@@ -139,12 +139,12 @@ void CommandPool::recordCommands(const CommandModel &model, Commands &commands)
     auto buffers = parent().getBufferPool().collectBuffers(model.renderModel.buffers);
 
     kFAssert(buffers.size() == model.renderModel.offsets.size(),
-        throw std::runtime_error("CommandPool::recordCommand: Invalid buffer offsets"));
+        throw std::runtime_error("Graphics::CommandPool::recordCommand: Invalid buffer offsets"));
     for (auto i = 0u; i < max; ++i) {
         auto &command = commands[i];
         renderPassBeginInfo.framebuffer = framebuffers[i];
         if (auto res = ::vkBeginCommandBuffer(command, &commandBeginInfo); res != VK_SUCCESS)
-            throw std::runtime_error("CommandPool::recordCommand: Couldn't begin command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
+            throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't begin command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
         ::vkCmdBeginRenderPass(command, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
         ::vkCmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 #ifndef KUBE_NO_DYNAMIC_RESIZE
@@ -156,11 +156,11 @@ void CommandPool::recordCommands(const CommandModel &model, Commands &commands)
         ::vkCmdDraw(command, model.renderModel.vertexCount, model.renderModel.instanceCount, model.renderModel.vertexOffset, model.renderModel.instanceOffset);
         ::vkCmdEndRenderPass(command);
         if (auto res = ::vkEndCommandBuffer(command); res != VK_SUCCESS)
-           throw std::runtime_error("CommandPool::recordCommand: Couldn't record command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
+           throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't record command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
     }
 }
 
-void CommandPool::destroyCommands(Commands &commands) noexcept
+void Graphics::CommandPool::destroyCommands(Commands &commands) noexcept
 {
     if (!commands.empty())
         ::vkFreeCommandBuffers(parent().getLogicalDevice(), handle(), static_cast<std::uint32_t>(commands.size()), commands.data());

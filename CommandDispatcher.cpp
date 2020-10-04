@@ -8,28 +8,29 @@
 
 using namespace kF;
 
-CommandDispatcher::CommandDispatcher(Renderer &renderer)
+Graphics::CommandDispatcher::CommandDispatcher(Renderer &renderer) : RendererObject(renderer)
 {
 
 }
 
-CommandDispatcher::~CommandDispatcher(void)
+Graphics::CommandPoolInstance::~CommandPoolInstance(void)
+{
+    if (_pool)
+        _parent->releaseInstance(_pool);
+}
+
+Graphics::CommandPoolInstance Graphics::CommandDispatcher::reserveCommandPool(const QueueType type)
 {
 
 }
 
-CommandPoolInstance CommandDispatcher::reserveCommandPool(void)
+void Graphics::CommandDispatcher::releaseInstance(CommandPool *pool)
 {
 
 }
 
-void CommandDispatcher::releaseInstance(CommandPool *pool)
+void Graphics::CommandDispatcher::onViewSizeChanged(void)
 {
-
-}
-
-void CommandDispatcher::onViewSizeChanged(void)
-{
-    for (auto &pool : pools)
+    for (auto &pool : _pools)
         pool->onViewSizeChanged();
 }

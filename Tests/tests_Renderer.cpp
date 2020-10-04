@@ -5,8 +5,12 @@
 
 #include <gtest/gtest.h>
 
-// #include <Kube/Graphics/Renderer.hpp>
+#include <Kube/Graphics/Renderer.hpp>
 
-TEST(Renderer, Basics)
+using namespace kF;
+
+TEST(Renderer, InitDestroy)
 {
+    ASSERT_ANY_THROW(Graphics::Renderer(nullptr));
 }
+

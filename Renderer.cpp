@@ -10,7 +10,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Renderer::Renderer(BackendWindow *window, const Version applicationVersion) :
+Graphics::Renderer::Renderer(BackendWindow *window, const Version applicationVersion) :
     _window(window),
     _instance(*this, applicationVersion),
     _surface(*this),
@@ -27,11 +27,11 @@ Renderer::Renderer(BackendWindow *window, const Version applicationVersion) :
 {
 }
 
-void Renderer::draw(void)
+void Graphics::Renderer::draw(void)
 {
 }
 
-void Renderer::onViewSizeChanged(void)
+void Graphics::Renderer::onViewSizeChanged(void)
 {
     _drawer.waitAllDrawCompleted();
     _swapchain = Swapchain(*this);

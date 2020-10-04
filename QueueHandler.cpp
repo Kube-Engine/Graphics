@@ -12,7 +12,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-QueueHandler::QueueHandler(Renderer &renderer)
+Graphics::QueueHandler::QueueHandler(Renderer &renderer)
     : RendererObject(renderer)
 {
     retreiveFamilyQueueIndexes();
@@ -36,7 +36,7 @@ QueueHandler::QueueHandler(Renderer &renderer)
 #endif
 }
 
-void QueueHandler::retreiveQueuesHandlers(void)
+void Graphics::QueueHandler::retreiveQueuesHandlers(void) noexcept
 {
     std::vector<QueueDescriptor *> past;
 
@@ -53,18 +53,18 @@ void QueueHandler::retreiveQueuesHandlers(void)
     }
 }
 
-QueueHandler::QueueCreateInfos QueueHandler::registerQueues(void)
+Graphics::QueueHandler::QueueCreateInfos Graphics::QueueHandler::registerQueues(void)
 {
     static const float priority = 1.0f;
 
     std::vector<std::uint32_t> usedIndexes;
-    QueueHandler::QueueCreateInfos queues;
+    QueueCreateInfos queues;
 
     for (std::size_t type = 0; type < QueueType::QueueTypeCount; ++type) {
         if (_candidates[type].empty()) {
             if (type == QueueType::FastTransfer)
                 continue;
-            throw std::runtime_error("QueueHandler::registerQueues: Couldn't register unsupported queue type '"_str + QueueTypeName(static_cast<QueueType>(type)));
+            throw std::runtime_error("Graphics::QueueHandler::registerQueues: Couldn't register unsupported queue type '"_str + QueueTypeName(static_cast<QueueType>(type)));
         }
         bool found = false;
         std::pair<std::uint32_t, std::size_t> best(0, usedIndexes.size() + 1);
@@ -73,12 +73,12 @@ QueueHandler::QueueCreateInfos QueueHandler::registerQueues(void)
             if (score < queueCount) {
                 if (!score)
                     queues.emplace_back(QueueCreateInfo {
-                        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-                        .pNext = nullptr,
-                        .flags = VkDeviceQueueCreateFlags(),
-                        .queueFamilyIndex = queueFamilyIndex,
-                        .queueCount = 1,
-                        .pQueuePriorities = &priority
+                        sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+                        pNext: nullptr,
+                        flags: VkDeviceQueueCreateFlags(),
+                        queueFamilyIndex: queueFamilyIndex,
+                        queueCount: 1,
+                        pQueuePriorities: &priority
                     });
                 else
                     for (auto &queue : queues) {
@@ -106,7 +106,7 @@ QueueHandler::QueueCreateInfos QueueHandler::registerQueues(void)
     return queues;
 }
 
-void QueueHandler::retreiveFamilyQueueIndexes(void)
+void Graphics::QueueHandler::retreiveFamilyQueueIndexes(void)
 {
     std::vector<VkQueueFamilyProperties> properties;
     std::uint32_t queueFamilyIndex = 0;
@@ -115,7 +115,7 @@ void QueueHandler::retreiveFamilyQueueIndexes(void)
     FillVkContainer(properties, &::vkGetPhysicalDeviceQueueFamilyProperties, parent().getPhysicalDevice());
     for (auto &property : properties) {
         if (auto res = ::vkGetPhysicalDeviceSurfaceSupportKHR(parent().getPhysicalDevice(), queueFamilyIndex, parent().getSurface(), &isPresent); res != VK_SUCCESS)
-            throw std::runtime_error("QueueHandler::registerQueues: Couldn't get physical device surface support '"_str + ErrorMessage(res) + '\'');
+            throw std::runtime_error("Graphics::QueueHandler::registerQueues: Couldn't get physical device surface support '"_str + ErrorMessage(res) + '\'');
         if (isPresent)
             _candidates[QueueType::Present].emplace_back(queueFamilyIndex, property.queueCount);
         if (property.queueFlags & TypeToFlag(QueueType::Graphics))
@@ -130,7 +130,7 @@ void QueueHandler::retreiveFamilyQueueIndexes(void)
     }
 }
 
-constexpr std::uint32_t QueueHandler::TypeToFlag(const QueueType type) noexcept
+constexpr std::uint32_t Graphics::QueueHandler::TypeToFlag(const QueueType type) noexcept
 {
     switch (type) {
     case QueueType::Graphics:
@@ -144,7 +144,7 @@ constexpr std::uint32_t QueueHandler::TypeToFlag(const QueueType type) noexcept
     }
 }
 
-constexpr const char *kF::QueueTypeName(const QueueType type) noexcept
+constexpr const char *kF::Graphics::QueueTypeName(const QueueType type) noexcept
 {
     switch (type) {
     case (QueueType::Graphics):

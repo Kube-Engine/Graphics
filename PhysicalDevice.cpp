@@ -13,7 +13,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-PhysicalDevice::PhysicalDevice(Renderer &renderer)
+Graphics::PhysicalDevice::PhysicalDevice(Renderer &renderer)
     : VulkanHandler<VkPhysicalDevice>(renderer)
 {
     auto devices = getDevices();
@@ -29,22 +29,18 @@ PhysicalDevice::PhysicalDevice(Renderer &renderer)
 #endif
 }
 
-PhysicalDevice::~PhysicalDevice(void)
+Graphics::PhysicalDevice::Devices Graphics::PhysicalDevice::getDevices(void) const
 {
-}
-
-PhysicalDevice::Devices PhysicalDevice::getDevices(void) const
-{
-    std::vector<VkPhysicalDevice> devices;
+    Devices devices;
 
     if (auto res = FillVkContainer(devices, &::vkEnumeratePhysicalDevices, parent().getInstance()); res != VK_SUCCESS)
-        throw std::runtime_error("PhysicalDevice::PhysicalDevice: Couldn't enumerate physical devices '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::PhysicalDevice::PhysicalDevice: Couldn't enumerate physical devices '"_str + ErrorMessage(res) + '\'');
     return devices;
 }
 
-void PhysicalDevice::selectDevice(const Devices &devices)
+void Graphics::PhysicalDevice::selectDevice(const Devices &devices)
 {
     if (devices.empty())
-        throw std::runtime_error("PhysicalDevice::selectDevice: No device detected !");
+        throw std::runtime_error("Graphics::PhysicalDevice::selectDevice: No device detected !");
     handle() = devices[0];
 }

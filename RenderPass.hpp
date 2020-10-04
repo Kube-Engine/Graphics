@@ -7,20 +7,28 @@
 
 #include "VulkanHandler.hpp"
 
-namespace kF
+namespace kF::Graphics
 {
     class RenderPass;
 }
 
-class kF::RenderPass final : public VulkanHandler<VkRenderPass>
+/** @brief Abstraction of a render pass */
+class kF::Graphics::RenderPass final : public VulkanHandler<VkRenderPass>
 {
 public:
+    /** @brief Construct a render pass */
     RenderPass(Renderer &renderer);
-    RenderPass(RenderPass &&other) = default;
-    ~RenderPass(void);
 
-    RenderPass &operator=(RenderPass &&other) = default;
+    /** @brief Move constructor */
+    RenderPass(RenderPass &&other) noexcept = default;
+
+    /** @brief Destruct the render pass */
+    ~RenderPass(void) noexcept;
+
+    /** @brief Move assignment */
+    RenderPass &operator=(RenderPass &&other) noexcept = default;
 
 private:
+    /** @brief Create a render pass */
     void createRenderPass(void);
 };

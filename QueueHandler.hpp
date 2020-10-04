@@ -10,10 +10,14 @@
 
 #include "RendererObject.hpp"
 
-namespace kF
+namespace kF::Graphics
 {
     class QueueHandler;
 
+    /** @brief A vulkan queue */
+    using Queue = VkQueue;
+
+    /** @brief Describes all types of queues */
     enum QueueType {
         Graphics = 0,
         Compute,
@@ -23,16 +27,18 @@ namespace kF
         QueueTypeCount
     };
 
-    using Queue = VkQueue;
-
+    /** @brief Get a literal of QueueType enumeration */
     [[nodiscard]] constexpr const char *QueueTypeName(const QueueType type) noexcept;
 }
 
-class kF::QueueHandler final : public RendererObject
+/** @brief Handles a list of queues */
+class kF::Graphics::QueueHandler final : public RendererObject
 {
 public:
+    /** @brief a Queue instance has a reference count */
     using QueueInstance = std::shared_ptr<Queue>;
 
+    /** @brief Describes a queue */
     struct QueueDescriptor
     {
         std::uint32_t queueFamilyIndex {};
@@ -40,22 +46,29 @@ public:
         Queue queueHandle {};
     };
 
+    /** @brief An array containing available queue descriptors */
     using QueuesArray = std::array<QueueDescriptor, QueueType::QueueTypeCount>;
+
+    /** @brief An array containing all available queue candidates */
     using QueueCandidateMap = std::array<std::vector<std::pair<std::uint32_t, std::size_t>>, QueueType::QueueTypeCount>;
+
+    /** @brief Describe how to create a queue */
     using QueueCreateInfo = VkDeviceQueueCreateInfo;
+
+    /** @brief Describe how to multiple queues */
     using QueueCreateInfos = std::vector<QueueCreateInfo>;
 
-    /** @brief Construct a new Queue Handler object */
+    /** @brief Construct queue handler */
     QueueHandler(Renderer &renderer);
 
-    /** @brief Construct a new Queue Handler object by move */
-    QueueHandler(QueueHandler &&other) = default;
+    /** @brief Move constructor */
+    QueueHandler(QueueHandler &&other) noexcept = default;
 
-    /** @brief Destroy the Queue Handler object */
-    ~QueueHandler(void) = default;
+    /** @brief Destroy queue handler */
+    ~QueueHandler(void) noexcept = default;
 
-    /** @brief Move assign a Queue Handler object */
-    QueueHandler &operator=(QueueHandler &&other) = default;
+    /** @brief Move assignment */
+    QueueHandler &operator=(QueueHandler &&other) noexcept = default;
 
     /** @brief Retreive a queue descriptor that match given type and index */
     [[nodiscard]] const QueueDescriptor &getQueueDescriptor(const QueueType type) const noexcept { return _array[type]; }
@@ -71,7 +84,7 @@ public:
     [[nodiscard]] QueueCreateInfos registerQueues(void);
 
     /** @brief Fill internal queues handler using registered queues */
-    void retreiveQueuesHandlers(void);
+    void retreiveQueuesHandlers(void) noexcept;
 
 private:
     QueuesArray _array;

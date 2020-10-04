@@ -7,7 +7,7 @@
 
 #include <glm/glm.hpp>
 
-namespace kF
+namespace kF::Graphics
 {
     using V1 = glm::vec1;
     using V2 = glm::vec2;

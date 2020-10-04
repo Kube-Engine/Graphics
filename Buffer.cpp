@@ -10,62 +10,62 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Buffer::Buffer(Renderer &renderer, const BufferModel &model) : RendererObject(renderer)
+Graphics::Buffer::Buffer(Renderer &renderer, const BufferModel &model) : RendererObject(renderer)
 {
     createDeviceBuffer(model);
     createDeviceMemory(model);
     fillBuffer(model);
 }
 
-Buffer::~Buffer(void)
+Graphics::Buffer::~Buffer(void) noexcept
 {
     ::vkDestroyBuffer(parent().getLogicalDevice(), _buffer, nullptr);
     ::vkFreeMemory(parent().getLogicalDevice(), _memory, nullptr);
 }
 
-void Buffer::swap(Buffer &other) noexcept
+void Graphics::Buffer::swap(Buffer &other) noexcept
 {
     std::swap(_buffer, other._buffer);
     std::swap(_memory, other._memory);
 }
 
-void Buffer::createDeviceBuffer(const BufferModel &model)
+void Graphics::Buffer::createDeviceBuffer(const BufferModel &model)
 {
     VkBufferCreateInfo bufferInfo {
-        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = 0,
-        .size = model.size,
-        .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-        .queueFamilyIndexCount = 0,
-        .pQueueFamilyIndices = nullptr,
+        sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        pNext: nullptr,
+        flags: 0,
+        size: model.size,
+        usage: VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+        sharingMode: VK_SHARING_MODE_EXCLUSIVE,
+        queueFamilyIndexCount: 0,
+        pQueueFamilyIndices: nullptr,
     };
 
     if (auto res = ::vkCreateBuffer(parent().getLogicalDevice(), &bufferInfo, nullptr, &_buffer); res != VK_SUCCESS)
-        throw std::runtime_error("Buffer::createDeviceBuffer: Couldn't create buffer '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Buffer::createDeviceBuffer: Couldn't create buffer '"_str + ErrorMessage(res) + '\'');
 }
 
-void Buffer::createDeviceMemory(const BufferModel &model)
+void Graphics::Buffer::createDeviceMemory(const BufferModel &model)
 {
     VkMemoryRequirements memoryRequirements;
     ::vkGetBufferMemoryRequirements(parent().getLogicalDevice(), _buffer, &memoryRequirements);
     VkMemoryAllocateInfo memoryAllocateInfo {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .pNext = nullptr,
-        .allocationSize = memoryRequirements.size,
-        .memoryTypeIndex = findMemoryType(
+        sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        pNext: nullptr,
+        allocationSize: memoryRequirements.size,
+        memoryTypeIndex: findMemoryType(
             memoryRequirements.memoryTypeBits,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
         )
     };
 
     if (auto res = ::vkAllocateMemory(parent().getLogicalDevice(), &memoryAllocateInfo, nullptr, &_memory))
-        throw std::runtime_error("Buffer::createDeviceMemory: Couldn't allocate device memory '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Buffer::createDeviceMemory: Couldn't allocate device memory '"_str + ErrorMessage(res) + '\'');
     ::vkBindBufferMemory(parent().getLogicalDevice(), _buffer, _memory, 0);
 }
 
-void Buffer::fillBuffer(const BufferModel &model)
+void Graphics::Buffer::fillBuffer(const BufferModel &model) noexcept
 {
     void *data = nullptr;
 
@@ -74,7 +74,7 @@ void Buffer::fillBuffer(const BufferModel &model)
     ::vkUnmapMemory(parent().getLogicalDevice(), _memory);
 }
 
-std::uint32_t Buffer::findMemoryType(const std::uint32_t type, const MemoryPropertyFlags flags)
+std::uint32_t Graphics::Buffer::findMemoryType(const std::uint32_t type, const MemoryPropertyFlags flags) const
 {
     VkPhysicalDeviceMemoryProperties properties;
 
@@ -83,5 +83,5 @@ std::uint32_t Buffer::findMemoryType(const std::uint32_t type, const MemoryPrope
         if (type & (1 << i) && (properties.memoryTypes[i].propertyFlags & flags))
             return i;
     }
-    throw std::runtime_error("Buffer::findMemoryType: Couldn't find memory type");
+    throw std::runtime_error("Graphics::Buffer::findMemoryType: Couldn't find memory type");
 }

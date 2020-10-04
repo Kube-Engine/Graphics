@@ -15,32 +15,32 @@
 using namespace kF;
 using namespace kF::Literal;
 
-LogicalDevice::LogicalDevice(Renderer &renderer)
+Graphics::LogicalDevice::LogicalDevice(Renderer &renderer)
     : VulkanHandler<VkDevice>(renderer)
 {
     createLogicalDevice();
 }
 
-LogicalDevice::~LogicalDevice(void)
+Graphics::LogicalDevice::~LogicalDevice(void) noexcept
 {
     ::vkDestroyDevice(handle(), nullptr);
 }
 
-void LogicalDevice::createLogicalDevice(void)
+void Graphics::LogicalDevice::createLogicalDevice(void)
 {
     auto extensions = getExtensions();
     auto queueInfos = parent().getQueueHandler().registerQueues();
     VkDeviceCreateInfo deviceInfo {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = VkDeviceCreateFlags(),
-        .queueCreateInfoCount = static_cast<std::uint32_t>(queueInfos.size()),
-        .pQueueCreateInfos = queueInfos.data(),
-        .enabledLayerCount = 0,
-        .ppEnabledLayerNames = nullptr,
-        .enabledExtensionCount = static_cast<std::uint32_t>(extensions.size()),
-        .ppEnabledExtensionNames = extensions.data(),
-        .pEnabledFeatures = nullptr
+        sType: VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        pNext: nullptr,
+        flags: VkDeviceCreateFlags(),
+        queueCreateInfoCount: static_cast<std::uint32_t>(queueInfos.size()),
+        pQueueCreateInfos: queueInfos.data(),
+        enabledLayerCount: 0,
+        ppEnabledLayerNames: nullptr,
+        enabledExtensionCount: static_cast<std::uint32_t>(extensions.size()),
+        ppEnabledExtensionNames: extensions.data(),
+        pEnabledFeatures: nullptr
     };
 
     if (auto res = ::vkCreateDevice(parent().getPhysicalDevice(), &deviceInfo, nullptr, &handle()); res != VK_SUCCESS)
@@ -53,7 +53,7 @@ void LogicalDevice::createLogicalDevice(void)
 #endif
 }
 
-LogicalDevice::Extensions LogicalDevice::getExtensions(void) const
+Graphics::LogicalDevice::Extensions Graphics::LogicalDevice::getExtensions(void) const
 {
     Extensions extensions { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
     std::vector<VkExtensionProperties> properties;

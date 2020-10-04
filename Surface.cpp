@@ -16,39 +16,39 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Surface::Surface(Renderer &renderer)
+Graphics::Surface::Surface(Renderer &renderer)
     : VulkanHandler<VkSurfaceKHR>(renderer)
 {
     if (!::SDL_Vulkan_CreateSurface(parent().getBackendWindow(), parent().getInstance(), &handle()))
-        throw std::runtime_error("Surface::Surface: Couldn't create surface '"_str + ::SDL_GetError() + '\'');
+        throw std::runtime_error("Graphics::Surface::Surface: Couldn't create surface '"_str + ::SDL_GetError() + '\'');
 }
 
-Surface::~Surface(void)
+Graphics::Surface::~Surface(void) noexcept
 {
     ::vkDestroySurfaceKHR(parent().getInstance(), handle(), nullptr);
 }
 
-SurfaceFormat Surface::getSurfaceFormat(void) const
+Graphics::SurfaceFormat Graphics::Surface::getSurfaceFormat(void) const
 {
     std::vector<SurfaceFormat> formats;
 
     if (auto res = FillVkContainer(formats, &::vkGetPhysicalDeviceSurfaceFormatsKHR, parent().getPhysicalDevice(), handle()); res != VK_SUCCESS || formats.empty())
-        throw std::runtime_error("Surface::getSurfaceFormat: Couldn't retreive physical device surface format '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Surface::getSurfaceFormat: Couldn't retreive physical device surface format '"_str + ErrorMessage(res) + '\'');
     for (const auto &format : formats) {
         if (format.format != VK_FORMAT_B8G8R8A8_UNORM || format.colorSpace != VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
             continue;
         return format;
     }
-    std::cout << "Surface::getSurfaceFormat: Couldn't find SurfaceFormat with B8G8R8A8_UNORM and SRGB_NONLINEAR, using first avaible format" << std::endl;
+    std::cout << "Graphics::Surface::getSurfaceFormat: Couldn't find SurfaceFormat with B8G8R8A8_UNORM and SRGB_NONLINEAR, using first avaible format" << std::endl;
     return formats[0];
 }
 
-PresentMode Surface::getPresentMode(void) const
+Graphics::PresentMode Graphics::Surface::getPresentMode(void) const
 {
     std::vector<PresentMode> modes;
 
     if (auto res = FillVkContainer(modes, &::vkGetPhysicalDeviceSurfacePresentModesKHR, parent().getPhysicalDevice(), handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Surface::getPresentMode: Couldn't retreive physical device present modes");
+        throw std::runtime_error("Graphics::Surface::getPresentMode: Couldn't retreive physical device present modes");
     for (const auto &mode : modes) {
         if (mode == VK_PRESENT_MODE_MAILBOX_KHR)
             return mode;
@@ -56,16 +56,16 @@ PresentMode Surface::getPresentMode(void) const
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-SurfaceCapabilities Surface::getSurfaceCapabilities(void) const
+Graphics::SurfaceCapabilities Graphics::Surface::getSurfaceCapabilities(void) const
 {
     SurfaceCapabilities capabilities {};
 
     if (auto res = ::vkGetPhysicalDeviceSurfaceCapabilitiesKHR(parent().getPhysicalDevice(), handle(), &capabilities); res != VK_SUCCESS)
-        throw std::runtime_error("Surface::getSurfaceCapabilities: Couldn't retreive physical device surface capabilities '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Surface::getSurfaceCapabilities: Couldn't retreive physical device surface capabilities '"_str + ErrorMessage(res) + '\'');
     return capabilities;
 }
 
-Extent Surface::getExtent(const SurfaceCapabilities &capabilities) const
+Graphics::Extent Graphics::Surface::getExtent(const SurfaceCapabilities &capabilities) const
 {
     int width = 0, height = 0;
 
@@ -78,7 +78,7 @@ Extent Surface::getExtent(const SurfaceCapabilities &capabilities) const
     };
 }
 
-const char *Surface::PresentModeName(const PresentMode type) noexcept
+const char *Graphics::Surface::PresentModeName(const PresentMode type) noexcept
 {
     switch (type) {
     case VK_PRESENT_MODE_IMMEDIATE_KHR:
