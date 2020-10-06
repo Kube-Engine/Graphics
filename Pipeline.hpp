@@ -60,10 +60,10 @@ public:
 private:
     PipelineLayout _pipelineLayout = VK_NULL_HANDLE;
 
-    /** @brief Create a pipeline layout */
+    /** @brief Create a pipeline layout from model */
     void createPipelineLayout(const PipelineModel &model);
 
-    /** @brief Create a pipeline */
+    /** @brief Create a pipeline from model */
     void createPipeline(const PipelineModel &model);
 
     /** @brief Build shader stage from model */

@@ -22,7 +22,7 @@ Graphics::PipelineIndex Graphics::PipelinePool::addPipeline(const PipelineModel 
     if (!_pipelineMap.empty())
         index = _pipelineMap.crbegin()->first + 1;
     _pipelineMap.emplace_back(index, std::make_unique<Pipeline>(Pipeline(parent(), model)));
-#ifdef KUBE_NO_DYNAMIC_RESIZE
+#ifndef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     _modelMap.emplace_back(index, std::make_unique<PipelineModel>(model));
 #endif
     return index;
@@ -35,7 +35,7 @@ void Graphics::PipelinePool::removePipeline(const PipelineIndex index)
     if (it == _pipelineMap.end())
         throw std::runtime_error("Renderer::removePipeline: Couldn't find pipeline with index '" + std::to_string(index) + '\'');
     _pipelineMap.erase(it);
-#ifdef KUBE_NO_DYNAMIC_RESIZE
+#ifndef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     auto mit = _modelMap.begin() + std::distance(_pipelineMap.begin(), it);
     _modelMap.erase(mit);
 #endif
@@ -61,7 +61,7 @@ const Graphics::Pipeline &Graphics::PipelinePool::getPipeline(const PipelineInde
 
 void Graphics::PipelinePool::onViewSizeChanged(void)
 {
-#ifdef KUBE_NO_DYNAMIC_RESIZE
+#ifndef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     for (auto it = _modelMap.begin(); auto &pair : _pipelineMap) {
         *pair.second = Pipeline(parent(), *it->second);
         ++it;

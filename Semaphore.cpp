@@ -16,7 +16,7 @@ Graphics::Semaphore::Semaphore(Renderer &renderer)
     createSemaphore();
 }
 
-Graphics::Semaphore::~Semaphore(void)
+Graphics::Semaphore::~Semaphore(void) noexcept
 {
     ::vkDestroySemaphore(parent().getLogicalDevice(), handle(), nullptr);
 }

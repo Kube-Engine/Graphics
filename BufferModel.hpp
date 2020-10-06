@@ -20,11 +20,13 @@ namespace kF::Graphics
     using BufferIndexes = std::vector<BufferIndex>;
 }
 
+static int FOO;
+
 /** @brief A buffer model describes a buffer that should be copied to GPU memory */
 struct kF::Graphics::BufferModel
 {
     const void *data { nullptr }; // Opaque data pointer
-    std::size_t size { 0u }; // Data size in bytes
+    std::size_t size { 0ul }; // Data size in bytes
 
     /** @brief Construct a buffer model from a container */
     template<typename Container>

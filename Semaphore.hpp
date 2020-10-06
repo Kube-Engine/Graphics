@@ -28,7 +28,7 @@ public:
     Semaphore(Semaphore &&other) noexcept = default;
 
     /** @brief Destruct the semaphore */
-    ~Semaphore(void);
+    ~Semaphore(void) noexcept;
 
     /** @brief Move constructor */
     Semaphore &operator=(Semaphore &&other) noexcept = default;

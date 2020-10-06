@@ -62,7 +62,7 @@ public:
 
 private:
     PipelineMap _pipelineMap;
-#ifdef KUBE_NO_DYNAMIC_RESIZE
+#ifndef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     PipelineModelMap _modelMap;
 #endif
 

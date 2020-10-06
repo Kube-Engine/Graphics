@@ -69,7 +69,7 @@ private:
     CommandMap _commandMap {};
     CommandModelMap _modelMap {};
 
-#ifndef KUBE_NO_DYNAMIC_RESIZE
+#ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     VkViewport _viewport {};
     VkRect2D _scissor {};
 #endif

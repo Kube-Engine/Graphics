@@ -26,16 +26,19 @@ public:
     VulkanHandler(Renderer &renderer) : RendererObject(renderer) {}
 
     /** @brief Move constructor */
-    VulkanHandler(VulkanHandler<Type> &&other) noexcept : RendererObject(std::move(other)) { swap(other); }
+    VulkanHandler(VulkanHandler &&other) noexcept : RendererObject(std::move(other)) { swap(other); }
 
     /** @brief Default constructor, does not release handler */
     ~VulkanHandler(void) noexcept = default;
 
     /** @brief Move assignment */
-    VulkanHandler<Type> &operator=(VulkanHandler<Type> &&other) noexcept { swap(other); return *this; }
+    VulkanHandler &operator=(VulkanHandler &&other) noexcept { swap(other); return *this; }
 
     /** @brief Implicit convertion to handle */
     [[nodiscard]] operator const Type(void) const noexcept { return _handle; }
+
+    /** @brief Fast handle check operator */
+    operator bool(void) const noexcept { return isNull(); }
 
     /** @brief Check if the handle is null */
     [[nodiscard]] bool isNull(void) const noexcept { return _handle == VK_NULL_HANDLE; }
@@ -45,7 +48,7 @@ public:
     [[nodiscard]] const Type &handle(void) const noexcept { return _handle; }
 
     /** @brief Swap two instances */
-    void swap(VulkanHandler<Type> &other) noexcept { std::swap(_handle, other._handle); }
+    void swap(VulkanHandler &other) noexcept { std::swap(_handle, other._handle); }
 
 private:
     Type _handle = VK_NULL_HANDLE;

@@ -16,7 +16,7 @@ using namespace kF::Literal;
 Graphics::CommandPool::CommandPool(Renderer &renderer)
     : VulkanHandler<VkCommandPool>(renderer)
 {
-#ifndef KUBE_NO_DYNAMIC_RESIZE
+#ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     _viewport.maxDepth = 1.0f;
 #endif
     createCommandPool();
@@ -73,7 +73,7 @@ const Graphics::Commands &Graphics::CommandPool::getCommands(const CommandIndex 
 
 void Graphics::CommandPool::onViewSizeChanged(void)
 {
-#ifndef KUBE_NO_DYNAMIC_RESIZE
+#ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     auto width = parent().getSwapchain().getExtent().width, height = parent().getSwapchain().getExtent().height;
     _viewport.width = width;
     _viewport.height = height;
@@ -147,7 +147,7 @@ void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &
             throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't begin command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
         ::vkCmdBeginRenderPass(command, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
         ::vkCmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-#ifndef KUBE_NO_DYNAMIC_RESIZE
+#ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
         ::vkCmdSetViewport(command, 0, 1, &_viewport);
         ::vkCmdSetScissor(command, 0, 1, &_scissor);
 #endif
