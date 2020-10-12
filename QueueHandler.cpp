@@ -69,7 +69,7 @@ Graphics::QueueHandler::QueueCreateInfos Graphics::QueueHandler::registerQueues(
         bool found = false;
         std::pair<std::uint32_t, std::size_t> best(0, usedIndexes.size() + 1);
         for (const auto [queueFamilyIndex, queueCount] : _candidates[type]) {
-            auto score = std::count(usedIndexes.begin(), usedIndexes.end(), queueFamilyIndex);
+            const std::size_t score = std::count(usedIndexes.begin(), usedIndexes.end(), queueFamilyIndex);
             if (score < queueCount) {
                 if (!score)
                     queues.emplace_back(QueueCreateInfo {

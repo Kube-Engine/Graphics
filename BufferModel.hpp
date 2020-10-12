@@ -20,8 +20,6 @@ namespace kF::Graphics
     using BufferIndexes = std::vector<BufferIndex>;
 }
 
-static int FOO;
-
 /** @brief A buffer model describes a buffer that should be copied to GPU memory */
 struct kF::Graphics::BufferModel
 {
