@@ -34,6 +34,8 @@ Graphics::CommandIndex Graphics::CommandPool::addCommand(const CommandModel &mod
 
     if (!_commandMap.empty())
         index = _commandMap.crbegin()->first + 1;
+    // ATTENTION ICI ON MULTIPLIE LA COMMAND PAR LE NOMBRE DE FRAME
+    // A CHANGER
     auto &pair = _commandMap.emplace_back(index, std::make_unique<Commands>(parent().getFramebufferHandler().getFramebuffers().size()));
     allocateCommands(model, *pair.second);
     recordCommands(model, *pair.second);
@@ -117,11 +119,23 @@ void Graphics::CommandPool::allocateCommands(const CommandModel &model, Commands
 
 void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &commands)
 {
+    constexpr auto GetUsageFlags = [](const CommandModel::Lifecycle lifecycle) -> CommandBufferUsageFlags {
+        switch (lifecycle) {
+        case CommandModel::Lifecycle::Manual:
+            return CommandBufferUsageFlags();
+        case CommandModel::Lifecycle::OneTimeSubmit:
+            return VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        default:
+            return CommandBufferUsageFlags();
+        }
+    };
+
     static const VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+
     VkCommandBufferBeginInfo commandBeginInfo {
         sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         pNext: nullptr,
-        flags: VkCommandBufferUsageFlags(),
+        flags: GetUsageFlags(model.lifecycle),
         pInheritanceInfo: nullptr
     };
     VkRenderPassBeginInfo renderPassBeginInfo {
@@ -133,12 +147,13 @@ void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &
         clearValueCount: 1,
         pClearValues: &clearColor
     };
+    const auto &renderModel = model.as<RenderModel>();
     const auto &framebuffers = parent().getFramebufferHandler().getFramebuffers();
-    auto &pipeline = parent().getPipelinePool().getPipeline(model.pipeline);
+    auto &pipeline = parent().getPipelinePool().getPipeline(renderModel.pipeline);
     auto max = framebuffers.size();
-    auto buffers = parent().getBufferPool().collectBuffers(model.renderModel.buffers);
+    auto buffers = parent().getBufferPool().collectBuffers(renderModel.buffers);
 
-    kFAssert(buffers.size() == model.renderModel.offsets.size(),
+    kFAssert(buffers.size() == renderModel.offsets.size(),
         throw std::runtime_error("Graphics::CommandPool::recordCommand: Invalid buffer offsets"));
     for (auto i = 0u; i < max; ++i) {
         auto &command = commands[i];
@@ -152,8 +167,8 @@ void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &
         ::vkCmdSetScissor(command, 0, 1, &_scissor);
 #endif
         if (!buffers.empty())
-            ::vkCmdBindVertexBuffers(command, 0, buffers.size(), buffers.data(), model.renderModel.offsets.data());
-        ::vkCmdDraw(command, model.renderModel.vertexCount, model.renderModel.instanceCount, model.renderModel.vertexOffset, model.renderModel.instanceOffset);
+            ::vkCmdBindVertexBuffers(command, 0, buffers.size(), buffers.data(), renderModel.offsets.data());
+        ::vkCmdDraw(command, renderModel.vertexCount, renderModel.instanceCount, renderModel.vertexOffset, renderModel.instanceOffset);
         ::vkCmdEndRenderPass(command);
         if (auto res = ::vkEndCommandBuffer(command); res != VK_SUCCESS)
            throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't record command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');

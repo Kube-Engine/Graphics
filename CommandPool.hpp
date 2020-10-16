@@ -7,11 +7,13 @@
 
 #include <vector>
 #include <memory>
+#include <variant>
 
 #include "LogicalDevice.hpp"
 #include "QueueHandler.hpp"
 #include "FramebufferHandler.hpp"
 #include "RenderModel.hpp"
+#include "TransferModel.hpp"
 
 namespace kF::Graphics
 {
@@ -25,11 +27,32 @@ namespace kF::Graphics
 }
 
 /** @brief Describe a command to be constructed */
-struct kF::Graphics::CommandModel
+struct KF_ALIGN_CACHELINE kF::Graphics::CommandModel
 {
-    PipelineIndex pipeline;
-    RenderModel renderModel;
+    enum class Type : std::size_t {
+        Render = 0,
+        Transfer
+    };
+
+    enum class Lifecycle : std::size_t {
+        Manual = 0,
+        OneTimeSubmit
+    };
+
+    Lifecycle lifecycle { Lifecycle::Manual };
+    std::variant<RenderModel, TransferModel> data {};
+
+    /** @brief Get the type of command */
+    [[nodiscard]] Type type(void) const noexcept { return static_cast<Type>(data.index()); }
+
+    /** @brief Get the internal command data */
+    template<typename As>
+    [[nodiscard]] As &as(void) noexcept { return std::get<As>(data); }
+    template<typename As>
+    [[nodiscard]] const As &as(void) const noexcept { return std::get<As>(data); }
 };
+
+static_assert(sizeof(kF::Graphics::CommandModel) == kF::Core::Utils::CacheLineSize);
 
 /** @brief Abstract a low level pool of command buffers, not thread safe */
 class kF::Graphics::CommandPool final : public VulkanHandler<VkCommandPool>

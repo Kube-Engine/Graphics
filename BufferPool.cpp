@@ -44,7 +44,7 @@ Graphics::DeviceBuffers Graphics::BufferPool::collectBuffers(const BufferIndexes
         for (auto index : indexes) {
             if (index != pair.first)
                 continue;
-            buffers.emplace_back(pair.second->getDeviceBuffer());
+            buffers.emplace_back(pair.second->handle());
             if (!--count)
                 break;
         }
