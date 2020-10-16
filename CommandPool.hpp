@@ -24,6 +24,7 @@ namespace kF::Graphics
     using Commands = std::vector<Command>;
     using CommandIndex = std::uint32_t;
     using CommandIndexes = std::vector<CommandIndex>;
+    using CommandPoolCreateFlags = VkCommandPoolCreateFlags;
 }
 
 /** @brief Describe a command to be constructed */
@@ -62,8 +63,14 @@ public:
     using CommandMap = std::vector<CommandPair>;
     using CommandModelMap = std::vector<std::unique_ptr<CommandModel>>;
 
+    /** @brief Type of command pool */
+    enum Type {
+        ManualAndOneTimeSubmit,
+        OneTimeSubmitOnly
+    };
+
     /** @brief Construct a command pool */
-    CommandPool(Renderer &renderer);
+    CommandPool(Renderer &renderer, const Type type);
 
     /** @brief Move constructor */
     CommandPool(CommandPool &&other) noexcept = default;
@@ -91,6 +98,7 @@ public:
 private:
     CommandMap _commandMap {};
     CommandModelMap _modelMap {};
+    Type _type { Type::ManualAndOneTimeSubmit };
 
 #ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     VkViewport _viewport {};
@@ -98,13 +106,16 @@ private:
 #endif
 
     /** @brief Create the command pool */
-    void createCommandPool(void);
+    void createCommandPool(const Type type);
 
     /** @brief Allocate a set of commands in the pool */
     void allocateCommands(const CommandModel &model, Commands &commands);
 
-    /** @brief Record a set of commands in the pool */
-    void recordCommands(const CommandModel &model, Commands &commands);
+    /** @brief Record a set of draw commands in the pool */
+    void recordDrawCommands(const CommandModel &model, Commands &commands);
+
+    /** @brief Record "a set" of transfer commands in the pool */
+    void recordTransferCommands(const CommandModel &model, Commands &commands);
 
     /** @brief Destroy a set of commands in the pool */
     void destroyCommands(Commands &commands) noexcept;

@@ -13,13 +13,13 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::CommandPool::CommandPool(Renderer &renderer)
+Graphics::CommandPool::CommandPool(Renderer &renderer, const Type type)
     : VulkanHandler<VkCommandPool>(renderer)
 {
 #ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     _viewport.maxDepth = 1.0f;
 #endif
-    createCommandPool();
+    createCommandPool(type);
     onViewSizeChanged();
 }
 
@@ -31,15 +31,22 @@ Graphics::CommandPool::~CommandPool(void) noexcept
 Graphics::CommandIndex Graphics::CommandPool::addCommand(const CommandModel &model)
 {
     auto index = 1u;
+    auto size = 1u;
+    const auto isManual = model.lifecycle == CommandModel::Lifecycle::Manual;
+    const auto isRender = model.type() == CommandModel::Type::Render;
 
     if (!_commandMap.empty())
         index = _commandMap.crbegin()->first + 1;
-    // ATTENTION ICI ON MULTIPLIE LA COMMAND PAR LE NOMBRE DE FRAME
-    // A CHANGER
-    auto &pair = _commandMap.emplace_back(index, std::make_unique<Commands>(parent().getFramebufferHandler().getFramebuffers().size()));
+    if (isRender)
+        size = parent().getFramebufferHandler().getFramebuffers().size();
+    auto &pair = _commandMap.emplace_back(index, std::make_unique<Commands>(size));
     allocateCommands(model, *pair.second);
-    recordCommands(model, *pair.second);
-    _modelMap.emplace_back(std::make_unique<CommandModel>(model));
+    if (isRender)
+        recordDrawCommands(model, *pair.second);
+    else
+        recordTransferCommands(model, *pair.second);
+    if (isManual)
+        _modelMap.emplace_back(std::make_unique<CommandModel>(model));
     return index;
 }
 
@@ -85,17 +92,31 @@ void Graphics::CommandPool::onViewSizeChanged(void)
     for (auto it = _modelMap.begin(); const auto &pair : _commandMap) {
         destroyCommands(*pair.second);
         allocateCommands(**it, *pair.second);
-        recordCommands(**it, *pair.second);
+        if ((**it).type() == CommandModel::Type::Render)
+            recordDrawCommands(**it, *pair.second);
+        else
+            recordTransferCommands(**it, *pair.second);
         ++it;
     }
 }
 
-void Graphics::CommandPool::createCommandPool(void)
+void Graphics::CommandPool::createCommandPool(const Type type)
 {
+    constexpr auto GetCreateFlags = [](const Type type) -> CommandPoolCreateFlags {
+        switch (type) {
+        case Type::ManualAndOneTimeSubmit:
+            return CommandPoolCreateFlags();
+        case Type::OneTimeSubmitOnly:
+            return VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        default:
+            return CommandPoolCreateFlags();
+        }
+    };
+
     VkCommandPoolCreateInfo commandPoolInfo {
         sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         pNext: nullptr,
-        flags: VkCommandPoolCreateFlags(),
+        flags: GetCreateFlags(type),
         queueFamilyIndex: parent().getQueueHandler().getQueueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
@@ -117,7 +138,32 @@ void Graphics::CommandPool::allocateCommands(const CommandModel &model, Commands
         throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
 }
 
-void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &commands)
+
+void Graphics::CommandPool::recordTransferCommands(const CommandModel &model, Commands &commands)
+{
+    auto &cmd = commands[0];
+    auto &transferModel = model.as<TransferModel>();
+    VkCommandBufferBeginInfo beginInfo {
+        sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+    };
+    VkBufferCopy copyRegion {
+        srcOffset: transferModel.sourceOffset,
+        dstOffset: transferModel.destinationOffset,
+        size: transferModel.size
+    };
+
+    if (auto res = ::vkBeginCommandBuffer(cmd, &beginInfo); res != VK_SUCCESS)
+        throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't begin command buffers '"_str + ErrorMessage(res) + '\'');
+
+    vkCmdCopyBuffer(cmd, transferModel.source, transferModel.destination, 1, &copyRegion);
+    if (auto res = ::vkEndCommandBuffer(cmd); res != VK_SUCCESS)
+        throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't copy command buffers '"_str + ErrorMessage(res) + '\'');
+
+    // _commandMap.emplace_back()}
+}
+
+void Graphics::CommandPool::recordDrawCommands(const CommandModel &model, Commands &commands)
 {
     constexpr auto GetUsageFlags = [](const CommandModel::Lifecycle lifecycle) -> CommandBufferUsageFlags {
         switch (lifecycle) {

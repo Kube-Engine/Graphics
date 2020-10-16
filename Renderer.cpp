@@ -21,7 +21,7 @@ Graphics::Renderer::Renderer(BackendWindow *window, const Version applicationVer
     _renderPass(*this),
     _pipelinePool(*this),
     _framebufferHandler(*this),
-    _commandPool(*this),
+    _commandPool(*this, CommandPool::Type::ManualAndOneTimeSubmit),
     _bufferPool(*this),
     _drawer(*this)
 {

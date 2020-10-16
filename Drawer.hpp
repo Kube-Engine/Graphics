@@ -39,7 +39,7 @@ public:
     /** @brief Remove all command indexes of the drawer */
     void clearCommandIndexes(void) noexcept;
 
-    /** @brief Draw a frame  */
+    /** @brief Draw a frame */
     void draw(void);
 
     /** @brief Wait until all drawing frame are completed */

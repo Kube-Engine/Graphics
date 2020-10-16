@@ -93,6 +93,7 @@ void Graphics::Buffer::fillMemory(const BufferModel &model) noexcept
         // Create another buffer with shared location
         BufferModel stagingModel = model;
         stagingModel.location = BufferModel::Location::Shared;
+        stagingModel.usage = BufferModel::Usage::Transfer;
         Buffer staging(parent(), stagingModel);
         // Copy the shared location to the local buffer
         auto cmd = parent().getCommandPool().addCommand(CommandModel {
@@ -103,10 +104,17 @@ void Graphics::Buffer::fillMemory(const BufferModel &model) noexcept
                 size: model.size
             }
         });
-        // Execute the command
-        // ...
-        // Wait until its done
-        // ...
+
+        // VkSubmitInfo submitInfo {
+        //     sType: VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        //     commandBufferCount: 1,
+        //     pCommandBuffers: &cmd
+        // };
+
+        // if (auto res = ::vkQueueSubmit(parent().getQueueHandler().getQueue(kF::Graphics::QueueType::Transfer), 1, &submitInfo, VK_NULL_HANDLE); res != VK_SUCCESS)
+        //     throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
+        // if (auto res = ::vkQueueWaitIdle(parent().getQueueHandler().getQueue(kF::Graphics::QueueType::Transfer)); res != VK_SUCCESS)
+        //     throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
     // Else, we can directly use shared memory
     } else if (model.location == BufferModel::Location::Shared) {
         void *data = nullptr;
