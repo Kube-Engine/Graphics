@@ -41,7 +41,7 @@ public:
 
     /** @brief Construct a new memory allocation */
     template<typename Type> requires std::same_as<Type, DeviceBuffer> || std::same_as<Type, DeviceImage>
-    MemoryAllocationModel(const Type &type, const MemoryUsage usage) noexcept;
+    MemoryAllocationModel(const Type &value, const MemoryUsage usage) noexcept;
 
     /** @brief Copy constructor */
     MemoryAllocationModel(const MemoryAllocationModel &other) noexcept = default;
@@ -68,3 +68,5 @@ private:
     MemoryUsage _usage { MemoryUsage::DeviceOnly };
     MemoryType _type { MemoryType::Buffer };
 };
+
+#include "MemoryAllocationModel.ipp"
