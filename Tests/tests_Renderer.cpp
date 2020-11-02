@@ -11,6 +11,5 @@ using namespace kF;
 
 TEST(Renderer, InitDestroy)
 {
-    ASSERT_ANY_THROW(Graphics::Renderer(nullptr));
 }
 
