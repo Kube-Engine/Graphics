@@ -46,6 +46,10 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/Buffer.hpp
     ${KubeGraphicsDir}/Buffer.cpp
     ${KubeGraphicsDir}/BufferModel.hpp
+    ${KubeGraphicsDir}/MemoryAllocator.hpp
+    ${KubeGraphicsDir}/MemoryAllocator.cpp
+    ${KubeGraphicsDir}/MemoryAllocationModel.hpp
+    ${KubeGraphicsDir}/MemoryAllocationModel.ipp
 )
 
 add_library(${PROJECT_NAME} ${KubeGraphicsSources})
@@ -54,6 +58,7 @@ target_link_libraries(${PROJECT_NAME}
 PUBLIC
     KubeCore
     Vulkan::Vulkan
+    VulkanMemoryAllocator
     # glm
     SDL2
 )

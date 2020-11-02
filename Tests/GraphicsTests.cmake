@@ -4,6 +4,7 @@ get_filename_component(KubeGraphicsTestsDir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
 set(KubeGraphicsTestsSources
     ${KubeGraphicsTestsDir}/tests_Renderer.cpp
+    ${KubeGraphicsTestsDir}/tests_MemoryAllocationModel.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${KubeGraphicsTestsSources})
