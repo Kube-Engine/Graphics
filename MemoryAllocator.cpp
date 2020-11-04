@@ -12,7 +12,7 @@ using namespace kF;
 
 Graphics::MemoryAllocation Graphics::MemoryAllocator::allocate(const MemoryAllocationModel &model)
 {
-
+    
 }
 
 void Graphics::MemoryAllocator::deallocate(const MemoryAllocation allocation)
