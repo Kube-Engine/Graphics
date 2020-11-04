@@ -7,6 +7,7 @@
 
 #include <vk_mem_alloc.h>
 
+#include "Kube/Core/Utils"
 #include "Buffer.hpp"
 #include "Image.hpp"
 
@@ -40,8 +41,8 @@ public:
     };
 
     /** @brief Construct a new memory allocation */
-    template<typename Type> requires std::same_as<Type, DeviceBuffer> || std::same_as<Type, DeviceImage>
-    MemoryAllocationModel(const Type &type, const MemoryUsage usage) noexcept;
+    template<typename BufferType> requires std::same_as<BufferType, DeviceBuffer> || std::same_as<BufferType, DeviceImage>
+    MemoryAllocationModel(const BufferType &buffer, const MemoryUsage usage) noexcept;
 
     /** @brief Copy constructor */
     MemoryAllocationModel(const MemoryAllocationModel &other) noexcept = default;
@@ -68,3 +69,5 @@ private:
     MemoryUsage _usage { MemoryUsage::DeviceOnly };
     MemoryType _type { MemoryType::Buffer };
 };
+
+#include "MemoryAllocationModel.ipp"
