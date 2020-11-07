@@ -35,7 +35,6 @@ void Graphics::Instance::createInstance(const Version applicationVersion)
     VkApplicationInfo appInfo {
         sType: VK_STRUCTURE_TYPE_APPLICATION_INFO,
         pNext: nullptr,
-
         pApplicationName: ::SDL_GetWindowTitle(parent().getBackendWindow()),
         applicationVersion: static_cast<std::uint32_t>(VK_MAKE_VERSION(applicationVersion.major, applicationVersion.minor, applicationVersion.patch)),
         pEngineName: "Kube",

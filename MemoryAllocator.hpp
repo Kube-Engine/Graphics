@@ -25,13 +25,13 @@ public:
     MemoryAllocator(Renderer &renderer);
 
     /** @brief Move constructor */
-    MemoryAllocator(MemoryAllocator &&other) noexcept : VulkanHandler<VmaAllocator>(other.parent()) { swap(other); }
+    MemoryAllocator(MemoryAllocator &&other) noexcept = default;
 
     /** @brief Destruct the buffer */
     ~MemoryAllocator(void) noexcept;
 
     /** @brief Move assignment */
-    MemoryAllocator &operator=(MemoryAllocator &&other) noexcept { swap(other); return *this; }
+    MemoryAllocator &operator=(MemoryAllocator &&other) noexcept = default;
 
 
     /** @brief Allocate memory */
@@ -47,4 +47,6 @@ public:
     void deallocate(const std::vector<MemoryAllocation> &allocations);
 
 private:
+    /** @brief Create a memory allocator */
+    void createMemoryAllocator(void);
 };

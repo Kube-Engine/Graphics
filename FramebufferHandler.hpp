@@ -38,6 +38,9 @@ public:
     /** @brief Swap two instances */
     void swap(FramebufferHandler &other) noexcept { std::swap(_framebuffers, other._framebuffers); }
 
+    /** @brief Get the number of buffered frames */
+    [[nodiscard]] std::size_t frameCount(void) const noexcept { return _framebuffers.size(); }
+
 private:
     Framebuffers _framebuffers;
 
