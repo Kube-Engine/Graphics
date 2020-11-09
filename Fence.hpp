@@ -21,7 +21,8 @@ class kF::Graphics::Fence final : public VulkanHandler<VkFence>
 {
 public:
     /** @brief Construct the fence */
-    Fence(Renderer &renderer);
+    Fence(Renderer &renderer) : VulkanHandler<VkFence>(renderer)
+        { createFence(); }
 
     /** @brief Move constructor */
     Fence(Fence &&other) noexcept = default;

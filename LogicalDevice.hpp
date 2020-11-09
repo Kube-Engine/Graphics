@@ -22,7 +22,8 @@ public:
     using Extensions = std::vector<const char *>;
 
     /** @brief Create a logical device */
-    LogicalDevice(Renderer &renderer);
+    LogicalDevice(Renderer &renderer) : VulkanHandler<VkDevice>(renderer)
+        { createLogicalDevice(); }
 
     /** @brief Move constructor */
     LogicalDevice(LogicalDevice &&other) noexcept = default;

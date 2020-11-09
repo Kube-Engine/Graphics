@@ -1,14 +1,12 @@
 /**
  * @ Author: Matthieu Moinvaziri
- * @ Description: Thread safe command dispatcher for an efficient usage of hardware queues
+ * @ Description: CommandDispatcher
  */
 
 #pragma once
 
-#include <thread>
-#include <mutex>
-
-#include "QueueHandler.hpp"
+#include "PerFrameCache.hpp"
+#include "CommandPool.hpp"
 
 namespace kF::Graphics
 {
@@ -16,82 +14,65 @@ namespace kF::Graphics
     class CommandDispatcher;
 }
 
-/** Notes for command pool usage best practises
- *
- * L * T + N pools
- * (L = the number of buffered frames,
- *  T = the number of threads which record command buffers,
- *  N = extra pools for secondary command buffers)
- *
- *  Reuse command pools for similarly sized sequences of draw calls.
- *      -> use 1 thread per task
- *  Call vkResetCommandPool before reusing it in another frame. Otherwise the pool will keep on growing until you run out of memory
- *  Don’t create/destroy command pools, reuse them instead. Save the overhead of allocator creation/destruction and memory allocation/free.
- *      -> Allocate pools as needed for each thread, don't destroy them if not specified explicitly
- *  Don’t forget that command pools consume GPU memory.
- *      -> Store an usage flag
- */
-
-/** @brief This class holds an instance of command pool and its associated parent dispatcher */
-class kF::Graphics::CommandPoolInstance
-{
-public:
-    /** @brief Construct a command pool instance */
-    CommandPoolInstance(CommandDispatcher *parent, CommandPool *pool) noexcept : _parent(parent), _pool(pool) {}
-
-    /** @brief Move constructor */
-    CommandPoolInstance(CommandPoolInstance &&other) noexcept { swap(other); }
-
-    /** @brief Destructor, release the command pool instance */
-    ~CommandPoolInstance(void);
-
-    /** @brief Move assignment */
-    CommandPoolInstance &operator=(CommandPoolInstance &&other) noexcept { swap(other); }
-
-    /** @brief Swap two instances */
-    void swap(CommandPoolInstance &other) noexcept { std::swap(_parent, other._parent); std::swap(_pool, other._pool); }
-
-private:
-    CommandDispatcher *_parent { nullptr };
-    CommandPool *_pool { nullptr };
-};
-
-/*
- * API:
- *  CommandDispatcher should generate CommandPool objects on thread demands
- *
- * Usage:
- *  Make one ore more command buffer recorder for each thread
- *
- */
+/** @brief Command dispatcher collect commands and dispatch them later */
 class kF::Graphics::CommandDispatcher : public RendererObject
 {
 public:
+    /** @brief An array of command sorted by queue types */
+    struct KF_ALIGN_DOUBLE_CACHELINE PerQueueCommandArray
+    {
+        using Array = std::array<Core::TinyVector<CommandHandle>, static_cast<std::size_t>(QueueType::Count)>;
+
+#if KUBE_DEBUG_BUILD
+        alignas(alignof(Array)) bool cleared { true };
+#endif
+        Array array;
+    };
+
     /** @brief Construct the command dispatcher */
     CommandDispatcher(Renderer &renderer);
 
     /** @brief Move constructor */
-    CommandDispatcher(CommandDispatcher &&other) noexcept { swap(other); }
+    CommandDispatcher(CommandDispatcher &&other) noexcept = default;
 
     /** @brief Destruct the command dispatcher */
-    ~CommandDispatcher(void);
+    ~CommandDispatcher(void) noexcept = default;
 
     /** @brief Move assignment */
     CommandDispatcher &operator=(CommandDispatcher &&other) noexcept { swap(other); return *this; }
 
     /** @brief Swap two instances */
-    void swap(CommandDispatcher &other) noexcept { _pools.swap(other._pools); }
+    void swap(CommandDispatcher &other) noexcept;
 
-    /** @brief Reserve a command pool */
-    [[nodiscard]] CommandPoolInstance reserveCommandPool(const QueueType type);
 
-    /** @brief Release a command pool */
-    void releaseInstance(CommandPool *pool);
+    /** @brief Prepare a single command to be dispatcher in a specific queue */
+    void prepare(const QueueType queueType, const CommandHandle command) noexcept
+        { prepare(queueType, &command, &command + 1); }
+
+    /** @brief Prepare a set of commands of the same queue type to be dispatched */
+    void prepare(const QueueType queueType, const CommandHandle * const from, const CommandHandle * const to) noexcept;
+
+
+    /** @brief Dispatch all cached commands of a same queue (only thread safe if the underlying hardward queue is not already submitting) */
+    void dispatch(const QueueType queueType);
+
+
+    /** @brief Acquire the next frame without releasing current one */
+    void acquireNextFrame(void) noexcept_ndebug;
+
+    /** @brief Release a given frame */
+    void releaseFrame(const FrameIndex frameIndex) noexcept;
+
+
+    /** @brief Clear every cached command of every frame */
+    void clear(void) noexcept;
+
 
     /** @brief Callback on render view size changed */
-    void onViewSizeChanged(void);
+    void onViewSizeChanged(void) noexcept { clear(); }
 
 private:
-    std::vector<std::unique_ptr<CommandPool>> _pools;
-    std::mutex _poolsMutex;
+    PerFrameCache<PerQueueCommandArray> _cachedFrames;
 };
+
+#include "CommandDispatcher.ipp

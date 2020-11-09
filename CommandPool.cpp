@@ -3,99 +3,49 @@
  * @ Description: CommandPool
  */
 
-#include <algorithm>
-
 #include <Kube/Core/Core.hpp>
-#include <Kube/Core/Assert.hpp>
 
 #include "Renderer.hpp"
 
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::CommandPool::CommandPool(Renderer &renderer)
+Graphics::CommandPool::CommandPool(Renderer &renderer, const QueueType queueType, const Lifecycle lifecycle)
     : VulkanHandler<VkCommandPool>(renderer)
 {
-#ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
-    _viewport.maxDepth = 1.0f;
-#endif
-    createCommandPool();
-    onViewSizeChanged();
+    createCommandPool(queueType, lifecycle);
 }
 
-Graphics::CommandPool::~CommandPool(void) noexcept
+Graphics::CommandPool::~CommandPool(void)
 {
     ::vkDestroyCommandPool(parent().getLogicalDevice(), handle(), nullptr);
 }
 
-Graphics::CommandIndex Graphics::CommandPool::addCommand(const CommandModel &model)
+void Graphics::CommandPool::remove(const CommandHandle command)
 {
-    auto index = 1u;
-
-    if (!_commandMap.empty())
-        index = _commandMap.crbegin()->first + 1;
-    // ATTENTION ICI ON MULTIPLIE LA COMMAND PAR LE NOMBRE DE FRAME
-    // A CHANGER
-    auto &pair = _commandMap.emplace_back(index, std::make_unique<Commands>(parent().getFramebufferHandler().getFramebuffers().size()));
-    allocateCommands(model, *pair.second);
-    recordCommands(model, *pair.second);
-    _modelMap.emplace_back(std::make_unique<CommandModel>(model));
-    return index;
+    ::vkFreeCommandBuffers(parent().getLogicalDevice(), handle(), 1u, &command);
 }
 
-void Graphics::CommandPool::removeCommand(const CommandIndex index)
+void Graphics::CommandPool::clear(void)
 {
-    auto it = findCommand(index);
-    auto mit = _modelMap.begin() + std::distance(_commandMap.begin(), it);
-
-    if (it == _commandMap.end())
-        throw std::runtime_error("Renderer::removeCommand: Couldn't find command with index '" + std::to_string(index) + '\'');
-    destroyCommands(*it->second);
-    _commandMap.erase(it);
-    _modelMap.erase(mit);
+    ::vkResetCommandPool(parent().getLogicalDevice(), handle(), VkCommandPoolResetFlags());
 }
 
-Graphics::Commands &Graphics::CommandPool::getCommands(const CommandIndex index)
+void Graphics::CommandPool::createCommandPool(const QueueType queueType, const Lifecycle lifecycle)
 {
-    auto it = findCommand(index);
+    constexpr auto GetFlags = [](const Lifecycle lifecycle) -> VkCommandPoolCreateFlags {
+        switch (lifecycle) {
+        case Lifecycle::Manual:
+            return VkCommandPoolCreateFlags();
+        case Lifecycle::Auto:
+            return VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+        }
+    };
 
-    if (it == _commandMap.end())
-        throw std::runtime_error("Graphics::CommandPool::getCommand: Couldn't get command of index '" + std::to_string(index) + '\'');
-    return *it->second;
-}
-
-const Graphics::Commands &Graphics::CommandPool::getCommands(const CommandIndex index) const
-{
-    auto it = findCommand(index);
-
-    if (it == _commandMap.end())
-        throw std::runtime_error("Graphics::CommandPool::getCommands: Couldn't get command of index '" + std::to_string(index) + '\'');
-    return *it->second;
-}
-
-void Graphics::CommandPool::onViewSizeChanged(void)
-{
-#ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
-    auto width = parent().getSwapchain().getExtent().width, height = parent().getSwapchain().getExtent().height;
-    _viewport.width = width;
-    _viewport.height = height;
-    _scissor.extent.width = width;
-    _scissor.extent.height = height;
-#endif
-    for (auto it = _modelMap.begin(); const auto &pair : _commandMap) {
-        destroyCommands(*pair.second);
-        allocateCommands(**it, *pair.second);
-        recordCommands(**it, *pair.second);
-        ++it;
-    }
-}
-
-void Graphics::CommandPool::createCommandPool(void)
-{
     VkCommandPoolCreateInfo commandPoolInfo {
         sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         pNext: nullptr,
-        flags: VkCommandPoolCreateFlags(),
+        flags: GetFlags(lifecycle),
         queueFamilyIndex: parent().getQueueHandler().getQueueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
@@ -103,41 +53,25 @@ void Graphics::CommandPool::createCommandPool(void)
         throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"_str + ErrorMessage(res) + '\'');
 }
 
-void Graphics::CommandPool::allocateCommands(const CommandModel &model, Commands &commands)
+void Graphics::CommandPool::allocateCommands(CommandHandle * const commandFrom, CommandHandle * const commandTo, const Level level)
 {
     VkCommandBufferAllocateInfo commandInfo {
         sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         pNext: nullptr,
         commandPool: handle(),
-        level: VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        commandBufferCount: static_cast<std::uint32_t>(commands.size())
+        level: static_cast<VkCommandBufferLevel>(level),
+        commandBufferCount: static_cast<std::uint32_t>(std::distance(commandFrom, commandTo))
     };
 
-    if (auto res = ::vkAllocateCommandBuffers(parent().getLogicalDevice(), &commandInfo, commands.data()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
+    if (auto res = ::vkAllocateCommandBuffers(parent().getLogicalDevice(), &commandInfo, commandFrom); res != VK_SUCCESS)
+        throw std::runtime_error("Graphics::CommandPool::
+        : Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
 }
 
-void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &commands)
+void Graphics::CommandPool::recordRender(const RenderModel * const modelFrom, const RenderModel * const modelTo,
+        CommandHandle * const commandFrom, CommandHandle * const commandTo,
+        const VkCommandBufferBeginInfo &commandBeginInfo)
 {
-    constexpr auto GetUsageFlags = [](const CommandModel::Lifecycle lifecycle) -> CommandBufferUsageFlags {
-        switch (lifecycle) {
-        case CommandModel::Lifecycle::Manual:
-            return CommandBufferUsageFlags();
-        case CommandModel::Lifecycle::OneTimeSubmit:
-            return VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-        default:
-            return CommandBufferUsageFlags();
-        }
-    };
-
-    static const VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-
-    VkCommandBufferBeginInfo commandBeginInfo {
-        sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        pNext: nullptr,
-        flags: GetUsageFlags(model.lifecycle),
-        pInheritanceInfo: nullptr
-    };
     VkRenderPassBeginInfo renderPassBeginInfo {
         sType: VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         pNext: nullptr,
@@ -162,10 +96,6 @@ void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &
             throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't begin command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
         ::vkCmdBeginRenderPass(command, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
         ::vkCmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-#ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
-        ::vkCmdSetViewport(command, 0, 1, &_viewport);
-        ::vkCmdSetScissor(command, 0, 1, &_scissor);
-#endif
         if (!buffers.empty())
             ::vkCmdBindVertexBuffers(command, 0, buffers.size(), buffers.data(), renderModel.offsets.data());
         ::vkCmdDraw(command, renderModel.vertexCount, renderModel.instanceCount, renderModel.vertexOffset, renderModel.instanceOffset);
@@ -175,8 +105,8 @@ void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &
     }
 }
 
-void Graphics::CommandPool::destroyCommands(Commands &commands) noexcept
+void Graphics::CommandPool::recordTransfer(const TransferModel * const modelFrom, const TransferModel * const modelTo,
+        CommandHandle * const commandFrom, CommandHandle * const commandTo,
+        const VkCommandBufferBeginInfo &commandBeginInfo)
 {
-    if (!commands.empty())
-        ::vkFreeCommandBuffers(parent().getLogicalDevice(), handle(), static_cast<std::uint32_t>(commands.size()), commands.data());
 }

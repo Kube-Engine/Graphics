@@ -72,3 +72,5 @@ private:
     /** @brief Create swapchain image views */
     void createImageViews(void);
 };
+
+#include "Swapchain.ipp"

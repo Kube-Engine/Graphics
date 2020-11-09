@@ -15,7 +15,7 @@
 #include "PipelinePool.hpp"
 #include "RenderPass.hpp"
 #include "FramebufferHandler.hpp"
-#include "CommandPool.hpp"
+#include "CommandPoolManager.hpp"
 #include "BufferPool.hpp"
 #include "Drawer.hpp"
 
@@ -88,9 +88,9 @@ public:
     [[nodiscard]] FramebufferHandler &getFramebufferHandler(void) noexcept { return _framebufferHandler; }
     [[nodiscard]] const FramebufferHandler &getFramebufferHandler(void) const noexcept { return _framebufferHandler; }
 
-    /** @brief Get the command pool */
-    [[nodiscard]] CommandPool &getCommandPool(void) noexcept { return _commandPool; }
-    [[nodiscard]] const CommandPool &getCommandPool(void) const noexcept { return _commandPool; }
+    /** @brief Get the command pool manager */
+    [[nodiscard]] CommandPoolManager &getCommandPoolManager(void) noexcept { return _commandPoolManager; }
+    [[nodiscard]] const CommandPoolManager &getCommandPoolManager(void) const noexcept { return _commandPoolManager; }
 
     /** @brief Get the buffer pool */
     [[nodiscard]] BufferPool &getBufferPool(void) noexcept { return _bufferPool; }
@@ -100,8 +100,11 @@ public:
     [[nodiscard]] Drawer &getDrawer(void) noexcept { return _drawer; }
     [[nodiscard]] const Drawer &getDrawer(void) const noexcept { return _drawer; }
 
+    /** @brief Get the number of cached frame */
+    [[nodiscard]] std::size_t cachedFrameCount(void) const noexcept { return getSwapchain().getImageViews().size(); }
+
 private:
-    BackendWindow *_window = nullptr;
+    BackendWindow *_window { nullptr };
     Instance _instance;
     Surface _surface;
     PhysicalDevice _physicalDevice;
@@ -111,7 +114,7 @@ private:
     RenderPass _renderPass;
     PipelinePool _pipelinePool;
     FramebufferHandler _framebufferHandler;
-    CommandPool _commandPool;
+    CommandPoolManager _commandPoolManager;
     BufferPool _bufferPool;
     Drawer _drawer;
 

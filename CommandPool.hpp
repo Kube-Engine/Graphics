@@ -5,111 +5,200 @@
 
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <variant>
+#include <Kube/Core/Vector.hpp>
 
-#include "LogicalDevice.hpp"
 #include "QueueHandler.hpp"
-#include "FramebufferHandler.hpp"
-#include "RenderModel.hpp"
-#include "TransferModel.hpp"
+#include "CommandModel.hpp"
 
 namespace kF::Graphics
 {
     class CommandPool;
-    struct CommandModel;
+    class ManualCommandPool;
+    class AutoCommandPool;
 
-    using Command = VkCommandBuffer;
-    using Commands = std::vector<Command>;
-    using CommandIndex = std::uint32_t;
-    using CommandIndexes = std::vector<CommandIndex>;
+    /** @brief Command handle */
+    using CommandHandle = VkCommandBuffer;
 }
 
-/** @brief Describe a command to be constructed */
-struct KF_ALIGN_CACHELINE kF::Graphics::CommandModel
-{
-    enum class Type : std::size_t {
-        Render = 0,
-        Transfer
-    };
-
-    enum class Lifecycle : std::size_t {
-        Manual = 0,
-        OneTimeSubmit
-    };
-
-    Lifecycle lifecycle { Lifecycle::Manual };
-    std::variant<RenderModel, TransferModel> data {};
-
-    /** @brief Get the type of command */
-    [[nodiscard]] Type type(void) const noexcept { return static_cast<Type>(data.index()); }
-
-    /** @brief Get the internal command data */
-    template<typename As>
-    [[nodiscard]] As &as(void) noexcept { return std::get<As>(data); }
-    template<typename As>
-    [[nodiscard]] const As &as(void) const noexcept { return std::get<As>(data); }
-};
-
-static_assert(sizeof(kF::Graphics::CommandModel) == kF::Core::Utils::CacheLineSize);
-
-/** @brief Abstract a low level pool of command buffers, not thread safe */
-class kF::Graphics::CommandPool final : public VulkanHandler<VkCommandPool>
+/** @brief Command pool that allocates command buffers */
+class KF_ALIGN_HALF_CACHELINE kF::Graphics::CommandPool : public VulkanHandler<VkCommandPool>
 {
 public:
-    using CommandPair = std::pair<CommandIndex, std::unique_ptr<Commands>>;
-    using CommandMap = std::vector<CommandPair>;
-    using CommandModelMap = std::vector<std::unique_ptr<CommandModel>>;
+    /** @brief Level of commands */
+    enum class Level : VkCommandBufferLevel {
+        Primary = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        Secondary = VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    };
 
-    /** @brief Construct a command pool */
-    CommandPool(Renderer &renderer);
+    /** @brief Lifecycle of commands inside the pool */
+    enum class Lifecycle {
+        Manual,
+        Auto
+    };
+
+
+    /** @brief Construct the command pool */
+    CommandPool(Renderer &renderer, const QueueType queueType, const Lifecycle lifecycle);
 
     /** @brief Move constructor */
     CommandPool(CommandPool &&other) noexcept = default;
 
     /** @brief Destruct the command pool */
-    ~CommandPool(void) noexcept;
+    ~CommandPool(void) noexcept_ndebug;
 
     /** @brief Move assignment */
     CommandPool &operator=(CommandPool &&other) noexcept = default;
 
-    /** @brief Add a command to the pool
-     *  @return Index of the command */
-    [[nodiscard]] CommandIndex addCommand(const CommandModel &model);
 
-    /** @brief Remove a command from the pool using its index */
-    void removeCommand(const CommandIndex index);
+    /** @brief Adds a command to the pool */
+    template<CommandModel Model>
+    [[nodiscard]] CommandHandle add(const Model &model, const Level level, const Lifecycle lifecycle);
 
-    /** @brief Get the command vector */
-    [[nodiscard]] Commands &getCommands(const CommandIndex index);
-    [[nodiscard]] const Commands &getCommands(const CommandIndex index) const;
+    /** @brief Adds a count of commands to the pool */
+    template<CommandModel Model>
+    void add(const Model &model, CommandHandle * const commandFrom, CommandHandle * const commandTo,
+            const Level level, const Lifecycle lifecycle)
+        { add(&model, &model + 1, commandFrom, commandTo, level, lifecycle); }
 
-    /** @brief Callback on render view size changed */
-    void onViewSizeChanged(void);
+    /** @brief Adds a range of commands to the pool
+     *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
+    template<CommandModel Model>
+    void add(const Model * const modelFrom, const Model * const modelTo,
+            CommandHandle * const commandFrom, CommandHandle * const commandTo,
+            const Level level, const Lifecycle lifecycle);
+
+    /** @brief Remove a command from the pool */
+    void remove(const CommandHandle command) noexcept { remove(&command, &command + 1); }
+
+    /** @brief Remove a range commands from the pool */
+    void remove(const CommandHandle * const from, const CommandHandle * const to) noexcept;
+
+    /** @brief Clear every commands at once */
+    void clear(void) noexcept;
+
+
+    /** @brief Get the queue level used by the pool */
+    [[nodiscard]] QueueType queueType(void) const noexcept { return _queueType; }
 
 private:
-    CommandMap _commandMap {};
-    CommandModelMap _modelMap {};
+    QueueType _queueType { QueueType::Graphics };
 
-#ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
-    VkViewport _viewport {};
-    VkRect2D _scissor {};
-#endif
+    /** @brief Create a command pool */
+    void createCommandPool(const QueueType queueType, const Lifecycle lifecycle);
 
-    /** @brief Create the command pool */
-    void createCommandPool(void);
+    /** @brief Allocate multiple command buffers */
+    void allocateCommands(CommandHandle * const commandFrom, CommandHandle * const commandTo, const Level level);
 
-    /** @brief Allocate a set of commands in the pool */
-    void allocateCommands(const CommandModel &model, Commands &commands);
+    /** @brief Record render commands */
+    void recordRender(const RenderModel * const modelFrom, const RenderModel * const modelTo,
+            CommandHandle * const commandFrom, CommandHandle * const commandTo,
+            const VkCommandBufferBeginInfo &commandBeginInfo);
 
-    /** @brief Record a set of commands in the pool */
-    void recordCommands(const CommandModel &model, Commands &commands);
+    /** @brief Record transfer commands */
+    void recordTransfer(const TransferModel * const modelFrom, const TransferModel * const modelTo,
+            CommandHandle * const commandFrom, CommandHandle * const commandTo,
+            const VkCommandBufferBeginInfo &commandBeginInfo);
 
-    /** @brief Destroy a set of commands in the pool */
-    void destroyCommands(Commands &commands) noexcept;
-
-    /** @brief Find a command in the pool using its index */
-    auto findCommand(const CommandIndex index) noexcept { return std::find_if(_commandMap.begin(), _commandMap.end(), [index](const auto &pair) { return pair.first == index; }); }
-    auto findCommand(const CommandIndex index) const noexcept { return std::find_if(_commandMap.begin(), _commandMap.end(), [index](const auto &pair) { return pair.first == index; }); }
+    /** @brief Helper toretreive command usage flags out of lifecycle */
+    [[nodiscard]] static VkCommandBufferUsageFlags GetCommandUsageFlags(const Lifecycle lifecycle);
 };
+
+static_assert(sizeof(kF::Graphics::CommandPool) == kF::Core::CacheLineHalfSize, "CommandPool must take the half of a cacheline");
+static_assert(sizeof(kF::Graphics::CommandPool) == kF::Core::CacheLineHalfSize, "CommandPool must be aligned to the half of a cacheline");
+
+/** @brief A command pool that can only create one time submit commands */
+class kF::Graphics::AutoCommandPool : public CommandPool
+{
+public:
+    /** @brief Construct the command pool */
+    AutoCommandPool(Renderer &renderer, const QueueType queueType) : CommandPool(renderer, queueType, Lifecycle::Auto) {}
+
+    /** @brief Move constructor */
+    AutoCommandPool(AutoCommandPool &&other) noexcept = default;
+
+    /** @brief Destruct the command pool */
+    ~AutoCommandPool(void) noexcept = default;
+
+    /** @brief Move assignment */
+    AutoCommandPool &operator=(AutoCommandPool &&other) noexcept = default;
+
+
+    /** @brief Add a one time submit command */
+    template<CommandModel Model>
+    [[nodiscard]] CommandHandle add(const Model &model, const Level level = Level::Primary)
+        { return CommandPool::add(model, level, Lifecycle::Auto); }
+
+    /** @brief Adds a count of commands to the pool */
+    template<CommandModel Model>
+    void add(const Model &model, CommandHandle * const commandFrom, CommandHandle * const commandTo,
+            const Level level = Level::Primary)
+        { CommandPool::add(model, commandFrom, commandTo, level, Lifecycle::Auto); }
+
+    /** @brief Adds a range of commands to the pool
+     *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
+    template<CommandModel Model>
+    void add(const Model * const modelFrom, const Model * const modelTo,
+            CommandHandle * const commandFrom, CommandHandle * const commandTo,
+            const Level level = Level::Primary)
+        { CommandPool::add(modelFrom, modelTo, commandFrom, commandTo, level, Lifecycle::Auto); }
+
+    /** @brief Clear every commands at once */
+    using CommandPool::clear;
+
+private:
+    using CommandPool::add;
+    using CommandPool::remove;
+};
+
+static_assert(sizeof(kF::Graphics::AutoCommandPool) == kF::Core::CacheLineHalfSize, "AutoCommandPool must take the half of a cacheline");
+static_assert(sizeof(kF::Graphics::AutoCommandPool) == kF::Core::CacheLineHalfSize, "AutoCommandPool must be aligned to the half of a cacheline");
+
+/** @brief A command pool that let user manager lifecycle of its commands manually */
+class kF::Graphics::ManualCommandPool : public CommandPool
+{
+public:
+    /** @brief Construct the command pool */
+    ManualCommandPool(Renderer &renderer, const QueueType queueType) : CommandPool(renderer, queueType, Lifecycle::Manual) {}
+
+    /** @brief Move constructor */
+    ManualCommandPool(ManualCommandPool &&other) noexcept = default;
+
+    /** @brief Destruct the command pool */
+    ~ManualCommandPool(void) = default;
+
+    /** @brief Move assignment */
+    ManualCommandPool &operator=(ManualCommandPool &&other) noexcept = default;
+
+
+    /** @brief Adds a command to the pool */
+    template<CommandModel Model>
+    [[nodiscard]] CommandHandle add(const Model &model, const Level level = Level::Primary)
+        { return CommandPool::add(model, level, Lifecycle::Manual); }
+
+    /** @brief Adds a count of commands to the pool */
+    template<CommandModel Model>
+    void add(const Model &model, CommandHandle * const commandFrom, CommandHandle * const commandTo,
+            const Level level = Level::Primary)
+        { CommandPool::add(&model, commandFrom, commandTo, level, Lifecycle::Manual); }
+
+    /** @brief Adds a range of commands to the pool
+     *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
+    template<CommandModel Model>
+    void add(const Model * const modelFrom, const Model * const modelTo,
+            CommandHandle * const commandFrom, CommandHandle * const commandTo, const Level level = Level::Primary)
+        { CommandPool::add(modelFrom, modelTo, commandFrom, commandTo, level, Lifecycle::Manual); }
+
+    /** @brief Remove a command from the pool */
+    using CommandPool::remove;
+
+    /** @brief Clear every commands at once */
+    using CommandPool::clear;
+
+private:
+    using CommandPool::add;
+};
+
+static_assert(sizeof(kF::Graphics::ManualCommandPool) == kF::Core::CacheLineHalfSize, "ManualCommandPool must take the half of a cacheline");
+static_assert(sizeof(kF::Graphics::ManualCommandPool) == kF::Core::CacheLineHalfSize, "ManualCommandPool must be aligned to the half of a cacheline");
+
+#include "CommandPool.ipp"

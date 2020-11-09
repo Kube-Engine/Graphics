@@ -50,7 +50,8 @@ public:
     using BinaryCode = std::vector<std::uint32_t>;
 
     /** @brief Construct a shader from a path */
-    Shader(Renderer &renderer, const std::string &path);
+    Shader(Renderer &renderer, const std::string &path) : VulkanHandler<VkShaderModule>(renderer)
+        { createShaderModule(path); }
 
     /** @brief Move constructor */
     Shader(Shader &&other) noexcept = default;

@@ -7,14 +7,6 @@
 
 using namespace kF;
 
-Graphics::BufferPool::BufferPool(Renderer &renderer) : RendererObject(renderer)
-{
-}
-
-Graphics::BufferPool::~BufferPool(void)
-{
-}
-
 Graphics::BufferIndex Graphics::BufferPool::addBuffer(const BufferModel &model)
 {
     auto index = 1u;
@@ -34,9 +26,9 @@ void Graphics::BufferPool::removeBuffer(const BufferIndex index)
     _bufferMap.erase(it);
 }
 
-Graphics::DeviceBuffers Graphics::BufferPool::collectBuffers(const BufferIndexes &indexes)
+Graphics::BufferHandles Graphics::BufferPool::collectBuffers(const BufferIndexes &indexes)
 {
-    std::vector<DeviceBuffer> buffers;
+    std::vector<BufferHandle> buffers;
     auto count = indexes.size();
 
     buffers.reserve(indexes.size());

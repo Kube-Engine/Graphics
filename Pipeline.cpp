@@ -10,23 +10,9 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Pipeline::Pipeline(Renderer &renderer, const PipelineModel &model)
-    : VulkanHandler<VkPipeline>(renderer)
-{
-    createPipelineLayout(model);
-    createPipeline(model);
-}
-
 Graphics::Pipeline::~Pipeline(void)
 {
     ::vkDestroyPipeline(parent().getLogicalDevice(), handle(), nullptr);
-    ::vkDestroyPipelineLayout(parent().getLogicalDevice(), _pipelineLayout, nullptr);
-}
-
-void Graphics::Pipeline::swap(Pipeline &other) noexcept
-{
-    VulkanHandler<VkPipeline>::swap(other);
-    std::swap(_pipelineLayout, other._pipelineLayout);
 }
 
 void Graphics::Pipeline::createPipeline(const PipelineModel &model)
@@ -62,22 +48,6 @@ void Graphics::Pipeline::createPipeline(const PipelineModel &model)
 
     if (auto res = ::vkCreateGraphicsPipelines(parent().getLogicalDevice(), VkPipelineCache(), 1, &pipelineInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Pipeline::createPipeline: Couldn't create pipeline '"_str + ErrorMessage(res) + '\'');
-}
-
-void Graphics::Pipeline::createPipelineLayout(const PipelineModel &model)
-{
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo {
-        sType: VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        pNext: nullptr,
-        flags: VkPipelineLayoutCreateFlags(),
-        setLayoutCount: 0,
-        pSetLayouts: nullptr,
-        pushConstantRangeCount: 0,
-        pPushConstantRanges: nullptr
-    };
-
-    if (auto res = ::vkCreatePipelineLayout(parent().getLogicalDevice(), &pipelineLayoutInfo, nullptr, &getPipelineLayout()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Pipeline::createPipelineLayout: Couldn't create pipeline layout '"_str + ErrorMessage(res) + '\'');
 }
 
 Graphics::Pipeline::ShaderStage Graphics::Pipeline::getShaderStage(const PipelineModel &model) const

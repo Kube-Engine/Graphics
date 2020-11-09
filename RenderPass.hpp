@@ -17,7 +17,8 @@ class kF::Graphics::RenderPass final : public VulkanHandler<VkRenderPass>
 {
 public:
     /** @brief Construct a render pass */
-    RenderPass(Renderer &renderer);
+    RenderPass(Renderer &renderer) : VulkanHandler<VkRenderPass>(renderer)
+        { createRenderPass(); }
 
     /** @brief Move constructor */
     RenderPass(RenderPass &&other) noexcept = default;

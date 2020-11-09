@@ -15,12 +15,6 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::LogicalDevice::LogicalDevice(Renderer &renderer)
-    : VulkanHandler<VkDevice>(renderer)
-{
-    createLogicalDevice();
-}
-
 Graphics::LogicalDevice::~LogicalDevice(void) noexcept
 {
     ::vkDestroyDevice(handle(), nullptr);

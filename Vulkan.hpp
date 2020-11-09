@@ -11,6 +11,9 @@
 
 namespace kF::Graphics
 {
+    /** @brief Null handle alias */
+    constexpr auto NullHandle = NullHandle;
+
     /** @brief Get an error message from a vulkan result */
     [[nodiscard]] const char *ErrorMessage(VkResult res);
 

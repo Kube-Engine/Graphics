@@ -12,12 +12,6 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Shader::Shader(Renderer &renderer, const std::string &path)
-    : VulkanHandler<VkShaderModule>(renderer)
-{
-    createShaderModule(path);
-}
-
 Graphics::Shader::~Shader(void) noexcept
 {
     ::vkDestroyShaderModule(parent().getLogicalDevice(), handle(), nullptr);

@@ -18,17 +18,11 @@ namespace kF::Graphics
     /** @brief Index of a buffer in the pool */
     using BufferIndex = std::uint32_t;
 
-    /** @brief A list of buffer indexes */
-    using BufferIndexes = Core::FlatVector<BufferIndex>;
-
     /** @brief Size of a buffer */
     using BufferSize = VkDeviceSize;
 
     /** @brief Offset in a buffer */
     using BufferOffset = VkDeviceSize;
-
-    /** @brief A list of offsets */
-    using BufferOffsets = Core::FlatVector<BufferOffset>;
 }
 
 /** @brief A buffer model describes a buffer that should be copied to GPU memory */

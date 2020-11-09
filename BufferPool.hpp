@@ -10,6 +10,8 @@
 namespace kF::Graphics
 {
     class BufferPool;
+
+    using BufferIndexes = Core::Vector<BufferIndex>;
 }
 
 /** @brief Abstract a pool of GPU buffers */
@@ -23,13 +25,13 @@ public:
     using BufferMap = std::vector<BufferPair>;
 
     /** @brief Construct a pool of buffers */
-    BufferPool(Renderer &renderer);
+    BufferPool(Renderer &renderer) : RendererObject(renderer) {}
 
     /** @brief Move constructor */
     BufferPool(BufferPool &&other) noexcept = default;
 
     /** @brief Destruct the pool of buffers */
-    ~BufferPool(void);
+    ~BufferPool(void) = default;
 
     /** @brief Move assignment */
     BufferPool &operator=(BufferPool &&other) noexcept = default;
@@ -42,7 +44,7 @@ public:
     void removeBuffer(const BufferIndex index);
 
     /** @brief Collect a list of buffers in the pool matching given indexes */
-    [[nodiscard]] DeviceBuffers collectBuffers(const BufferIndexes &indexes);
+    [[nodiscard]] BufferHandles collectBuffers(const BufferIndexes &indexes);
 
 private:
     BufferMap _bufferMap;

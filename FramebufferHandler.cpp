@@ -40,7 +40,7 @@ void Graphics::FramebufferHandler::createFramebuffers(void)
         height: parent().getSwapchain().getExtent().height,
         layers: 1
     };
-    auto max = parent().getSwapchain().getImageViews().size();
+    auto max = parent().cachedFrameCount();
 
     _framebuffers.reserve(max);
     for (auto i = 0u; i < max; ++i) {

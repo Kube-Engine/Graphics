@@ -7,26 +7,26 @@
 
 #include "VulkanHandler.hpp"
 #include "Shader.hpp"
-#include "LayoutModel.hpp"
+#include "PipelineLayout.hpp"
 
 namespace kF::Graphics
 {
     class Pipeline;
     struct PipelineModel;
 
-    /** @brief A vulkan pipeline layout */
-    using PipelineLayout = VkPipelineLayout;
+    /** @brief A device pipeline */
+    using PipelineHandle = VkPipeline;
 }
 
 /** @brief Describes how to create a pipeline */
 struct kF::Graphics::PipelineModel
 {
     ShaderModels shaders;
-    LayoutModel layoutModel;
+    PipelineLayoutModel layout;
 };
 
 /** @brief Abstraction of a GPU pipeline */
-class kF::Graphics::Pipeline final : public VulkanHandler<VkPipeline>
+class kF::Graphics::Pipeline final : public VulkanHandler<PipelineHandle>
 {
 public:
     /** @brief Various stages structures used to setup the pipeline */
@@ -58,10 +58,7 @@ public:
     void swap(Pipeline &other) noexcept;
 
 private:
-    PipelineLayout _pipelineLayout = VK_NULL_HANDLE;
-
-    /** @brief Create a pipeline layout from model */
-    void createPipelineLayout(const PipelineModel &model);
+    PipelineLayout _pipelineLayout;
 
     /** @brief Create a pipeline from model */
     void createPipeline(const PipelineModel &model);
@@ -127,3 +124,5 @@ struct kF::Graphics::Pipeline::DynamicStage
     std::vector<VkDynamicState> dynamicStates;
     VkPipelineDynamicStateCreateInfo dynamicStatesInfo;
 };
+
+#include "Pipeline.ipp"

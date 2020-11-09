@@ -18,7 +18,7 @@ Graphics::QueueHandler::QueueHandler(Renderer &renderer)
     retreiveFamilyQueueIndexes();
 #ifndef KUBE_NO_DEBUG
     std::cout << "Queues:" << std::endl;
-    for (auto type = 0u; type < QueueType::QueueTypeCount; ++type) {
+    for (auto type = 0u; type < QueueType::Count; ++type) {
         std::cout << '\t' << QueueTypeName(static_cast<QueueType>(type)) << ": ";
         if (!_candidates[type].empty()) {
             std::cout << _candidates[type].size() << " queues available: " << std::endl;
@@ -60,7 +60,7 @@ Graphics::QueueHandler::QueueCreateInfos Graphics::QueueHandler::registerQueues(
     std::vector<std::uint32_t> usedIndexes;
     QueueCreateInfos queues;
 
-    for (std::size_t type = 0; type < QueueType::QueueTypeCount; ++type) {
+    for (std::size_t type = 0; type < QueueType::Count; ++type) {
         if (_candidates[type].empty()) {
             if (type == QueueType::FastTransfer)
                 continue;

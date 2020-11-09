@@ -10,26 +10,13 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Buffer::Buffer(Renderer &renderer, const BufferModel &model) : VulkanHandler<DeviceBuffer>(renderer)
-{
-    createDeviceBuffer(model);
-    createDeviceMemory(model);
-    fillMemory(model);
-}
-
 Graphics::Buffer::~Buffer(void) noexcept
 {
     ::vkDestroyBuffer(parent().getLogicalDevice(), handle(), nullptr);
     ::vkFreeMemory(parent().getLogicalDevice(), _memory, nullptr);
 }
 
-void Graphics::Buffer::swap(Buffer &other) noexcept
-{
-    std::swap(handle(), other.handle());
-    std::swap(_memory, other._memory);
-}
-
-void Graphics::Buffer::createDeviceBuffer(const BufferModel &model)
+void Graphics::Buffer::createBufferHandle(const BufferModel &model)
 {
     constexpr auto GetUsage = [](const BufferModel::Location location, const BufferModel::Usage usage) -> VkBufferUsageFlags {
         switch (usage) {
@@ -56,7 +43,7 @@ void Graphics::Buffer::createDeviceBuffer(const BufferModel &model)
     };
 
     if (auto res = ::vkCreateBuffer(parent().getLogicalDevice(), &bufferInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Buffer::createDeviceBuffer: Couldn't create buffer '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Buffer::createBufferHandle: Couldn't create buffer '"_str + ErrorMessage(res) + '\'');
 }
 
 void Graphics::Buffer::createDeviceMemory(const BufferModel &model)

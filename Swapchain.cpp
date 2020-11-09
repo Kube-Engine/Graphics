@@ -106,13 +106,3 @@ void Graphics::Swapchain::createImageViews(void)
             throw std::runtime_error("Graphics::Swapchain::createImageViews: Couldn't create image " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
     }
 }
-
-void Graphics::Swapchain::swap(Swapchain &other) noexcept
-{
-    VulkanHandler<VkSwapchainKHR>::swap(other);
-    std::swap(_surfaceFormat, other._surfaceFormat);
-    std::swap(_presentMode, other._presentMode);
-    std::swap(_extent, other._extent);
-    std::swap(_images, other._images);
-    std::swap(_imageViews, other._imageViews);
-}

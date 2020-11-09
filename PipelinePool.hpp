@@ -13,9 +13,6 @@
 namespace kF::Graphics
 {
     class PipelinePool;
-
-    /** @brief Index of a pipeline in the pool */
-    using PipelineIndex = std::uint32_t;
 }
 
 /** @brief Abstraction of a pipeline pool */
@@ -35,7 +32,7 @@ public:
     using PipelineModelMap = std::vector<PipelineModelPair>;
 
     /** @brief Construct a pool of pipelines */
-    PipelinePool(Renderer &renderer);
+    PipelinePool(Renderer &renderer) : RendererObject(renderer) {}
 
     /** @brief Move constructor */
     PipelinePool(PipelinePool &&other) noexcept = default;
@@ -62,11 +59,11 @@ public:
 
 private:
     PipelineMap _pipelineMap;
-#ifndef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     PipelineModelMap _modelMap;
-#endif
 
     /** @brief Find a pipeline in the pool using its index */
     auto findPipeline(const PipelineIndex index) noexcept { return std::find_if(_pipelineMap.begin(), _pipelineMap.end(), [index](const auto &pair) { return pair.first == index; }); }
     auto findPipeline(const PipelineIndex index) const noexcept { return std::find_if(_pipelineMap.begin(), _pipelineMap.end(), [index](const auto &pair) { return pair.first == index; }); }
 };
+
+#include "PipelinePool.ipp"

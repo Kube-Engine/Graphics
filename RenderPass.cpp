@@ -10,12 +10,6 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::RenderPass::RenderPass(Renderer &renderer)
-    : VulkanHandler<VkRenderPass>(renderer)
-{
-    createRenderPass();
-}
-
 Graphics::RenderPass::~RenderPass(void) noexcept
 {
     ::vkDestroyRenderPass(parent().getLogicalDevice(), handle(), nullptr);

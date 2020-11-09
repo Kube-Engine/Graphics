@@ -68,8 +68,6 @@ PUBLIC
     ${SDL2_INCLUDE_DIRS}
 )
 
-# target_compile_definitions(${PROJECT_NAME} PUBLIC KUBE_HAS_DYNAMIC_WINDOW_RESIZE)
-
 if(${KF_TESTS})
     include(${KubeGraphicsDir}/Tests/GraphicsTests.cmake)
 endif()

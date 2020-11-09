@@ -36,7 +36,7 @@ public:
     [[nodiscard]] const Framebuffers &getFramebuffers(void) const noexcept { return _framebuffers; }
 
     /** @brief Swap two instances */
-    void swap(FramebufferHandler &other) noexcept { std::swap(_framebuffers, other._framebuffers); }
+    void swap(FramebufferHandler &other) noexcept;
 
 private:
     Framebuffers _framebuffers;
@@ -44,3 +44,5 @@ private:
     /** @brief Create a set of framebuffer */
     void createFramebuffers(void);
 };
+
+#include "FrameBufferHandler.ipp"

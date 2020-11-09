@@ -18,13 +18,13 @@ namespace kF::Graphics
     using Queue = VkQueue;
 
     /** @brief Describes all types of queues */
-    enum QueueType {
+    enum class QueueType {
         Graphics = 0,
         Compute,
         Transfer,
         FastTransfer,
         Present,
-        QueueTypeCount
+        Count
     };
 
     /** @brief Get a literal of QueueType enumeration */
@@ -41,16 +41,22 @@ public:
     /** @brief Describes a queue */
     struct QueueDescriptor
     {
-        std::uint32_t queueFamilyIndex {};
+        std::uint32_t queueFamilyIndex {}; // Index of the queue family
         std::uint32_t queueIndex {}; // Index from specific queue family
         Queue queueHandle {};
     };
 
+    /** @brief The number of different familly queues */
+    static constexpr auto QueueCount = static_cast<std::size_t>(QueueType::Count);
+
     /** @brief An array containing available queue descriptors */
-    using QueuesArray = std::array<QueueDescriptor, QueueType::QueueTypeCount>;
+    using QueuesArray = std::array<QueueDescriptor, QueueCount>;
+
+    /** @brief All candidates of a queue family */
+    using QueueCandidates = std::vector<std::pair<std::uint32_t, std::size_t>>;
 
     /** @brief An array containing all available queue candidates */
-    using QueueCandidateMap = std::array<std::vector<std::pair<std::uint32_t, std::size_t>>, QueueType::QueueTypeCount>;
+    using QueueCandidateMap = std::array<QueueCandidates, QueueCount>;
 
     /** @brief Describe how to create a queue */
     using QueueCreateInfo = VkDeviceQueueCreateInfo;
@@ -71,10 +77,12 @@ public:
     QueueHandler &operator=(QueueHandler &&other) noexcept = default;
 
     /** @brief Retreive a queue descriptor that match given type and index */
-    [[nodiscard]] const QueueDescriptor &getQueueDescriptor(const QueueType type) const noexcept { return _array[type]; }
+    [[nodiscard]] const QueueDescriptor &getQueueDescriptor(const QueueType type) const noexcept
+        { return _array[static_cast<std::size_t>(type)]; }
 
     /** @brief Retreive a queue that match given type and index */
-    [[nodiscard]] const Queue &getQueue(const QueueType type) const noexcept { return _array[type].queueHandle; }
+    [[nodiscard]] const Queue &getQueue(const QueueType type) const noexcept
+        { return _array[static_cast<std::size_t>(type)].queueHandle; }
 
     /**
      * @brief Get a create info list of queues

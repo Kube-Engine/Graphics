@@ -10,12 +10,6 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Fence::Fence(Renderer &renderer)
-    : VulkanHandler<VkFence>(renderer)
-{
-    createFence();
-}
-
 Graphics::Fence::~Fence(void) noexcept
 {
     ::vkDestroyFence(parent().getLogicalDevice(), handle(), nullptr);

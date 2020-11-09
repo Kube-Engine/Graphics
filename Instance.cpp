@@ -17,11 +17,6 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Instance::Instance(Renderer &renderer, const Version applicationVersion)
-    : VulkanHandler<VkInstance>(renderer)
-{
-    createInstance(applicationVersion);
-}
 
 Graphics::Instance::~Instance(void) noexcept
 {

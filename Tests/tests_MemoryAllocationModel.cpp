@@ -12,7 +12,7 @@ using namespace kF;
 TEST(MemoryAllocationModel, InitDestroy)
 {
     {
-        Graphics::MemoryAllocationModel model(Graphics::DeviceBuffer{}, Graphics::MemoryUsage::DeviceOnly);
+        Graphics::MemoryAllocationModel model(Graphics::BufferHandle{}, Graphics::MemoryUsage::DeviceOnly);
         ASSERT_EQ(model.memoryUsage(), Graphics::MemoryUsage::DeviceOnly);
         ASSERT_EQ(model.memoryType(), Graphics::MemoryType::Buffer);
     }

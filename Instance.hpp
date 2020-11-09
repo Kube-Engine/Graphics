@@ -28,7 +28,8 @@ public:
     using Layers = std::vector<const char *>;
 
     /** @brief Construct an instance */
-    Instance(Renderer &renderer, const Version applicationVersion);
+    Instance(Renderer &renderer, const Version applicationVersion) : VulkanHandler<VkInstance>(renderer)
+        { createInstance(applicationVersion); }
 
     /** @brief Move constructor */
     Instance(Instance &&other) noexcept = default;

@@ -16,7 +16,7 @@ namespace kF::Graphics
 /** @brief This is the base class of all renderer sub objects
  * This class is not virtual because it is trivially destructible
 */
-class kF::Graphics::RendererObject
+class KF_ALIGN_EIGHTH_CACHELINE kF::Graphics::RendererObject
 {
 public:
     /** @brief Construct a new object */

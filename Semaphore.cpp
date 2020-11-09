@@ -10,11 +10,6 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Semaphore::Semaphore(Renderer &renderer)
-    : VulkanHandler<VkSemaphore>(renderer)
-{
-    createSemaphore();
-}
 
 Graphics::Semaphore::~Semaphore(void) noexcept
 {
