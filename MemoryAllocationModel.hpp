@@ -17,7 +17,7 @@ namespace kF::Graphics
     struct MemoryAllocationModel;
 
     /** @brief All kinds of memory types */
-    enum class MemoryUsage : std::uint32_t {
+    enum class MemoryUsage : VmaMemoryUsage {
         DeviceOnly = VMA_MEMORY_USAGE_GPU_ONLY,
         HostOnly = VMA_MEMORY_USAGE_CPU_ONLY,
         DeviceToHost = VMA_MEMORY_USAGE_GPU_TO_CPU,

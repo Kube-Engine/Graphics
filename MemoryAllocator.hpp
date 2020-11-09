@@ -22,7 +22,8 @@ class kF::Graphics::MemoryAllocator : public VulkanHandler<VmaAllocator>
 {
 public:
     /** @brief Construct a new memory allocator using VMA */
-    MemoryAllocator(Renderer &renderer);
+    MemoryAllocator(Renderer &renderer) : VulkanHandler<VmaAllocator>(renderer)
+        { createMemoryAllocator(); }
 
     /** @brief Move constructor */
     MemoryAllocator(MemoryAllocator &&other) noexcept = default;
@@ -37,14 +38,15 @@ public:
     /** @brief Allocate memory */
     [[nodiscard]] MemoryAllocation allocate(const MemoryAllocationModel &model);
 
+    /** @brief Allocate a list of memory */
+    [[nodiscard]] void allocate(const MemoryAllocationModel * const modelFrom, const MemoryAllocationModel * const modelTo,
+            MemoryAllocation * const allocationFrom, MemoryAllocation * const allocationTo);
+
     /** @brief Deallocate memory */
     void deallocate(const MemoryAllocation allocation);
 
-    /** @brief Allocate a list of memory */
-    [[nodiscard]] MemoryAllocation allocate(const std::vector<MemoryAllocationModel> &models);
-
     /** @brief Deallocate a list of memory */
-    void deallocate(const std::vector<MemoryAllocation> &allocations);
+    void deallocate(const MemoryAllocation * const allocationFrom, const MemoryAllocation * const allocationTo);
 
 private:
     /** @brief Create a memory allocator */
