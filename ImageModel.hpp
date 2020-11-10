@@ -69,7 +69,7 @@ struct kF::Graphics::ImageModel : public VkImageCreateInfo
     ImageModel &operator=(const ImageModel &other) noexcept = default;
     ImageModel &operator=(ImageModel &&other) noexcept = default;
 
-    [[nodiscard]] static ImageModel MakeBasic2D() noexcept {
-
-    }
+    // [[nodiscard]] static ImageModel MakeBasic2D() noexcept {
+    //     return
+    // }
 };
