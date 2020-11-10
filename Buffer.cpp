@@ -82,7 +82,7 @@ void Graphics::Buffer::fillMemory(const BufferModel &model) noexcept
         stagingModel.location = BufferModel::Location::Shared;
         Buffer staging(parent(), stagingModel);
         // Copy the shared location to the local buffer
-        auto cmd = parent().getCommandPool().addCommand(CommandModel {
+        auto cmd = parent().commandPool().addCommand(CommandModel {
             lifecycle: CommandModel::Lifecycle::OneTimeSubmit,
             data: TransferModel {
                 source: staging,

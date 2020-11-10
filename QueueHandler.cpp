@@ -24,7 +24,7 @@ Graphics::QueueHandler::QueueHandler(Renderer &renderer)
             std::cout << _candidates[type].size() << " queues available: " << std::endl;
             for (auto index : _candidates[type]) {
                 std::cout << "\t\t-> ";
-                if (index.first == getQueueDescriptor(static_cast<QueueType>(type)).queueFamilyIndex)
+                if (index.first == queueDescriptor(static_cast<QueueType>(type)).queueFamilyIndex)
                     std::cout << '\'' << index.first << '\'';
                 else
                     std::cout << index.first;

@@ -19,12 +19,6 @@ namespace kF::Graphics
     /** @brief A list of device buffers */
     using BufferHandles = std::vector<BufferHandle>;
 
-    /** @brief Vulkan memory */
-    using DeviceMemory = VkDeviceMemory;
-
-    /** @brief Vulkan memory properties */
-    using MemoryPropertyFlags = VkMemoryPropertyFlags;
-
     /** @brief Vulkan buffer properties */
     using CommandBufferUsageFlags = VkCommandBufferUsageFlags;
 }

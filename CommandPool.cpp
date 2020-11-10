@@ -46,7 +46,7 @@ void Graphics::CommandPool::createCommandPool(const QueueType queueType, const L
         sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         pNext: nullptr,
         flags: GetFlags(lifecycle),
-        queueFamilyIndex: parent().queueHandler().getQueueDescriptor(QueueType::Graphics).queueFamilyIndex
+        queueFamilyIndex: parent().queueHandler().queueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
     if (auto res = ::vkCreateCommandPool(parent().logicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)

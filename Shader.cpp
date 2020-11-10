@@ -23,7 +23,7 @@ Graphics::Shader::BinaryCode Graphics::Shader::GetBinaryCode(const std::string &
     BinaryCode binary;
 
     if (!is || !is.tellg())
-        throw std::runtime_error("Renderer::getShaderBinary: Invalid shader file '" + path + '\'');
+        throw std::runtime_error("Graphics::Renderer::GetBinaryCode: Invalid shader file '" + path + '\'');
     binary.resize(is.tellg());
     is.seekg(0);
     is.read(reinterpret_cast<char *>(binary.data()), binary.size());

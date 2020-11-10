@@ -20,7 +20,7 @@ void Graphics::MemoryAllocator::allocate(const MemoryAllocationModel * const mod
         MemoryAllocation * const allocationFrom, MemoryAllocation * const allocationTo)
 {
     kFAssert(std::distance(modelFrom, modelTo) == std::distance(allocationFrom, allocationTo),
-        throw std::logic_error("MemoryAllocator::allocate: Mismatching model count and allocation count"));
+        throw std::logic_error("Graphics::MemoryAllocator::allocate: Mismatching model count and allocation count"));
 
     auto allocationIt = allocationFrom;
     for (auto modelIt = modelFrom; modelIt != modelTo; ++modelIt, ++allocationIt) {
@@ -74,16 +74,16 @@ void Graphics::MemoryAllocator::createMemoryAllocator(void)
 {
     VmaAllocatorCreateInfo allocatorCreateInfo {
         flags: VmaAllocatorCreateFlags(),
-        physicalDevice: parent().getPhysicalDevice(),
-        device: parent().getLogicalDevice(),
+        physicalDevice: parent().physicalDevice(),
+        device: parent().logicalDevice(),
         preferredLargeHeapBlockSize: 0u, // 0 for default VkDeviceMemory block size = 256MB
         pAllocationCallbacks: nullptr,
         pDeviceMemoryCallbacks: nullptr,
-        frameInUseCount: parent().getFramebufferHandler().frameCount(),
+        frameInUseCount: parent().framebufferHandler().frameCount(),
         pHeapSizeLimit: nullptr, // NULL for no limit on maximum number of bytes that can be allocated on a particular Vulkan heap
         pVulkanFunctions: nullptr,
         pRecordSettings: nullptr,
-        instance: parent().getInstance(),
+        instance: parent().instance(),
         vulkanApiVersion: VK_API_VERSION_1_1
     };
 

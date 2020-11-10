@@ -15,7 +15,7 @@ Graphics::CommandPoolManager::CommandPoolManager(Renderer &renderer)
 Graphics::CommandPoolManager::~CommandPoolManager(void)
 {
    kFAssert(!_activeScopedCount.load(),
-      throw std::logic_error("CommandPoolManager::~CommandPoolManager: Can't destroy manager as there are "
+      throw std::logic_error("Graphics::CommandPoolManager::~CommandPoolManager: Can't destroy manager as there are "
          + std::to_string(_activeScopedCount.load()) + " active scoped command pools"));
    for (auto &cache : _cachedFrames.caches()) {
       for (auto &node : cache) {

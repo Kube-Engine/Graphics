@@ -12,7 +12,7 @@ inline void kF::Graphics::ScopedCommandPool::release(void) noexcept
 inline void kF::Graphics::CommandPoolManager::acquireNextFrame(void) noexcept_ndebug
 {
    kFAssert(!_activeScopedCount.load(),
-      throw std::logic_error("CommandPoolManager::acquireNextFrame: Can't acquire next frame as there are "
+      throw std::logic_error("Graphics::CommandPoolManager::acquireNextFrame: Can't acquire next frame as there are "
          + std::to_string(_activeScopedCount.load()) + " active scoped command pools"));
    _cachedFrames.incrementFrame();
 }

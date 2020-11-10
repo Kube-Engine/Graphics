@@ -38,7 +38,7 @@ void Graphics::LogicalDevice::createLogicalDevice(void)
     };
 
     if (auto res = ::vkCreateDevice(parent().physicalDevice(), &deviceInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("LogicalDevice::LogicalDevice: Couldn't create logical device '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::LogicalDevice::LogicalDevice: Couldn't create logical device '"_str + ErrorMessage(res) + '\'');
     parent().queueHandler().retreiveQueuesHandlers();
 #if KUBE_DEBUG_BUILD
     std::cout << "Logical Extensions:" << std::endl;
@@ -53,7 +53,7 @@ Graphics::LogicalDevice::Extensions Graphics::LogicalDevice::getExtensions(void)
     std::vector<VkExtensionProperties> properties;
 
     if (auto res = FillVkContainer(properties, &::vkEnumerateDeviceExtensionProperties, parent().physicalDevice(), nullptr); res != VK_SUCCESS)
-        throw std::runtime_error("LogicalDevice::getExtensions: Couldn't enumerate logical device extensions '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::LogicalDevice::getExtensions: Couldn't enumerate logical device extensions '"_str + ErrorMessage(res) + '\'');
     for (const auto &extension : extensions) {
         auto found = false;
         for (const auto &property : properties) {
@@ -61,7 +61,7 @@ Graphics::LogicalDevice::Extensions Graphics::LogicalDevice::getExtensions(void)
                 break;
         }
         if (!found)
-            throw std::runtime_error("Renderer::getLogicalExtensions: Extension '" + std::string(extension) + "' not found");
+            throw std::runtime_error("Graphics::Renderer::getLogicalExtensions: Extension '" + std::string(extension) + "' not found");
     }
     return extensions;
 }

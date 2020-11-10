@@ -95,7 +95,7 @@ void Graphics::Drawer::draw(void)
 void Graphics::Drawer::retreiveFrameCommands(const std::uint32_t imageIndex) noexcept
 {
     for (auto i = 0u; i < _commands.size(); ++i)
-        _commands[i] = parent().getCommandPool().getCommands(_commandIndexes[i])[imageIndex];
+        _commands[i] = parent().commandPool().getCommands(_commandIndexes[i])[imageIndex];
 }
 
 void Graphics::Drawer::presentImage(const std::uint32_t imageIndex)

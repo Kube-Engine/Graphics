@@ -77,7 +77,7 @@ public:
     QueueHandler &operator=(QueueHandler &&other) noexcept = default;
 
     /** @brief Retreive a queue descriptor that match given type and index */
-    [[nodiscard]] const QueueDescriptor &getQueueDescriptor(const QueueType type) const noexcept
+    [[nodiscard]] const QueueDescriptor &queueDescriptor(const QueueType type) const noexcept
         { return _array[static_cast<std::size_t>(type)]; }
 
     /** @brief Retreive a queue that match given type and index */

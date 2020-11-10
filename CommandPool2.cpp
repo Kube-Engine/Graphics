@@ -49,7 +49,7 @@ void Graphics::CommandPool::removeCommand(const CommandIndex index)
     auto mit = _modelMap.begin() + std::distance(_commandMap.begin(), it);
 
     if (it == _commandMap.end())
-        throw std::runtime_error("Renderer::removeCommand: Couldn't find command with index '" + std::to_string(index) + '\'');
+        throw std::runtime_error("Graphics::Renderer::removeCommand: Couldn't find command with index '" + std::to_string(index) + '\'');
     destroyCommands(*it->second);
     _commandMap.erase(it);
     _modelMap.erase(mit);
@@ -96,7 +96,7 @@ void Graphics::CommandPool::createCommandPool(void)
         sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         pNext: nullptr,
         flags: VkCommandPoolCreateFlags(),
-        queueFamilyIndex: parent().queueHandler().getQueueDescriptor(QueueType::Graphics).queueFamilyIndex
+        queueFamilyIndex: parent().queueHandler().queueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
     if (auto res = ::vkCreateCommandPool(parent().logicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)

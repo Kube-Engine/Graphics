@@ -20,7 +20,7 @@ inline void kF::Graphics::CommandDispatcher::acquireNextFrame(void) noexcept_nde
 {
     _cachedFrames.incrementFrame();
     kFAssert(_cachesFrames.cacheAt(_cachedFrames.currentFrame()).cleared,
-        throw std::logic_error("CommandDispatcher::acquireNextFrame: The frame acquired was not yiet released"));
+        throw std::logic_error("Graphics::CommandDispatcher::acquireNextFrame: The frame acquired was not yiet released"));
 }
 
 inline void kF::Graphics::CommandDispatcher::releaseFrame([[maybe_unused]] const FrameIndex frameIndex) noexcept
@@ -30,7 +30,7 @@ inline void kF::Graphics::CommandDispatcher::releaseFrame([[maybe_unused]] const
     cache.cleared = true;
     for (auto &commands : cache.array) {
         if (!commands.empty())
-            throw std::logic_error("CommandDispatcher::releaseFrame: The current frame has still undispatched commands");
+            throw std::logic_error("Graphics::CommandDispatcher::releaseFrame: The current frame has still undispatched commands");
     }
 #endif
 }

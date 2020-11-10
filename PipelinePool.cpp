@@ -26,7 +26,7 @@ void Graphics::PipelinePool::removePipeline(const PipelineIndex index)
     auto it = findPipeline(index);
 
     if (it == _pipelineMap.end())
-        throw std::runtime_error("Renderer::removePipeline: Couldn't find pipeline with index '" + std::to_string(index) + '\'');
+        throw std::runtime_error("Graphics::Renderer::removePipeline: Couldn't find pipeline with index '" + std::to_string(index) + '\'');
     _pipelineMap.erase(it);
     auto mit = _modelMap.begin() + std::distance(_pipelineMap.begin(), it);
     _modelMap.erase(mit);
