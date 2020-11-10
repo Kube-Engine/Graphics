@@ -23,7 +23,7 @@ Graphics::LogicalDevice::~LogicalDevice(void) noexcept
 void Graphics::LogicalDevice::createLogicalDevice(void)
 {
     auto extensions = getExtensions();
-    auto queueInfos = parent().getQueueHandler().registerQueues();
+    auto queueInfos = parent().queueHandler().registerQueues();
     VkDeviceCreateInfo deviceInfo {
         sType: VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         pNext: nullptr,
@@ -37,10 +37,10 @@ void Graphics::LogicalDevice::createLogicalDevice(void)
         pEnabledFeatures: nullptr
     };
 
-    if (auto res = ::vkCreateDevice(parent().getPhysicalDevice(), &deviceInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (auto res = ::vkCreateDevice(parent().physicalDevice(), &deviceInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("LogicalDevice::LogicalDevice: Couldn't create logical device '"_str + ErrorMessage(res) + '\'');
-    parent().getQueueHandler().retreiveQueuesHandlers();
-#ifndef KUBE_NO_DEBUG
+    parent().queueHandler().retreiveQueuesHandlers();
+#if KUBE_DEBUG_BUILD
     std::cout << "Logical Extensions:" << std::endl;
     for (auto &extension : extensions)
         std::cout << '\t' << extension << std::endl;
@@ -52,7 +52,7 @@ Graphics::LogicalDevice::Extensions Graphics::LogicalDevice::getExtensions(void)
     Extensions extensions { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
     std::vector<VkExtensionProperties> properties;
 
-    if (auto res = FillVkContainer(properties, &::vkEnumerateDeviceExtensionProperties, parent().getPhysicalDevice(), nullptr); res != VK_SUCCESS)
+    if (auto res = FillVkContainer(properties, &::vkEnumerateDeviceExtensionProperties, parent().physicalDevice(), nullptr); res != VK_SUCCESS)
         throw std::runtime_error("LogicalDevice::getExtensions: Couldn't enumerate logical device extensions '"_str + ErrorMessage(res) + '\'');
     for (const auto &extension : extensions) {
         auto found = false;

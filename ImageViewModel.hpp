@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "Vulkan.hpp"
 #include "Image.hpp"
 
 namespace kF::Graphics

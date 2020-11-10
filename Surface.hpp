@@ -42,16 +42,16 @@ public:
     Surface &operator=(Surface &&other) noexcept = default;
 
     /** @brief Get the surface format */
-    [[nodiscard]] SurfaceFormat getSurfaceFormat(void) const;
+    [[nodiscard]] SurfaceFormat surfaceFormat(void) const;
 
     /** @brief Get the presentation mode */
-    [[nodiscard]] PresentMode getPresentMode(void) const;
+    [[nodiscard]] PresentMode presentMode(void) const;
 
     /** @brief Get the surface capabilities */
-    [[nodiscard]] SurfaceCapabilities getSurfaceCapabilities(void) const;
+    [[nodiscard]] SurfaceCapabilities surfaceCapabilities(void) const;
 
     /** @brief Get the extent */
-    [[nodiscard]] Extent getExtent(const SurfaceCapabilities &capabilities) const;
+    [[nodiscard]] Extent extent(const SurfaceCapabilities &capabilities) const;
 
     /** @brief Get literal of a 'PresentMode' enumeration */
     [[nodiscard]] static const char *PresentModeName(const PresentMode type) noexcept;

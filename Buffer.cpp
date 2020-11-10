@@ -12,8 +12,8 @@ using namespace kF::Literal;
 
 Graphics::Buffer::~Buffer(void) noexcept
 {
-    ::vkDestroyBuffer(parent().getLogicalDevice(), handle(), nullptr);
-    ::vkFreeMemory(parent().getLogicalDevice(), _memory, nullptr);
+    ::vkDestroyBuffer(parent().logicalDevice(), handle(), nullptr);
+    ::vkFreeMemory(parent().logicalDevice(), _memory, nullptr);
 }
 
 void Graphics::Buffer::createBufferHandle(const BufferModel &model)
@@ -42,7 +42,7 @@ void Graphics::Buffer::createBufferHandle(const BufferModel &model)
         pQueueFamilyIndices: nullptr,
     };
 
-    if (auto res = ::vkCreateBuffer(parent().getLogicalDevice(), &bufferInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (auto res = ::vkCreateBuffer(parent().logicalDevice(), &bufferInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Buffer::createBufferHandle: Couldn't create buffer '"_str + ErrorMessage(res) + '\'');
 }
 
@@ -60,7 +60,7 @@ void Graphics::Buffer::createDeviceMemory(const BufferModel &model)
     };
 
     VkMemoryRequirements memoryRequirements;
-    ::vkGetBufferMemoryRequirements(parent().getLogicalDevice(), handle(), &memoryRequirements);
+    ::vkGetBufferMemoryRequirements(parent().logicalDevice(), handle(), &memoryRequirements);
     VkMemoryAllocateInfo memoryAllocateInfo {
         sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         pNext: nullptr,
@@ -68,9 +68,9 @@ void Graphics::Buffer::createDeviceMemory(const BufferModel &model)
         memoryTypeIndex: findMemoryType(memoryRequirements.memoryTypeBits, GetMemoryFlags(model.location))
     };
 
-    if (auto res = ::vkAllocateMemory(parent().getLogicalDevice(), &memoryAllocateInfo, nullptr, &_memory))
+    if (auto res = ::vkAllocateMemory(parent().logicalDevice(), &memoryAllocateInfo, nullptr, &_memory))
         throw std::runtime_error("Graphics::Buffer::createDeviceMemory: Couldn't allocate device memory '"_str + ErrorMessage(res) + '\'');
-    ::vkBindBufferMemory(parent().getLogicalDevice(), handle(), _memory, 0);
+    ::vkBindBufferMemory(parent().logicalDevice(), handle(), _memory, 0);
 }
 
 void Graphics::Buffer::fillMemory(const BufferModel &model) noexcept
@@ -97,9 +97,9 @@ void Graphics::Buffer::fillMemory(const BufferModel &model) noexcept
     // Else, we can directly use shared memory
     } else if (model.location == BufferModel::Location::Shared) {
         void *data = nullptr;
-        ::vkMapMemory(parent().getLogicalDevice(), _memory, 0, model.size, 0, &data);
+        ::vkMapMemory(parent().logicalDevice(), _memory, 0, model.size, 0, &data);
         std::memcpy(data, model.data, model.size);
-        ::vkUnmapMemory(parent().getLogicalDevice(), _memory);
+        ::vkUnmapMemory(parent().logicalDevice(), _memory);
     }
 }
 
@@ -107,7 +107,7 @@ std::uint32_t Graphics::Buffer::findMemoryType(const std::uint32_t type, const M
 {
     VkPhysicalDeviceMemoryProperties properties;
 
-    ::vkGetPhysicalDeviceMemoryProperties(parent().getPhysicalDevice(), &properties);
+    ::vkGetPhysicalDeviceMemoryProperties(parent().physicalDevice(), &properties);
     for (auto i = 0u; i < properties.memoryTypeCount; ++i) {
         if (type & (1 << i) && (properties.memoryTypes[i].propertyFlags & flags))
             return i;

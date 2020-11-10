@@ -12,12 +12,12 @@ using namespace kF::Literal;
 
 Graphics::Fence::~Fence(void) noexcept
 {
-    ::vkDestroyFence(parent().getLogicalDevice(), handle(), nullptr);
+    ::vkDestroyFence(parent().logicalDevice(), handle(), nullptr);
 }
 
 bool Graphics::Fence::waitToBeSignaled(const std::uint64_t timeout) const
 {
-    if (auto res = ::vkWaitForFences(parent().getLogicalDevice(), 1, &handle(), true, timeout); res == VK_TIMEOUT)
+    if (auto res = ::vkWaitForFences(parent().logicalDevice(), 1, &handle(), true, timeout); res == VK_TIMEOUT)
         return false;
     else if (res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Fence::waitToBeSignaled: Error on waiting fence '"_str + ErrorMessage(res) + '\'');
@@ -26,7 +26,7 @@ bool Graphics::Fence::waitToBeSignaled(const std::uint64_t timeout) const
 
 void Graphics::Fence::resetFence(void) noexcept
 {
-    ::vkResetFences(parent().getLogicalDevice(), 1, &handle());
+    ::vkResetFences(parent().logicalDevice(), 1, &handle());
 }
 
 void Graphics::Fence::createFence(void)
@@ -37,6 +37,6 @@ void Graphics::Fence::createFence(void)
         flags: VK_FENCE_CREATE_SIGNALED_BIT
     };
 
-    if (auto res = ::vkCreateFence(parent().getLogicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (auto res = ::vkCreateFence(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Fence::createFence: Couldn't create semaphore '"_str + ErrorMessage(res) + '\'');
 }

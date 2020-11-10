@@ -16,7 +16,7 @@ Graphics::QueueHandler::QueueHandler(Renderer &renderer)
     : RendererObject(renderer)
 {
     retreiveFamilyQueueIndexes();
-#ifndef KUBE_NO_DEBUG
+#if KUBE_DEBUG_BUILD
     std::cout << "Queues:" << std::endl;
     for (auto type = 0u; type < QueueType::Count; ++type) {
         std::cout << '\t' << QueueTypeName(static_cast<QueueType>(type)) << ": ";
@@ -48,7 +48,7 @@ void Graphics::QueueHandler::retreiveQueuesHandlers(void) noexcept
             desc.queueHandle = (*it)->queueHandle;
             continue;
         }
-        ::vkGetDeviceQueue(parent().getLogicalDevice(), desc.queueFamilyIndex, desc.queueIndex, &desc.queueHandle);
+        ::vkGetDeviceQueue(parent().logicalDevice(), desc.queueFamilyIndex, desc.queueIndex, &desc.queueHandle);
         past.emplace_back(&desc);
     }
 }
@@ -112,9 +112,9 @@ void Graphics::QueueHandler::retreiveFamilyQueueIndexes(void)
     std::uint32_t queueFamilyIndex = 0;
     VkBool32 isPresent = false;
 
-    FillVkContainer(properties, &::vkGetPhysicalDeviceQueueFamilyProperties, parent().getPhysicalDevice());
+    FillVkContainer(properties, &::vkGetPhysicalDeviceQueueFamilyProperties, parent().physicalDevice());
     for (auto &property : properties) {
-        if (auto res = ::vkGetPhysicalDeviceSurfaceSupportKHR(parent().getPhysicalDevice(), queueFamilyIndex, parent().getSurface(), &isPresent); res != VK_SUCCESS)
+        if (auto res = ::vkGetPhysicalDeviceSurfaceSupportKHR(parent().physicalDevice(), queueFamilyIndex, parent().surface(), &isPresent); res != VK_SUCCESS)
             throw std::runtime_error("Graphics::QueueHandler::registerQueues: Couldn't get physical device surface support '"_str + ErrorMessage(res) + '\'');
         if (isPresent)
             _candidates[QueueType::Present].emplace_back(queueFamilyIndex, property.queueCount);

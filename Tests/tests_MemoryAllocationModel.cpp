@@ -17,7 +17,7 @@ TEST(MemoryAllocationModel, InitDestroy)
         ASSERT_EQ(model.memoryType(), Graphics::MemoryType::Buffer);
     }
     {
-        Graphics::MemoryAllocationModel model(Graphics::DeviceImage{}, Graphics::MemoryUsage::DeviceToHost);
+        Graphics::MemoryAllocationModel model(Graphics::ImageHandle{}, Graphics::MemoryUsage::DeviceToHost);
         ASSERT_EQ(model.memoryUsage(), Graphics::MemoryUsage::DeviceToHost);
         ASSERT_EQ(model.memoryType(), Graphics::MemoryType::Image);
     }

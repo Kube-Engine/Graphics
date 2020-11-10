@@ -9,7 +9,7 @@ using namespace kF;
 
 Graphics::PipelineLayout::~PipelineLayout(void)
 {
-    ::vkDestroyPipelineLayout(parent().getLogicalDevice(), handle(), nullptr);
+    ::vkDestroyPipelineLayout(parent().logicalDevice(), handle(), nullptr);
 }
 
 void Graphics::PipelineLayout::createPipelineLayout(const PipelineLayoutModel &model)
@@ -24,6 +24,6 @@ void Graphics::PipelineLayout::createPipelineLayout(const PipelineLayoutModel &m
         pPushConstantRanges: nullptr
     };
 
-    if (auto res = ::vkCreatePipelineLayout(parent().getLogicalDevice(), &pipelineLayoutInfo, nullptr, &getPipelineLayout()); res != VK_SUCCESS)
+    if (auto res = ::vkCreatePipelineLayout(parent().logicalDevice(), &pipelineLayoutInfo, nullptr, &getPipelineLayout()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::PipelineLayout::createPipelineLayout: Couldn't create pipeline layout '"_str + ErrorMessage(res) + '\'');
 }

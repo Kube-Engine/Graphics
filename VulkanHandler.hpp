@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "Vulkan.hpp"
-
 #include "RendererObject.hpp"
 
 namespace kF::Graphics
@@ -19,7 +18,7 @@ namespace kF::Graphics
 
 /** @brief Abstraction of a vulkan handler */
 template<typename Type>
-class KF_ALIGN_QUARTER_CACHELINE kF::Graphics::VulkanHandler : public RendererObject
+class alignas_quarter_cacheline kF::Graphics::VulkanHandler : public RendererObject
 {
 public:
     /** @brief Default construct the handle */

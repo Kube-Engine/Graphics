@@ -22,7 +22,7 @@ namespace kF::Graphics
  *  Manager is used to acquire access to an auto command pool for a given frame: each command is one time submit
  *  If you wish to reuse command buffers, please use a ManualCommandPool instead of the CommandPoolManager
  */
-class KF_ALIGN_CACHELINE kF::Graphics::CommandPoolManager : public RendererObject
+class alignas_cacheline kF::Graphics::CommandPoolManager : public RendererObject
 {
 public:
     /** @brief Pool node */
@@ -122,7 +122,6 @@ private:
     [[nodiscard]] Node *deallocate(Node * const node) noexcept;
 };
 
-static_assert(sizeof(kF::Graphics::CommandPoolManager) == kF::Core::CacheLineSize, "ManualCommandPool must take a cacheline");
-static_assert(sizeof(kF::Graphics::CommandPoolManager) == kF::Core::CacheLineSize, "ManualCommandPool must be aligned to cacheline");
+static_assert_fit_cacheline(kF::Graphics::CommandPoolManager);
 
 #include "CommandPoolManager.ipp"

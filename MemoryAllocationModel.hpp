@@ -36,11 +36,11 @@ public:
     union Data
     {
         BufferHandle buffer { NullHandle };
-        DeviceImage image;
+        ImageHandle image;
     };
 
     /** @brief Construct a new memory allocation */
-    template<typename Type> requires std::same_as<Type, BufferHandle> || std::same_as<Type, DeviceImage>
+    template<typename Type> requires std::same_as<Type, BufferHandle> || std::same_as<Type, ImageHandle>
     MemoryAllocationModel(const Type &value, const MemoryUsage usage) noexcept;
 
     /** @brief Copy constructor */
@@ -61,7 +61,7 @@ public:
     [[nodiscard]] BufferHandle buffer(void) const noexcept { return _data.buffer; }
 
     /** @brief Retreive data as an image */
-    [[nodiscard]] DeviceImage image(void) const noexcept { return _data.image; }
+    [[nodiscard]] ImageHandle image(void) const noexcept { return _data.image; }
 
 private:
     Data _data {};

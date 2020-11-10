@@ -12,17 +12,17 @@ namespace kF::Graphics
 {
     class ImageSample;
 
-    using DeviceImageSampler = VkSampler;
+    using ImageHandleSampler = VkSampler;
 };
 
-class kF::Graphics::ImageSample final : public VulkanHandler<DeviceImageSampler>
+class kF::Graphics::ImageSample final : public VulkanHandler<ImageHandleSampler>
 {
 public:
     /** @brief Construct a new ImageSampler using ImageSampler model */
     ImageSampler(Renderer &renderer, const ImageSamplerModel model);
 
     /** @brief Move constructor */
-    ImageSampler(ImageSampler &&other) noexcept : VulkanHandler<DeviceImageSampler>(other.parent()) { swap(other); }
+    ImageSampler(ImageSampler &&other) noexcept : VulkanHandler<ImageHandleSampler>(other.parent()) { swap(other); }
 
     /** @brief Destruct the buffer */
     ~ImageSampler(void) noexcept;

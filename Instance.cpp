@@ -26,12 +26,12 @@ Graphics::Instance::~Instance(void) noexcept
 void Graphics::Instance::createInstance(const Version applicationVersion)
 {
     auto layers = getLayers();
-    auto extensions = getExtensions(parent().getBackendWindow());
+    auto extensions = getExtensions(parent().backendWindow());
     VkApplicationInfo appInfo {
         sType: VK_STRUCTURE_TYPE_APPLICATION_INFO,
         pNext: nullptr,
 
-        pApplicationName: ::SDL_GetWindowTitle(parent().getBackendWindow()),
+        pApplicationName: ::SDL_GetWindowTitle(parent().backendWindow()),
         applicationVersion: static_cast<std::uint32_t>(VK_MAKE_VERSION(applicationVersion.major, applicationVersion.minor, applicationVersion.patch)),
         pEngineName: "Kube",
         engineVersion: static_cast<std::uint32_t>(VK_MAKE_VERSION(KubeVersion.major, KubeVersion.minor, KubeVersion.patch)),
@@ -50,7 +50,7 @@ void Graphics::Instance::createInstance(const Version applicationVersion)
 
     if (auto res = ::vkCreateInstance(&instanceInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Instance::Instance: Couldn't create instance '"_str + ErrorMessage(res) + '\'');
-#ifndef KUBE_NO_DEBUG
+#if KUBE_DEBUG_BUILD
     std::cout << "Extensions:" << std::endl;
     for (auto &extension : extensions)
         std::cout << '\t' << extension << std::endl;
@@ -62,7 +62,7 @@ void Graphics::Instance::createInstance(const Version applicationVersion)
 
 Graphics::Instance::Layers Graphics::Instance::getLayers(void) const
 {
-#ifndef KUBE_NO_DEBUG
+#if KUBE_DEBUG_BUILD
     Layers layers { "VK_LAYER_KHRONOS_validation" };
     std::uint32_t count = 0;
     std::vector<VkLayerProperties> avaible;

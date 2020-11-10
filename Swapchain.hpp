@@ -5,20 +5,15 @@
 
 #pragma once
 
-#include "VulkanHandler.hpp"
+#include "Image.hpp"
 
 namespace kF::Graphics
 {
     class Swapchain;
-
-    using Image = VkImage;
-    using Images = std::vector<Image>;
-    using ImageView = VkImageView;
-    using ImageViews = std::vector<ImageView>;
 }
 
 /** @brief Abstraction of renderer swapchain */
-class kF::Graphics::Swapchain final : public VulkanHandler<VkSwapchainKHR>
+class akignas_cacheline kF::Graphics::Swapchain final : public VulkanHandler<VkSwapchainKHR>
 {
 public:
     /** @brief Construct the swapchain */
@@ -34,24 +29,24 @@ public:
     Swapchain &operator=(Swapchain &&other) noexcept { swap(other); return *this; }
 
     /** @brief Get the surface format */
-    [[nodiscard]] SurfaceFormat &getSurfaceFormat(void) noexcept { return _surfaceFormat; }
-    [[nodiscard]] const SurfaceFormat &getSurfaceFormat(void) const noexcept { return _surfaceFormat; }
+    [[nodiscard]] SurfaceFormat &surfaceFormat(void) noexcept { return _surfaceFormat; }
+    [[nodiscard]] const SurfaceFormat &surfaceFormat(void) const noexcept { return _surfaceFormat; }
 
     /** @brief Get the surface presentationmode */
-    [[nodiscard]] PresentMode &getPresentMode(void) noexcept { return _presentMode; }
-    [[nodiscard]] const PresentMode &getPresentMode(void) const noexcept { return _presentMode; }
+    [[nodiscard]] PresentMode &presentMode(void) noexcept { return _presentMode; }
+    [[nodiscard]] const PresentMode &presentMode(void) const noexcept { return _presentMode; }
 
     /** @brief Get the extent */
-    [[nodiscard]] Extent &getExtent(void) noexcept { return _extent; }
-    [[nodiscard]] const Extent &getExtent(void) const noexcept { return _extent; }
+    [[nodiscard]] Extent &extent(void) noexcept { return _extent; }
+    [[nodiscard]] const Extent &extent(void) const noexcept { return _extent; }
 
     /** @brief Get the images buffer of theswapchain */
-    [[nodiscard]] Images &getImages(void) noexcept { return _images; }
-    [[nodiscard]] const Images &getImages(void) const noexcept { return _images; }
+    [[nodiscard]] auto &images(void) noexcept { return _images; }
+    [[nodiscard]] const auto &images(void) const noexcept { return _images; }
 
     /** @brief Get the image views buffer */
-    [[nodiscard]] ImageViews &getImageViews(void) noexcept { return _imageViews; }
-    [[nodiscard]] const ImageViews &getImageViews(void) const noexcept { return _imageViews; }
+    [[nodiscard]] auto &imageViews(void) noexcept { return _imageViews; }
+    [[nodiscard]] const auto &imageViews(void) const noexcept { return _imageViews; }
 
     /** @brief Swap two swapchains */
     void swap(Swapchain &other) noexcept;
@@ -60,8 +55,8 @@ private:
     SurfaceFormat _surfaceFormat;
     PresentMode _presentMode;
     Extent _extent;
-    Images _images;
-    ImageViews _imageViews;
+    Core::TinyVector<ImageHandle> _images;
+    Core::TinyVector<ImageView> _imageViews;
 
     /** @brief Create the swapchain */
     void createSwapchain(void);
@@ -72,5 +67,7 @@ private:
     /** @brief Create swapchain image views */
     void createImageViews(void);
 };
+
+static_assert_fit_cacheline(kF::Graphics::Swapchain);
 
 #include "Swapchain.ipp"

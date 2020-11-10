@@ -13,7 +13,7 @@ using namespace kF::Literal;
 
 Graphics::Semaphore::~Semaphore(void) noexcept
 {
-    ::vkDestroySemaphore(parent().getLogicalDevice(), handle(), nullptr);
+    ::vkDestroySemaphore(parent().logicalDevice(), handle(), nullptr);
 }
 
 void Graphics::Semaphore::createSemaphore(void)
@@ -24,6 +24,6 @@ void Graphics::Semaphore::createSemaphore(void)
         flags: VkSemaphoreCreateFlags()
     };
 
-    if (auto res = ::vkCreateSemaphore(parent().getLogicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (auto res = ::vkCreateSemaphore(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Semaphore::createSemaphore: Couldn't create semaphore '"_str + ErrorMessage(res) + '\'');
 }

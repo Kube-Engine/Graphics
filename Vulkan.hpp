@@ -35,7 +35,7 @@ namespace kF::Graphics
     {
         std::uint32_t count = 0;
         (*function)(std::forward<Args>(args)..., &count, nullptr);
-        if (!count)
+        if (!count) [[unlikely]]
             return;
         container.resize(count);
         (*function)(std::forward<Args>(args)..., &count, container.data());

@@ -18,7 +18,7 @@ namespace kF::Graphics
 }
 
 template<typename Type>
-class KF_ALIGN_HALF_CACHELINE kF::Graphics::PerFrameCache
+class alignas_half_cacheline kF::Graphics::PerFrameCache
 {
 public:
     using CachedFrames = Core::Vector<Type>;
@@ -66,8 +66,7 @@ public:
 private:
     CachedFrames _caches {};
     FrameIndex _currentFrame { 0u };
-
 };
 
-static_assert(sizeof(kF::Graphics::PerFrameCache<char>) == kF::Core::CacheLineHalfSize, "PerFrameCache must take the half of a cacheline");
-static_assert(sizeof(kF::Graphics::PerFrameCache<char[64]>) == kF::Core::CacheLineHalfSize, "PerFrameCache must take the half of a cacheline");
+static_assert_fit_half_cacheline(kF::Graphics::PerFrameCache<char>);
+static_assert_fit_half_cacheline(kF::Graphics::PerFrameCache<char[64]>);

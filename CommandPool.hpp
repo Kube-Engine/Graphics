@@ -21,7 +21,7 @@ namespace kF::Graphics
 }
 
 /** @brief Command pool that allocates command buffers */
-class KF_ALIGN_HALF_CACHELINE kF::Graphics::CommandPool : public VulkanHandler<VkCommandPool>
+class alignas_half_cacheline kF::Graphics::CommandPool : public VulkanHandler<VkCommandPool>
 {
 public:
     /** @brief Level of commands */
@@ -53,12 +53,6 @@ public:
     /** @brief Adds a command to the pool */
     template<CommandModel Model>
     [[nodiscard]] CommandHandle add(const Model &model, const Level level, const Lifecycle lifecycle);
-
-    /** @brief Adds a count of commands to the pool */
-    template<CommandModel Model>
-    void add(const Model &model, CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const Level level, const Lifecycle lifecycle)
-        { add(&model, &model + 1, commandFrom, commandTo, level, lifecycle); }
 
     /** @brief Adds a range of commands to the pool
      *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
@@ -103,8 +97,7 @@ private:
     [[nodiscard]] static VkCommandBufferUsageFlags GetCommandUsageFlags(const Lifecycle lifecycle);
 };
 
-static_assert(sizeof(kF::Graphics::CommandPool) == kF::Core::CacheLineHalfSize, "CommandPool must take the half of a cacheline");
-static_assert(sizeof(kF::Graphics::CommandPool) == kF::Core::CacheLineHalfSize, "CommandPool must be aligned to the half of a cacheline");
+static_assert_fit_half_cacheline(kF::Graphics::CommandPool);
 
 /** @brief A command pool that can only create one time submit commands */
 class kF::Graphics::AutoCommandPool : public CommandPool
@@ -128,12 +121,6 @@ public:
     [[nodiscard]] CommandHandle add(const Model &model, const Level level = Level::Primary)
         { return CommandPool::add(model, level, Lifecycle::Auto); }
 
-    /** @brief Adds a count of commands to the pool */
-    template<CommandModel Model>
-    void add(const Model &model, CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const Level level = Level::Primary)
-        { CommandPool::add(model, commandFrom, commandTo, level, Lifecycle::Auto); }
-
     /** @brief Adds a range of commands to the pool
      *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
     template<CommandModel Model>
@@ -150,8 +137,7 @@ private:
     using CommandPool::remove;
 };
 
-static_assert(sizeof(kF::Graphics::AutoCommandPool) == kF::Core::CacheLineHalfSize, "AutoCommandPool must take the half of a cacheline");
-static_assert(sizeof(kF::Graphics::AutoCommandPool) == kF::Core::CacheLineHalfSize, "AutoCommandPool must be aligned to the half of a cacheline");
+static_assert_fit_half_cacheline(kF::Graphics::AutoCommandPool);
 
 /** @brief A command pool that let user manager lifecycle of its commands manually */
 class kF::Graphics::ManualCommandPool : public CommandPool
@@ -175,12 +161,6 @@ public:
     [[nodiscard]] CommandHandle add(const Model &model, const Level level = Level::Primary)
         { return CommandPool::add(model, level, Lifecycle::Manual); }
 
-    /** @brief Adds a count of commands to the pool */
-    template<CommandModel Model>
-    void add(const Model &model, CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const Level level = Level::Primary)
-        { CommandPool::add(&model, commandFrom, commandTo, level, Lifecycle::Manual); }
-
     /** @brief Adds a range of commands to the pool
      *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
     template<CommandModel Model>
@@ -198,7 +178,6 @@ private:
     using CommandPool::add;
 };
 
-static_assert(sizeof(kF::Graphics::ManualCommandPool) == kF::Core::CacheLineHalfSize, "ManualCommandPool must take the half of a cacheline");
-static_assert(sizeof(kF::Graphics::ManualCommandPool) == kF::Core::CacheLineHalfSize, "ManualCommandPool must be aligned to the half of a cacheline");
+static_assert_fit_half_cacheline(kF::Graphics::ManualCommandPool);
 
 #include "CommandPool.ipp"

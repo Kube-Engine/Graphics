@@ -19,7 +19,7 @@ class kF::Graphics::CommandDispatcher : public RendererObject
 {
 public:
     /** @brief An array of command sorted by queue types */
-    struct KF_ALIGN_DOUBLE_CACHELINE PerQueueCommandArray
+    struct alignas_double_cacheline PerQueueCommandArray
     {
         using Array = std::array<Core::TinyVector<CommandHandle>, static_cast<std::size_t>(QueueType::Count)>;
 

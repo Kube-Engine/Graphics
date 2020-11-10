@@ -18,17 +18,17 @@ Graphics::CommandPool::CommandPool(Renderer &renderer, const QueueType queueType
 
 Graphics::CommandPool::~CommandPool(void)
 {
-    ::vkDestroyCommandPool(parent().getLogicalDevice(), handle(), nullptr);
+    ::vkDestroyCommandPool(parent().logicalDevice(), handle(), nullptr);
 }
 
 void Graphics::CommandPool::remove(const CommandHandle command)
 {
-    ::vkFreeCommandBuffers(parent().getLogicalDevice(), handle(), 1u, &command);
+    ::vkFreeCommandBuffers(parent().logicalDevice(), handle(), 1u, &command);
 }
 
 void Graphics::CommandPool::clear(void)
 {
-    ::vkResetCommandPool(parent().getLogicalDevice(), handle(), VkCommandPoolResetFlags());
+    ::vkResetCommandPool(parent().logicalDevice(), handle(), VkCommandPoolResetFlags());
 }
 
 void Graphics::CommandPool::createCommandPool(const QueueType queueType, const Lifecycle lifecycle)
@@ -46,10 +46,10 @@ void Graphics::CommandPool::createCommandPool(const QueueType queueType, const L
         sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         pNext: nullptr,
         flags: GetFlags(lifecycle),
-        queueFamilyIndex: parent().getQueueHandler().getQueueDescriptor(QueueType::Graphics).queueFamilyIndex
+        queueFamilyIndex: parent().queueHandler().getQueueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
-    if (auto res = ::vkCreateCommandPool(parent().getLogicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (auto res = ::vkCreateCommandPool(parent().logicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"_str + ErrorMessage(res) + '\'');
 }
 
@@ -63,7 +63,7 @@ void Graphics::CommandPool::allocateCommands(CommandHandle * const commandFrom, 
         commandBufferCount: static_cast<std::uint32_t>(std::distance(commandFrom, commandTo))
     };
 
-    if (auto res = ::vkAllocateCommandBuffers(parent().getLogicalDevice(), &commandInfo, commandFrom); res != VK_SUCCESS)
+    if (auto res = ::vkAllocateCommandBuffers(parent().logicalDevice(), &commandInfo, commandFrom); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::CommandPool::
         : Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
 }
@@ -72,26 +72,29 @@ void Graphics::CommandPool::recordRender(const RenderModel * const modelFrom, co
         CommandHandle * const commandFrom, CommandHandle * const commandTo,
         const VkCommandBufferBeginInfo &commandBeginInfo)
 {
+    static const VkClearValue ClearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+
     VkRenderPassBeginInfo renderPassBeginInfo {
         sType: VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         pNext: nullptr,
-        renderPass: parent().getRenderPass(),
-        framebuffer: VkFramebuffer(),
-        renderArea: VkRect2D { { 0, 0 }, parent().getSwapchain().getExtent() },
-        clearValueCount: 1,
-        pClearValues: &clearColor
+        renderPass: parent().renderPass(),
+        frameBuffer: VkFrameBuffer(),
+        renderArea: VkRect2D { { 0, 0 }, parent().swapchain().extent() },
+        clearValueCount: 1u,
+        pClearValues: &ClearColor
     };
+
     const auto &renderModel = model.as<RenderModel>();
-    const auto &framebuffers = parent().getFramebufferHandler().getFramebuffers();
-    auto &pipeline = parent().getPipelinePool().getPipeline(renderModel.pipeline);
-    auto max = framebuffers.size();
-    auto buffers = parent().getBufferPool().collectBuffers(renderModel.buffers);
+    const auto &frameBuffers = parent().frameBufferManager().frameBuffers();
+    auto &pipeline = parent().pipelinePool().getPipeline(renderModel.pipeline);
+    auto max = frameBuffers.size();
+    auto buffers = parent().bufferPool().collectBuffers(renderModel.buffers);
 
     kFAssert(buffers.size() == renderModel.offsets.size(),
         throw std::runtime_error("Graphics::CommandPool::recordCommand: Invalid buffer offsets"));
     for (auto i = 0u; i < max; ++i) {
         auto &command = commands[i];
-        renderPassBeginInfo.framebuffer = framebuffers[i];
+        renderPassBeginInfo.frameBuffer = frameBuffers[i];
         if (auto res = ::vkBeginCommandBuffer(command, &commandBeginInfo); res != VK_SUCCESS)
             throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't begin command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
         ::vkCmdBeginRenderPass(command, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);

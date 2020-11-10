@@ -27,11 +27,10 @@ namespace kF::Graphics
 }
 
 /** @brief Model describing a memory layout of a pipeline */
-struct KF_ALIGN_HALF_CACHELINE kF::Graphics::PipelineLayoutModel
+struct alignas_half_cacheline kF::Graphics::PipelineLayoutModel
 {
     VertexInputBindings bindings;
     VertexInputAttributes attributes;
 };
 
-static_assert(sizeof(kF::Graphics::PipelineLayoutModel) == kF::Core::CacheLineHalfSize, "PipelineLayoutModel must take the half of a cacheline");
-static_assert(alignof(kF::Graphics::PipelineLayoutModel) == kF::Core::CacheLineHalfSize, "PipelineLayoutModel must be aligned to the half of a cacheline");
+static_assert_fit_half_cacheline(kF::Graphics::PipelineLayoutModel);

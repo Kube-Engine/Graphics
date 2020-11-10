@@ -19,7 +19,7 @@ Graphics::PhysicalDevice::PhysicalDevice(Renderer &renderer)
     auto devices = getDevices();
 
     selectDevice(devices);
-#ifndef KUBE_NO_DEBUG
+#if KUBE_DEBUG_BUILD
     std::cout << "Devices:" << std::endl;
     for (auto &device : devices) {
         VkPhysicalDeviceProperties properties;
@@ -33,7 +33,7 @@ Graphics::PhysicalDevice::Devices Graphics::PhysicalDevice::getDevices(void) con
 {
     Devices devices;
 
-    if (auto res = FillVkContainer(devices, &::vkEnumeratePhysicalDevices, parent().getInstance()); res != VK_SUCCESS)
+    if (auto res = FillVkContainer(devices, &::vkEnumeratePhysicalDevices, parent().instance()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::PhysicalDevice::PhysicalDevice: Couldn't enumerate physical devices '"_str + ErrorMessage(res) + '\'');
     return devices;
 }

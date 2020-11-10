@@ -29,7 +29,7 @@ public:
     ~PipelineLayout(void);
 
     /** @brief Move assignment */
-    PipelineLayout &operator=(Pipeline &&other) noexcept = default;
+    PipelineLayout &operator=(PipelineLayout &&other) noexcept = default;
 
 private:
     /** @brief Create a pipeline layout from model */

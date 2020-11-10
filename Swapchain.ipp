@@ -9,6 +9,6 @@ inline void kF::Graphics::Swapchain::swap(Swapchain &other) noexcept
     std::swap(_surfaceFormat, other._surfaceFormat);
     std::swap(_presentMode, other._presentMode);
     std::swap(_extent, other._extent);
-    std::swap(_images, other._images);
-    std::swap(_imageViews, other._imageViews);
+    _images.swap(other._images);
+    _imageViews.swap(other._imageViews);
 }

@@ -31,8 +31,8 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/Pipeline.cpp
     ${KubeGraphicsDir}/PipelinePool.hpp
     ${KubeGraphicsDir}/PipelinePool.cpp
-    ${KubeGraphicsDir}/FramebufferHandler.hpp
-    ${KubeGraphicsDir}/FramebufferHandler.cpp
+    ${KubeGraphicsDir}/FrameBufferManager.hpp
+    ${KubeGraphicsDir}/FrameBufferManager.cpp
     ${KubeGraphicsDir}/CommandPool.hpp
     ${KubeGraphicsDir}/CommandPool.cpp
     ${KubeGraphicsDir}/Drawer.hpp

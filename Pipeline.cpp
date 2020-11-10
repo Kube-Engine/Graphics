@@ -12,7 +12,7 @@ using namespace kF::Literal;
 
 Graphics::Pipeline::~Pipeline(void)
 {
-    ::vkDestroyPipeline(parent().getLogicalDevice(), handle(), nullptr);
+    ::vkDestroyPipeline(parent().logicalDevice(), handle(), nullptr);
 }
 
 void Graphics::Pipeline::createPipeline(const PipelineModel &model)
@@ -40,13 +40,13 @@ void Graphics::Pipeline::createPipeline(const PipelineModel &model)
         pColorBlendState: &colorStage.colorBlendInfo,
         pDynamicState: &dynamicStage.dynamicStatesInfo,
         layout: _pipelineLayout,
-        renderPass: parent().getRenderPass(),
+        renderPass: parent().renderPass(),
         subpass: 0,
         basePipelineHandle: nullptr,
         basePipelineIndex: -1
     };
 
-    if (auto res = ::vkCreateGraphicsPipelines(parent().getLogicalDevice(), VkPipelineCache(), 1, &pipelineInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (auto res = ::vkCreateGraphicsPipelines(parent().logicalDevice(), VkPipelineCache(), 1, &pipelineInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Pipeline::createPipeline: Couldn't create pipeline '"_str + ErrorMessage(res) + '\'');
 }
 
@@ -102,14 +102,14 @@ Graphics::Pipeline::OutputStage Graphics::Pipeline::getOutputStage(const Pipelin
         VkViewport {
             x: 0.0f,
             y: 0.0f,
-            width: static_cast<float>(parent().getSwapchain().getExtent().width),
-            height: static_cast<float>(parent().getSwapchain().getExtent().height),
+            width: static_cast<float>(parent().swapchain().extent().width),
+            height: static_cast<float>(parent().swapchain().extent().height),
             minDepth: 0.0f,
             maxDepth: 1.0f
         },
         VkRect2D {
             { 0, 0 },
-            { parent().getSwapchain().getExtent().width, parent().getSwapchain().getExtent().height }
+            { parent().swapchain().extent().width, parent().swapchain().extent().height }
         },
         VkPipelineViewportStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,

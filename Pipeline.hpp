@@ -26,7 +26,7 @@ struct kF::Graphics::PipelineModel
 };
 
 /** @brief Abstraction of a GPU pipeline */
-class kF::Graphics::Pipeline final : public VulkanHandler<PipelineHandle>
+class alignas_half_cacheline kF::Graphics::Pipeline final : public VulkanHandler<PipelineHandle>
 {
 public:
     /** @brief Various stages structures used to setup the pipeline */
@@ -81,6 +81,8 @@ private:
     /** @brief Build dynamic stage from model */
     [[nodiscard]] DynamicStage getDynamicStage(const PipelineModel &model) const noexcept;
 };
+
+
 
 /** @brief Describes shader stage of the pipeline */
 struct kF::Graphics::Pipeline::ShaderStage

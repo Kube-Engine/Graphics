@@ -12,17 +12,17 @@ namespace kF::Graphics
 {
     class Image;
 
-    using DeviceImage = VkImage;
+    using ImageHandle = VkImage;
 };
 
-class kF::Graphics::Image final : public VulkanHandler<DeviceImage>
+class kF::Graphics::Image final : public VulkanHandler<ImageHandle>
 {
 public:
     /** @brief Construct a new Image using image model */
     Image(Renderer &renderer, const ImageModel model);
 
     /** @brief Move constructor */
-    Image(Image &&other) noexcept : VulkanHandler<DeviceImage>(other.parent()) { swap(other); }
+    Image(Image &&other) noexcept : VulkanHandler<ImageHandle>(other.parent()) { swap(other); }
 
     /** @brief Destruct the buffer */
     ~Image(void) noexcept;

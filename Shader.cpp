@@ -14,7 +14,7 @@ using namespace kF::Literal;
 
 Graphics::Shader::~Shader(void) noexcept
 {
-    ::vkDestroyShaderModule(parent().getLogicalDevice(), handle(), nullptr);
+    ::vkDestroyShaderModule(parent().logicalDevice(), handle(), nullptr);
 }
 
 Graphics::Shader::BinaryCode Graphics::Shader::GetBinaryCode(const std::string &path)
@@ -41,6 +41,6 @@ void Graphics::Shader::createShaderModule(const std::string &path)
         pCode: binary.data()
     };
 
-    if (auto res = ::vkCreateShaderModule(parent().getLogicalDevice(), &shaderModuleInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (auto res = ::vkCreateShaderModule(parent().logicalDevice(), &shaderModuleInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Shader::createShaderModule: Couldn't create shader module '"_str + ErrorMessage(res) + "' at path '" + path + '\'');
 }

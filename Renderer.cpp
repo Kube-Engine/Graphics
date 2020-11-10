@@ -20,7 +20,7 @@ Graphics::Renderer::Renderer(BackendWindow *window, const Version applicationVer
     _swapchain(*this),
     _renderPass(*this),
     _pipelinePool(*this),
-    _framebufferHandler(*this),
+    _frameBufferManager(*this),
     _commandPool(*this),
     _bufferPool(*this),
     _drawer(*this)
@@ -37,6 +37,6 @@ void Graphics::Renderer::onViewSizeChanged(void)
     _swapchain = Swapchain(*this);
     _renderPass = RenderPass(*this);
     _pipelinePool.onViewSizeChanged();
-    _framebufferHandler = FramebufferHandler(*this);
+    _frameBufferManager = FrameBufferManager(*this);
     _commandPool.onViewSizeChanged();
 }
