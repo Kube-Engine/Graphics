@@ -12,6 +12,7 @@ namespace kF::Graphics
 {
     class Image;
 
+    /** @brief Image handle */
     using ImageHandle = VkImage;
 };
 
@@ -22,17 +23,15 @@ public:
     Image(Renderer &renderer, const ImageModel model);
 
     /** @brief Move constructor */
-    Image(Image &&other) noexcept : VulkanHandler<ImageHandle>(other.parent()) { swap(other); }
+    Image(Image &&other) noexcept = default;
 
     /** @brief Destruct the buffer */
     ~Image(void) noexcept;
 
     /** @brief Move assignment */
-    Image &operator=(Image &&other) noexcept { swap(other); return *this; }
-
-    /** @brief Swap two instances */
-    void swap(Image &other) noexcept;
+    Image &operator=(Image &&other) noexcept = default;
 
 private:
+    void createImage(const ImageModel &model)
 
 };

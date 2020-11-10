@@ -10,30 +10,66 @@
 namespace kF::Graphics
 {
     struct ImageModel;
+
+    /** @brief Image format */
+    using Format = VkFormat;
+
+    /** @brief Image creation flags */
+    using ImageCreateFlags = VkImageCreateFlagBits;
+
+    /** @brief Image type */
+    using ImageType = VkImageType;
+
+    /** @brief Image tiling */
+    using ImageTiling = VkImageTiling;
+
+    /** @brief Image layout */
+    using ImageLayout = VkImageLayout;
+
+    /** @brief Image usage flags */
+    using ImageUsageFlags = VkImageUsageFlagBits;
+
+    /** @brief Sharing mode */
+    using SharingMode = VkSharingMode;
+
+    /** @brief Sample count flags */
+    using SampleCountFlags = VkSampleCountFlagBits;
+
+    /** @brief 3D extent */
+    using Extent3D = VkExtent3D;
 };
 
-struct kF::Graphics::ImageModel
+struct kF::Graphics::ImageModel : public VkImageCreateInfo
 {
-    enum class Type {
-        Image1D = VK_IMAGE_TYPE_1D,
-        Image2D = VK_IMAGE_TYPE_2D,
-        Image3D = VK_IMAGE_TYPE_3D
-    };
+    /** @brief Initialize constructor */
+    ImageModel(const ImageCreateFlags flags_, const ImageType imageType_, const Format format_, const Extent3D &extent_,
+            const std::uint32_t mipLevels_, const std::uint32_t arrayLayers_, const SampleCountFlags samples_,
+            const ImageTiling tiling_, const Usage usage_, const SharingMode sharingMode_)
+        : VkImageCreateInfo(
+            sType: VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+            pNext: nullptr,
+            flags: createFlags_,
+            imageType: imageType_,
+            format: format_,
+            extent: extent_,
+            mipLevels: mipLevels_,
+            arrayLayers: arrayLayers_,
+            samples: samples_,
+            tiling: tiling_,
+            usage: usage_,
+            sharingMode: sharingMode_,
+            queueFamilyIndexCount: queueFamilyIndexCount_,
+            pQueueFamilyIndices: pQueueFamilyIndices_,
+            initialLayout: initialLayout_
+        ) {}
 
-    struct Dimensions {
-        uint32_t width;
-        uint32_t height;
-        uint32_t depth;
-    };
+    /** @brief POD semantics */
+    ImageModel(const ImageModel &other) noexcept = default;
+    ImageModel(ImageModel &&other) noexcept = default;
+    ImageModel &operator=(const ImageModel &other) noexcept = default;
+    ImageModel &operator=(ImageModel &&other) noexcept = default;
 
-    Type type;
-    Dimensions dimension;
-    uint32_t mipMapCount;
-    uint32_t arrayLayerCount;
-    VkFormat format;
-    VkImageTilling tilling;
-    VkImageLayout initialLayout;
-    VkImageUsageFlags usage;
-    VkSharingMode sharingMode;
-    VkSampleCountFlagBits samplingDetail;
+    [[nodiscard]] static ImageModel MakeBasic2D() noexcept {
+
+    }
 };

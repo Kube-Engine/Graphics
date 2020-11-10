@@ -14,14 +14,13 @@ Graphics::ImageView::~ImageView(void) noexcept
 
 void Graphics::ImageView::createImageView(const ImageViewModel &model)
 {
-    const auto max = images().size();
     VkImageViewCreateInfo imageViewInfo {
         sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         pNext: nullptr,
         flags: VkImageViewCreateFlags(),
         image: model.image,
         viewType: static_cast<VkImageViewType>(model.type),
-        format: surfaceFormat().format,
+        format: model.format,
         components: {
             r: VK_COMPONENT_SWIZZLE_IDENTITY,
             g: VK_COMPONENT_SWIZZLE_IDENTITY,

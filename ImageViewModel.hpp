@@ -10,28 +10,27 @@
 namespace kF::Graphics
 {
     struct ImageViewModel;
+
+    /** @brief Creation flags of image views */
+    using ImageViewCreateFlags = VkImageViewCreateFlagBits;
+
+    /** @brief Types of image views */
+    using ImageViewType = VkImageViewType;
+
+    /** @brief Image subresource range */
+    using ImageSubresourceRange = VkImageSubresourceRange;
+
+    /** @brief Image aspect flags */
+    using ImageAspectFlags = VkImageAspectFlagBits;
 };
 
 struct alignas_cacheline kF::Graphics::ImageViewModel
 {
-    enum class Type : VkImageViewType {
-        ImageView1D = VK_IMAGE_VIEW_TYPE_1D,
-        ImageView2D = VK_IMAGE_VIEW_TYPE_2D,
-        ImageView3D = VK_IMAGE_VIEW_TYPE_3D,
-        ImageViewCube = VK_IMAGE_VIEW_TYPE_CUBE,
-        ImageViewArray1D = VK_IMAGE_VIEW_TYPE_1D_ARRAY,
-        ImageViewArray2D = VK_IMAGE_VIEW_TYPE_2D_ARRAY,
-        ImageViewArrayCube = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY
-    };
-
+    ImageViewCreateFlags flags {};
     ImageHandle image {};
-    Type type {};
-    VkFormat format {};
-    VkImageAspectFlags apspectMasks {};
-    uint32_t mipMapIdx { 0u };
-    uint32_t mipMapCount { 0u };
-    uint32_t layerIdx { 0u };
-    uint32_t layerCount { 0u };
+    ImageViewType viewType {};
+    Format format {};
+    ImageSubresourceRange subresourceRange {};
 };
 
 static_assert_cacheline(kF::Graphics::ImageViewModel);
