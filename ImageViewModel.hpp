@@ -12,9 +12,9 @@ namespace kF::Graphics
     struct ImageViewModel;
 };
 
-struct kF::Graphics::ImageViewModel
+struct alignas_cacheline kF::Graphics::ImageViewModel
 {
-    enum class Type {
+    enum class Type : VkImageViewType {
         ImageView1D = VK_IMAGE_VIEW_TYPE_1D,
         ImageView2D = VK_IMAGE_VIEW_TYPE_2D,
         ImageView3D = VK_IMAGE_VIEW_TYPE_3D,
@@ -24,15 +24,14 @@ struct kF::Graphics::ImageViewModel
         ImageViewArrayCube = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY
     };
 
-    // Image related parameters
-    Image               image {};
-    Type                type {};
-    VkFormat            format {};
-
-    // Subregions parameters
-    VkImageAspectFlags  apspectMasks {};
-    uint32_t            mipMapIdx {};
-    uint32_t            mipMapCount {};
-    uint32_t            layerIdx {};
-    uint32_t            layerCount {};
+    ImageHandle image {};
+    Type type {};
+    VkFormat format {};
+    VkImageAspectFlags apspectMasks {};
+    uint32_t mipMapIdx { 0u };
+    uint32_t mipMapCount { 0u };
+    uint32_t layerIdx { 0u };
+    uint32_t layerCount { 0u };
 };
+
+static_assert_cacheline(kF::Graphics::ImageViewModel);
