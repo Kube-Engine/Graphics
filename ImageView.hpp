@@ -11,14 +11,17 @@ namespace kF::Graphics
 {
     class ImageView;
 
+    /** @brief Image view handle */
     using ImageViewHandle = VkImageView;
 };
 
+/** @brief Abstract an image view */
 class kF::Graphics::ImageView final : public VulkanHandler<ImageViewHandle>
 {
 public:
     /** @brief Construct a new ImageView using ImageView model */
-    ImageView(Renderer &renderer, const ImageViewModel model);
+    ImageView(Renderer &renderer, const ImageViewModel model) : VulkanHandler<ImageViewHandle>(renderer)
+        { createImageView(model); }
 
     /** @brief Move constructor */
     ImageView(ImageView &&other) noexcept = default;
@@ -27,9 +30,9 @@ public:
     ~ImageView(void) noexcept;
 
     /** @brief Move assignment */
-    ImageView &operator=(ImageView &&other) noexcept { swap(other); return *this; }
+    ImageView &operator=(ImageView &&other) noexcept = default;
 
-    /** @brief Swap two instances */
-    void swap(ImageView &other) noexcept;
-
+private:
+    /** @brief Create an image view */
+    void createImageView(const ImageViewModel &model);
 };

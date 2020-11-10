@@ -22,7 +22,7 @@ namespace kF::Graphics
  *  Manager is used to acquire access to an auto command pool for a given frame: each command is one time submit
  *  If you wish to reuse command buffers, please use a ManualCommandPool instead of the CommandPoolManager
  */
-class alignas_cacheline kF::Graphics::CommandPoolManager : public RendererObject
+class alignas_cacheline kF::Graphics::CommandPoolManager final : public RendererObject
 {
 public:
     /** @brief Pool node */
