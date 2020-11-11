@@ -17,8 +17,8 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/Surface.cpp
     ${KubeGraphicsDir}/PhysicalDevice.hpp
     ${KubeGraphicsDir}/PhysicalDevice.cpp
-    ${KubeGraphicsDir}/QueueHandler.hpp
-    ${KubeGraphicsDir}/QueueHandler.cpp
+    ${KubeGraphicsDir}/QueueManager.hpp
+    ${KubeGraphicsDir}/QueueManager.cpp
     ${KubeGraphicsDir}/LogicalDevice.hpp
     ${KubeGraphicsDir}/LogicalDevice.cpp
     ${KubeGraphicsDir}/Swapchain.hpp

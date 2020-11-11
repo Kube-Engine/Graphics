@@ -7,22 +7,19 @@
 
 #include <vector>
 
-#include "VulkanHandler.hpp"
-#include "MemoryAllocationModel.hpp"
+#include "VulkanHandle.hpp"
+#include "MemoryAllocationHandleModel.hpp"
 
 namespace kF::Graphics
 {
     class MemoryAllocator;
-
-    /** @brief Device memory allocation */
-    using MemoryAllocation = VmaAllocation;
 }
 
-class kF::Graphics::MemoryAllocator : public VulkanHandler<VmaAllocator>
+class kF::Graphics::MemoryAllocator : public VulkanHandle<VmaAllocator>
 {
 public:
     /** @brief Construct a new memory allocator using VMA */
-    MemoryAllocator(Renderer &renderer) : VulkanHandler<VmaAllocator>(renderer)
+    MemoryAllocator(Renderer &renderer) : VulkanHandle<VmaAllocator>(renderer)
         { createMemoryAllocator(); }
 
     /** @brief Move constructor */
@@ -36,17 +33,17 @@ public:
 
 
     /** @brief Allocate memory */
-    [[nodiscard]] MemoryAllocation allocate(const MemoryAllocationModel &model);
+    [[nodiscard]] MemoryAllocationHandle allocate(const MemoryAllocationHandleModel &model);
 
     /** @brief Allocate a list of memory */
-    [[nodiscard]] void allocate(const MemoryAllocationModel * const modelFrom, const MemoryAllocationModel * const modelTo,
-            MemoryAllocation * const allocationFrom, MemoryAllocation * const allocationTo);
+    [[nodiscard]] void allocate(const MemoryAllocationHandleModel * const modelFrom, const MemoryAllocationHandleModel * const modelTo,
+            MemoryAllocationHandle * const allocationFrom, MemoryAllocationHandle * const allocationTo);
 
     /** @brief Deallocate memory */
-    void deallocate(const MemoryAllocation allocation);
+    void deallocate(const MemoryAllocationHandle allocation);
 
     /** @brief Deallocate a list of memory */
-    void deallocate(const MemoryAllocation * const allocationFrom, const MemoryAllocation * const allocationTo);
+    void deallocate(const MemoryAllocationHandle * const allocationFrom, const MemoryAllocationHandle * const allocationTo);
 
 private:
     /** @brief Create a memory allocator */

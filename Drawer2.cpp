@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -70,7 +70,7 @@ void Graphics::Drawer::draw(void)
     std::uint32_t imageIndex;
     VkResult res;
 
-    if (!_frameFences[_currentFrame].waitToBeSignaled())
+    if (!_frameFences[_currentFrame].wait())
         throw std::runtime_error("Graphics::Drawer::draw: Couldn't wait for image fence");
     res = ::vkAcquireNextImageKHR(
         parent().logicalDevice(), parent().swapchain(),
@@ -82,12 +82,12 @@ void Graphics::Drawer::draw(void)
     if (res == VK_ERROR_OUT_OF_DATE_KHR || res == VK_SUBOPTIMAL_KHR)
         return;
     else if (res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Drawer::draw: Couldn't acquire next image '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Drawer::draw: Couldn't acquire next image '"s + ErrorMessage(res) + '\'');
     retreiveFrameCommands(imageIndex);
-    _frameFences[_currentFrame].resetFence();
-    res = ::vkQueueSubmit(parent().queueHandler().getQueue(QueueType::Graphics), 1, &submitInfo, _frameFences[_currentFrame]);
+    _frameFences[_currentFrame].reset();
+    res = ::vkQueueSubmit(parent().queueManager().getQueue(QueueType::Graphics), 1, &submitInfo, _frameFences[_currentFrame]);
     if (res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Drawer::draw: Couldn't submit queue '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Drawer::draw: Couldn't submit queue '"s + ErrorMessage(res) + '\'');
     presentImage(imageIndex);
     _currentFrame = (_currentFrame + 1) % _asyncFrameCount;
 }
@@ -110,17 +110,17 @@ void Graphics::Drawer::presentImage(const std::uint32_t imageIndex)
         pImageIndices: &imageIndex,
         pResults: nullptr,
     };
-    auto res = ::vkQueuePresentKHR(parent().queueHandler().getQueue(QueueType::Present), &presentInfo);
+    auto res = ::vkQueuePresentKHR(parent().queueManager().getQueue(QueueType::Present), &presentInfo);
 
     if (res == VK_ERROR_OUT_OF_DATE_KHR || res == VK_SUBOPTIMAL_KHR)
         return;
     else if (res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Drawer::draw: Couldn't setup queue present '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Drawer::draw: Couldn't setup queue present '"s + ErrorMessage(res) + '\'');
 }
 
 void Graphics::Drawer::waitAllDrawCompleted(void)
 {
     for (auto &fence : _frameFences)
-        fence.waitToBeSignaled();
+        fence.wait();
     ::vkDeviceWaitIdle(parent().logicalDevice());
 }

@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 
 namespace kF::Graphics
 {
@@ -18,11 +18,11 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of a low-level system semaphore */
-class kF::Graphics::Semaphore final : public VulkanHandler<VkSemaphore>
+class kF::Graphics::Semaphore final : public VulkanHandle<VkSemaphore>
 {
 public:
     /** @brief Construct a semaphore */
-    Semaphore(Renderer &renderer) : VulkanHandler<VkSemaphore>(renderer)
+    Semaphore(Renderer &renderer) : VulkanHandle<VkSemaphore>(renderer)
         { createSemaphore(); }
 
     /** @brief Move constructor */

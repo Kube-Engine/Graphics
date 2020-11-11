@@ -9,7 +9,7 @@
 #include "Instance.hpp"
 #include "Surface.hpp"
 #include "PhysicalDevice.hpp"
-#include "QueueHandler.hpp"
+#include "QueueManager.hpp"
 #include "LogicalDevice.hpp"
 #include "Swapchain.hpp"
 #include "PipelinePool.hpp"
@@ -43,11 +43,6 @@ public:
     /** @brief Move assignment */
     Renderer &operator=(Renderer &&other) noexcept = default;
 
-    /** @brief Execute the drawer to present a frame */
-    void draw(void);
-
-    /** @brief Callback on render view size changed */
-    void onViewSizeChanged(void);
 
     /** @brief Get the assigned backend window */
     [[nodiscard]] BackendWindow *backendWindow(void) const noexcept { return _window; }
@@ -65,8 +60,8 @@ public:
     [[nodiscard]] const PhysicalDevice &physicalDevice(void) const noexcept { return _physicalDevice; }
 
     /** @brief Get the queue handler */
-    [[nodiscard]] QueueHandler &queueHandler(void) noexcept { return _queueHandler; }
-    [[nodiscard]] const QueueHandler &queueHandler(void) const noexcept { return _queueHandler; }
+    [[nodiscard]] QueueManager &queueManager(void) noexcept { return _queueManager; }
+    [[nodiscard]] const QueueManager &queueManager(void) const noexcept { return _queueManager; }
 
     /** @brief Get the logical device */
     [[nodiscard]] LogicalDevice &logicalDevice(void) noexcept { return _logicalDevice; }
@@ -92,31 +87,26 @@ public:
     [[nodiscard]] CommandPoolManager &commandPoolManager(void) noexcept { return _commandPoolManager; }
     [[nodiscard]] const CommandPoolManager &commandPoolManager(void) const noexcept { return _commandPoolManager; }
 
-    /** @brief Get the buffer pool */
-    [[nodiscard]] BufferPool &bufferPool(void) noexcept { return _bufferPool; }
-    [[nodiscard]] const BufferPool &bufferPool(void) const noexcept { return _bufferPool; }
-
-    /** @brief Get the renderer drawer */
-    [[nodiscard]] Drawer &drawer(void) noexcept { return _drawer; }
-    [[nodiscard]] const Drawer &drawer(void) const noexcept { return _drawer; }
 
     /** @brief Get the number of cached frame */
     [[nodiscard]] std::size_t cachedFrameCount(void) const noexcept { return swapchain().imageViews().size(); }
+
+
+    /** @brief Callback on render view size changed */
+    void onViewSizeChanged(void);
 
 private:
     BackendWindow *_window { nullptr };
     Instance _instance;
     Surface _surface;
     PhysicalDevice _physicalDevice;
-    QueueHandler _queueHandler;
+    QueueManager _queueManager;
     LogicalDevice _logicalDevice;
     Swapchain _swapchain;
     RenderPass _renderPass;
     PipelinePool _pipelinePool;
     FrameBufferManager _frameBufferManager;
     CommandPoolManager _commandPoolManager;
-    BufferPool _bufferPool;
-    Drawer _drawer;
 
     /** @brief Initialize the backend window for the renderer context */
     [[nodiscard]] static BackendWindow *InitializeContextWindow(void);

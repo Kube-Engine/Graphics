@@ -9,5 +9,6 @@ struct SDL_Window;
 
 namespace kF::Graphics
 {
-    using BackendWindow = struct SDL_Window;
+    /** @brief Backend window structure forward declaration */
+    using BackendWindow = SDL_Window;
 }

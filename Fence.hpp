@@ -7,21 +7,26 @@
 
 #include <vector>
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 
 namespace kF::Graphics
 {
     class Fence;
-
-    using Fences = std::vector<Fence>;
 }
 
 /** @brief Abstraction of a low level system fence */
-class kF::Graphics::Fence final : public VulkanHandler<VkFence>
+class kF::Graphics::Fence final : public VulkanHandle<VkFence>
 {
 public:
+    /** @brief Wait fences to be signaled */
+    static bool Wait(Renderer &renderer, const FenceHandle * const begin, const FenceHandle * const end, const bool waitAll = true, const std::uint64_t timeout = UINT64_MAX);
+
+    /** @brief Reset fences to be signaled */
+    static void Reset(Renderer &renderer, const FenceHandle * const begin, const FenceHandle * const end) noexcept;
+
+
     /** @brief Construct the fence */
-    Fence(Renderer &renderer) : VulkanHandler<VkFence>(renderer)
+    Fence(Renderer &renderer) : VulkanHandle<VkFence>(renderer)
         { createFence(); }
 
     /** @brief Move constructor */
@@ -33,11 +38,14 @@ public:
     /** @brief Move assignment */
     Fence &operator=(Fence &&other) noexcept = default;
 
+
     /** @brief Wait the fence to be signaled */
-    bool waitToBeSignaled(const std::uint64_t timeout = UINT64_MAX) const;
+    bool wait(const std::uint64_t timeout = UINT64_MAX) const
+        { return Wait(parent(), &handle(), &handle() + 1, true, timeout); }
 
     /** @brief Reset the fence */
-    void resetFence(void) noexcept;
+    void reset(void) noexcept
+        { Reset(parent(), &handle(), &handle() + 1); }
 
 private:
     /** @brief Create the fence */

@@ -5,6 +5,8 @@
 
 #include <stdexcept>
 
+#include <Kube/Core/StringLiteral.hpp>
+
 #include "Renderer.hpp"
 
 using namespace kF;
@@ -15,7 +17,7 @@ Graphics::Renderer::Renderer(BackendWindow *window, const Version applicationVer
     _instance(*this, applicationVersion),
     _surface(*this),
     _physicalDevice(*this),
-    _queueHandler(*this),
+    _queueManager(*this),
     _logicalDevice(*this),
     _swapchain(*this),
     _renderPass(*this),
@@ -24,10 +26,6 @@ Graphics::Renderer::Renderer(BackendWindow *window, const Version applicationVer
     _commandPool(*this),
     _bufferPool(*this),
     _drawer(*this)
-{
-}
-
-void Graphics::Renderer::draw(void)
 {
 }
 

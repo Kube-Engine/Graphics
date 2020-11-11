@@ -5,20 +5,36 @@
 
 #pragma once
 
-#include <Kube/Core/Vector.hpp>
-
-#include "ImageView.hpp"
+#include "Vulkan.hpp"
 
 namespace kF::Graphics
 {
     struct FrameBufferModel;
 }
 
-/** @brief Model describing a memory layout of a pipeline */
-struct alignas_half_cacheline kF::Graphics::FrameBufferModel
+/** @brief Describe how to create a frame buffer */
+struct kF::Graphics::FrameBufferModel : public VkBufferCreateInfo
 {
-    Core::TinyVector<ImageViewHandle> imageViews {};
-    std::uint32_t layerCount { 1u };
-};
+    /** @brief Initialize constructor */
+    FrameBufferModel(const FramebufferCreateFlags flags_, const RenderPassHandle renderPass_,
+            const ImageViewHandle* attachmentBegin, const ImageViewHandle* attachmentEnd,
+            const std::uint32_t width_, const std::uint32_t height_, const std::uint32_t layers_)
+        noexcept
+        : VkFramebufferCreateInfo(
+            sType: VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+            pNext: nullptr,
+            flags: flags_,
+            renderPass: renderPass_,
+            attachmentCount: std::distance(attachmentBegin, attachmentEnd),
+            pAttachments: attachmentBegin,
+            width: width_,
+            height: height_,
+            layers: layers_
+        ) {}
 
-static_assert_fit_half_cacheline(kF::Graphics::FrameBufferModel);
+    /** @brief POD semantics */
+    FrameBufferModel(const FrameBufferModel &other) noexcept = default;
+    FrameBufferModel(FrameBufferModel &&other) noexcept = default;
+    FrameBufferModel &operator=(const FrameBufferModel &other) noexcept = default;
+    FrameBufferModel &operator=(FrameBufferModel &&other) noexcept = default;
+};

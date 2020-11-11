@@ -6,7 +6,7 @@
 #pragma once
 
 #include "BackendWindow.hpp"
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 
 namespace kF::Graphics
 {
@@ -26,7 +26,7 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of a render surface */
-class kF::Graphics::Surface final : public VulkanHandler<VkSurfaceKHR>
+class kF::Graphics::Surface final : public VulkanHandle<VkSurfaceKHR>
 {
 public:
     /** @brief Construct a surface */

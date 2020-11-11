@@ -3,30 +3,30 @@
  * @ Description: Fence
  */
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Fence::~Fence(void) noexcept
+bool Graphics::Fence::Wait(Renderer &renderer, const FenceHandle * const begin, const FenceHandle * const end, const bool waitAll, const std::uint64_t timeout)
 {
-    ::vkDestroyFence(parent().logicalDevice(), handle(), nullptr);
-}
-
-bool Graphics::Fence::waitToBeSignaled(const std::uint64_t timeout) const
-{
-    if (auto res = ::vkWaitForFences(parent().logicalDevice(), 1, &handle(), true, timeout); res == VK_TIMEOUT)
+    if (auto res = ::vkWaitForFences(renderer.logicalDevice(), std::distance(begin, end), begin, waitAll, timeout); res == VK_TIMEOUT)
         return false;
     else if (res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Fence::waitToBeSignaled: Error on waiting fence '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Fence::Wait: Error on waiting fence(s) '"s + ErrorMessage(res) + '\'');
     return true;
 }
 
-void Graphics::Fence::resetFence(void) noexcept
+void Graphics::Fence::Reset(Renderer &renderer, const FenceHandle * const begin, const FenceHandle * const end) noexcept
 {
-    ::vkResetFences(parent().logicalDevice(), 1, &handle());
+    ::vkResetFences(renderer.logicalDevice(), std::distance(begin, end), begin);
+}
+
+Graphics::Fence::~Fence(void) noexcept
+{
+    ::vkDestroyFence(parent().logicalDevice(), handle(), nullptr);
 }
 
 void Graphics::Fence::createFence(void)
@@ -38,5 +38,5 @@ void Graphics::Fence::createFence(void)
     };
 
     if (auto res = ::vkCreateFence(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Fence::createFence: Couldn't create semaphore '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Fence::createFence: Couldn't create semaphore '"s + ErrorMessage(res) + '\'');
 }

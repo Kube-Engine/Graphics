@@ -5,6 +5,8 @@
 
 #include <algorithm>
 
+#include <Kube/Core/StringLiteral.hpp>
+
 #include "Renderer.hpp"
 
 using namespace kF;

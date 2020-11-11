@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 #include "Shader.hpp"
 #include "PipelineLayout.hpp"
 
@@ -26,7 +26,7 @@ struct kF::Graphics::PipelineModel
 };
 
 /** @brief Abstraction of a GPU pipeline */
-class alignas_half_cacheline kF::Graphics::Pipeline final : public VulkanHandler<PipelineHandle>
+class alignas_half_cacheline kF::Graphics::Pipeline final : public VulkanHandle<PipelineHandle>
 {
 public:
     /** @brief Various stages structures used to setup the pipeline */
@@ -42,7 +42,7 @@ public:
     Pipeline(Renderer &renderer, const PipelineModel &model);
 
     /** @brief Move constructor */
-    Pipeline(Pipeline &&other) noexcept : VulkanHandler<VkPipeline>(other.parent()) { swap(other); }
+    Pipeline(Pipeline &&other) noexcept : VulkanHandle<VkPipeline>(other.parent()) { swap(other); }
 
     /** @brief Destruct the pipeline */
     ~Pipeline(void);

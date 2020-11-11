@@ -3,7 +3,7 @@
  * @ Description: Semaphore
  */
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -25,5 +25,5 @@ void Graphics::Semaphore::createSemaphore(void)
     };
 
     if (auto res = ::vkCreateSemaphore(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Semaphore::createSemaphore: Couldn't create semaphore '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Semaphore::createSemaphore: Couldn't create semaphore '"s + ErrorMessage(res) + '\'');
 }

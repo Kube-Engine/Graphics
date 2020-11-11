@@ -15,12 +15,12 @@ namespace kF::Graphics
     using PipelineLayoutHandle = VkPipelineLayout;
 }
 
-class kF::Graphics::PipelineLayout : public VulkanHandler<PipelineLayoutHandle>
+class kF::Graphics::PipelineLayout : public VulkanHandle<PipelineLayoutHandle>
 {
 public:
     /** @brief Construct a pipeline using a model */
     PipelineLayout(Renderer &renderer, const PipelineLayoutModel &model)
-        : VulkanHandler<PipelineLayoutHandle>(renderer) { createPipelineLayout(model); }
+        : VulkanHandle<PipelineLayoutHandle>(renderer) { createPipelineLayout(model); }
 
     /** @brief Move constructor */
     PipelineLayout(PipelineLayout &&other) noexcept = default;

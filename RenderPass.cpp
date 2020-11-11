@@ -3,7 +3,7 @@
  * @ Description: Render Pass
  */
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -57,5 +57,5 @@ void Graphics::RenderPass::createRenderPass(void)
     };
 
     if (auto res = ::vkCreateRenderPass(parent().logicalDevice(), &renderPassInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::RenderPass::createRenderPass: Couldn't create render pass '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::RenderPass::createRenderPass: Couldn't create render pass '"s + ErrorMessage(res) + '\'');
 }

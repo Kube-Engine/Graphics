@@ -16,11 +16,11 @@ namespace kF::Graphics
 };
 
 /** @brief Abstract an image view */
-class kF::Graphics::ImageView final : public VulkanHandler<ImageViewHandle>
+class kF::Graphics::ImageView final : public VulkanHandle<ImageViewHandle>
 {
 public:
     /** @brief Construct a new ImageView using ImageView model */
-    ImageView(Renderer &renderer, const ImageViewModel model) : VulkanHandler<ImageViewHandle>(renderer)
+    ImageView(Renderer &renderer, const ImageViewModel model) : VulkanHandle<ImageViewHandle>(renderer)
         { createImageView(model); }
 
     /** @brief Move constructor */

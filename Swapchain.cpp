@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -13,7 +13,7 @@ using namespace kF;
 using namespace kF::Literal;
 
 Graphics::Swapchain::Swapchain(Renderer &renderer)
-    : VulkanHandler<VkSwapchainKHR>(renderer)
+    : VulkanHandle<VkSwapchainKHR>(renderer)
 {
     createSwapchain();
     retreiveImages();
@@ -62,7 +62,7 @@ void Graphics::Swapchain::createSwapchain(void)
     };
 
     if (auto res = ::vkCreateSwapchainKHR(parent().logicalDevice(), &swapchainInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Swapchain::createSwapchain: Couldn't create swapchain '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Swapchain::createSwapchain: Couldn't create swapchain '"s + ErrorMessage(res) + '\'');
     _surfaceFormat = surfaceFormat;
     _presentMode = presentMode;
     _extent = extent;
@@ -71,7 +71,7 @@ void Graphics::Swapchain::createSwapchain(void)
 void Graphics::Swapchain::retreiveImages(void)
 {
     if (auto res = FillVkContainer(images(), &::vkGetSwapchainImagesKHR, parent().logicalDevice(), handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Swapchain::createImageViews: Couldn't retreive swapchain images '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Swapchain::createImageViews: Couldn't retreive swapchain images '"s + ErrorMessage(res) + '\'');
 }
 
 void Graphics::Swapchain::createImageViews(void)

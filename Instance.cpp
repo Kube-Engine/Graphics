@@ -10,7 +10,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -48,7 +48,7 @@ void Graphics::Instance::createInstance(const Version applicationVersion)
     };
 
     if (auto res = ::vkCreateInstance(&instanceInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Instance::Instance: Couldn't create instance '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Instance::Instance: Couldn't create instance '"s + ErrorMessage(res) + '\'');
 #if KUBE_DEBUG_BUILD
     std::cout << "Extensions:" << std::endl;
     for (auto &extension : extensions)
@@ -67,12 +67,12 @@ Graphics::Instance::Layers Graphics::Instance::getLayers(void) const
     std::vector<VkLayerProperties> avaible;
 
     if (auto res = ::vkEnumerateInstanceLayerProperties(&count, nullptr); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Instance::getLayers: Couldn't enumerate instances layers properties"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Instance::getLayers: Couldn't enumerate instances layers properties"s + ErrorMessage(res) + '\'');
     if (!count)
         return layers;
     avaible.resize(count + layers.size());
     if (auto res = ::vkEnumerateInstanceLayerProperties(&count, avaible.data()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Instance::getLayers: Couldn't enumerate instances layers properties"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Instance::getLayers: Couldn't enumerate instances layers properties"s + ErrorMessage(res) + '\'');
     for (auto it = layers.begin(); it != layers.end();) {
         bool found = false;
         for (const auto &layerProperties : avaible) {
@@ -98,11 +98,11 @@ Graphics::Instance::Extensions Graphics::Instance::getExtensions(BackendWindow *
     std::uint32_t count = 0;
 
     if (!::SDL_Vulkan_GetInstanceExtensions(window, &count, nullptr))
-        throw std::runtime_error("Graphics::Instance::getExtensions: Couldn't retreive instance extensions '"_str + ::SDL_GetError() + '\'');
+        throw std::runtime_error("Graphics::Instance::getExtensions: Couldn't retreive instance extensions '"s + ::SDL_GetError() + '\'');
     if (!count)
         return extensions;
     extensions.resize(count);
     if (!::SDL_Vulkan_GetInstanceExtensions(window, &count, extensions.data()))
-        throw std::runtime_error("Graphics::Instance::getExtensions: Couldn't retreive instance extensions '"_str + ::SDL_GetError() + '\'');
+        throw std::runtime_error("Graphics::Instance::getExtensions: Couldn't retreive instance extensions '"s + ::SDL_GetError() + '\'');
     return extensions;
 }

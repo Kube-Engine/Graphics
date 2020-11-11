@@ -13,25 +13,25 @@
 namespace kF::Graphics
 {
     template<typename Type>
-    class VulkanHandler;
+    class VulkanHandle;
 }
 
 /** @brief Abstraction of a vulkan handler */
 template<typename Type>
-class alignas_quarter_cacheline kF::Graphics::VulkanHandler : public RendererObject
+class alignas_quarter_cacheline kF::Graphics::VulkanHandle : public RendererObject
 {
 public:
     /** @brief Default construct the handle */
-    VulkanHandler(Renderer &renderer) : RendererObject(renderer) {}
+    VulkanHandle(Renderer &renderer) : RendererObject(renderer) {}
 
     /** @brief Move constructor */
-    VulkanHandler(VulkanHandler &&other) noexcept : RendererObject(std::move(other)) { swap(other); }
+    VulkanHandle(VulkanHandle &&other) noexcept : RendererObject(std::move(other)) { swap(other); }
 
     /** @brief Default constructor, does not release handler */
-    ~VulkanHandler(void) noexcept = default;
+    ~VulkanHandle(void) noexcept = default;
 
     /** @brief Move assignment */
-    VulkanHandler &operator=(VulkanHandler &&other) noexcept { swap(other); return *this; }
+    VulkanHandle &operator=(VulkanHandle &&other) noexcept { swap(other); return *this; }
 
     /** @brief Implicit convertion to handle */
     [[nodiscard]] operator const Type(void) const noexcept { return _handle; }
@@ -47,7 +47,7 @@ public:
     [[nodiscard]] const Type &handle(void) const noexcept { return _handle; }
 
     /** @brief Swap two instances */
-    void swap(VulkanHandler &other) noexcept { RendererObject::swap(other); std::swap(_handle, other._handle); }
+    void swap(VulkanHandle &other) noexcept { RendererObject::swap(other); std::swap(_handle, other._handle); }
 
 private:
     Type _handle = NullHandle;

@@ -10,7 +10,7 @@
 #include <variant>
 
 #include "LogicalDevice.hpp"
-#include "QueueHandler.hpp"
+#include "QueueManager.hpp"
 #include "FrameBufferManager.hpp"
 #include "RenderModel.hpp"
 #include "TransferModel.hpp"
@@ -55,7 +55,7 @@ struct alignas_cacheline kF::Graphics::CommandModel
 static_assert(sizeof(kF::Graphics::CommandModel) == kF::Core::CacheLineSize);
 
 /** @brief Abstract a low level pool of command buffers, not thread safe */
-class kF::Graphics::CommandPool final : public VulkanHandler<VkCommandPool>
+class kF::Graphics::CommandPool final : public VulkanHandle<VkCommandPool>
 {
 public:
     using CommandPair = std::pair<CommandIndex, std::unique_ptr<Commands>>;

@@ -5,14 +5,14 @@
 
 #include <iostream>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::QueueHandler::QueueHandler(Renderer &renderer)
+Graphics::QueueManager::QueueManager(Renderer &renderer)
     : RendererObject(renderer)
 {
     retreiveFamilyQueueIndexes();
@@ -36,7 +36,7 @@ Graphics::QueueHandler::QueueHandler(Renderer &renderer)
 #endif
 }
 
-void Graphics::QueueHandler::retreiveQueuesHandlers(void) noexcept
+void Graphics::QueueManager::retreiveQueuesHandlers(void) noexcept
 {
     std::vector<QueueDescriptor *> past;
 
@@ -53,7 +53,7 @@ void Graphics::QueueHandler::retreiveQueuesHandlers(void) noexcept
     }
 }
 
-Graphics::QueueHandler::QueueCreateInfos Graphics::QueueHandler::registerQueues(void)
+Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(void)
 {
     static const float priority = 1.0f;
 
@@ -64,7 +64,7 @@ Graphics::QueueHandler::QueueCreateInfos Graphics::QueueHandler::registerQueues(
         if (_candidates[type].empty()) {
             if (type == QueueType::FastTransfer)
                 continue;
-            throw std::runtime_error("Graphics::QueueHandler::registerQueues: Couldn't register unsupported queue type '"_str + QueueTypeName(static_cast<QueueType>(type)));
+            throw std::runtime_error("Graphics::QueueManager::registerQueues: Couldn't register unsupported queue type '"s + QueueTypeName(static_cast<QueueType>(type)));
         }
         bool found = false;
         std::pair<std::uint32_t, std::size_t> best(0, usedIndexes.size() + 1);
@@ -106,7 +106,7 @@ Graphics::QueueHandler::QueueCreateInfos Graphics::QueueHandler::registerQueues(
     return queues;
 }
 
-void Graphics::QueueHandler::retreiveFamilyQueueIndexes(void)
+void Graphics::QueueManager::retreiveFamilyQueueIndexes(void)
 {
     std::vector<VkQueueFamilyProperties> properties;
     std::uint32_t queueFamilyIndex = 0;
@@ -115,7 +115,7 @@ void Graphics::QueueHandler::retreiveFamilyQueueIndexes(void)
     FillVkContainer(properties, &::vkGetPhysicalDeviceQueueFamilyProperties, parent().physicalDevice());
     for (auto &property : properties) {
         if (auto res = ::vkGetPhysicalDeviceSurfaceSupportKHR(parent().physicalDevice(), queueFamilyIndex, parent().surface(), &isPresent); res != VK_SUCCESS)
-            throw std::runtime_error("Graphics::QueueHandler::registerQueues: Couldn't get physical device surface support '"_str + ErrorMessage(res) + '\'');
+            throw std::runtime_error("Graphics::QueueManager::registerQueues: Couldn't get physical device surface support '"s + ErrorMessage(res) + '\'');
         if (isPresent)
             _candidates[QueueType::Present].emplace_back(queueFamilyIndex, property.queueCount);
         if (property.queueFlags & TypeToFlag(QueueType::Graphics))
@@ -130,7 +130,7 @@ void Graphics::QueueHandler::retreiveFamilyQueueIndexes(void)
     }
 }
 
-constexpr std::uint32_t Graphics::QueueHandler::TypeToFlag(const QueueType type) noexcept
+constexpr std::uint32_t Graphics::QueueManager::TypeToFlag(const QueueType type) noexcept
 {
     switch (type) {
     case QueueType::Graphics:

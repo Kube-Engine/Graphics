@@ -9,7 +9,7 @@
 
 #include <Kube/Core/Version.hpp>
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 #include "BackendWindow.hpp"
 
 namespace kF::Graphics
@@ -18,7 +18,7 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of the low-level API instance */
-class kF::Graphics::Instance final : public VulkanHandler<VkInstance>
+class kF::Graphics::Instance final : public VulkanHandle<VkInstance>
 {
 public:
     /** @brief Instance extension list */
@@ -28,7 +28,7 @@ public:
     using Layers = std::vector<const char *>;
 
     /** @brief Construct an instance */
-    Instance(Renderer &renderer, const Version applicationVersion) : VulkanHandler<VkInstance>(renderer)
+    Instance(Renderer &renderer, const Version applicationVersion) : VulkanHandle<VkInstance>(renderer)
         { createInstance(applicationVersion); }
 
     /** @brief Move constructor */

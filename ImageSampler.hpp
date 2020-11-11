@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 #include "ImageSamplerModel.hpp"
 
 namespace kF::Graphics
@@ -15,14 +15,14 @@ namespace kF::Graphics
     using ImageHandleSampler = VkSampler;
 };
 
-class kF::Graphics::ImageSample final : public VulkanHandler<ImageHandleSampler>
+class kF::Graphics::ImageSample final : public VulkanHandle<ImageHandleSampler>
 {
 public:
     /** @brief Construct a new ImageSampler using ImageSampler model */
     ImageSampler(Renderer &renderer, const ImageSamplerModel model);
 
     /** @brief Move constructor */
-    ImageSampler(ImageSampler &&other) noexcept : VulkanHandler<ImageHandleSampler>(other.parent()) { swap(other); }
+    ImageSampler(ImageSampler &&other) noexcept : VulkanHandle<ImageHandleSampler>(other.parent()) { swap(other); }
 
     /** @brief Destruct the buffer */
     ~ImageSampler(void) noexcept;

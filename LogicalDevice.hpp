@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 
 namespace kF::Graphics
 {
@@ -15,14 +15,14 @@ namespace kF::Graphics
 }
 
 /** @brief The logical device abstracts the communication with a physical device */
-class kF::Graphics::LogicalDevice final : public VulkanHandler<VkDevice>
+class kF::Graphics::LogicalDevice final : public VulkanHandle<VkDevice>
 {
 public:
     /** @brief Logical device extension list */
     using Extensions = std::vector<const char *>;
 
     /** @brief Create a logical device */
-    LogicalDevice(Renderer &renderer) : VulkanHandler<VkDevice>(renderer)
+    LogicalDevice(Renderer &renderer) : VulkanHandle<VkDevice>(renderer)
         { createLogicalDevice(); }
 
     /** @brief Move constructor */

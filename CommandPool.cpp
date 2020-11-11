@@ -3,7 +3,7 @@
  * @ Description: CommandPool
  */
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -11,7 +11,7 @@ using namespace kF;
 using namespace kF::Literal;
 
 Graphics::CommandPool::CommandPool(Renderer &renderer, const QueueType queueType, const Lifecycle lifecycle)
-    : VulkanHandler<VkCommandPool>(renderer)
+    : VulkanHandle<VkCommandPool>(renderer)
 {
     createCommandPool(queueType, lifecycle);
 }
@@ -46,14 +46,14 @@ void Graphics::CommandPool::createCommandPool(const QueueType queueType, const L
         sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         pNext: nullptr,
         flags: GetFlags(lifecycle),
-        queueFamilyIndex: parent().queueHandler().queueDescriptor(QueueType::Graphics).queueFamilyIndex
+        queueFamilyIndex: parent().queueManager().queueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
     if (auto res = ::vkCreateCommandPool(parent().logicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"s + ErrorMessage(res) + '\'');
 }
 
-void Graphics::CommandPool::allocateCommands(CommandHandle * const commandFrom, CommandHandle * const commandTo, const Level level)
+void Graphics::CommandPool::allocateCommands(CommandHandle * const commandFrom, CommandHandle * const commandTo, const CommandLevel level)
 {
     VkCommandBufferAllocateInfo commandInfo {
         sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -65,7 +65,7 @@ void Graphics::CommandPool::allocateCommands(CommandHandle * const commandFrom, 
 
     if (auto res = ::vkAllocateCommandBuffers(parent().logicalDevice(), &commandInfo, commandFrom); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::CommandPool::
-        : Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
+        : Couldn't allocate command buffers '"s + ErrorMessage(res) + '\'');
 }
 
 void Graphics::CommandPool::recordRender(const RenderModel * const modelFrom, const RenderModel * const modelTo,

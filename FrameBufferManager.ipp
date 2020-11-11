@@ -6,7 +6,7 @@
 inline void kF::Graphics::FrameBufferManager::swap(FrameBufferManager &other) noexcept
 {
     RendererObject::swap(other);
-    std::swap(_cachedFrames, other._cachedFrames);
+    _cachedFrames.swap(other._cachedFrames);
 }
 
 inline void kF::Graphics::FrameBufferManager::acquireNextFrame(void) noexcept;

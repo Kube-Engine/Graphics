@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/Utils.hpp>
 
 namespace kF::Graphics
 {
@@ -36,6 +36,9 @@ public:
 
     /** @brief Move assignment */
     RendererObject &operator=(RendererObject &&other) noexcept = default;
+
+    /** @brief Swap two instances */
+    void swap(RendererObject &other) noexcept { std::swap(_parent, other._parent); }
 
 protected:
     /** @brief Get parent renderer */

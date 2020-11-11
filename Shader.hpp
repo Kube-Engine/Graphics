@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 
 namespace kF::Graphics
 {
@@ -43,14 +43,14 @@ struct kF::Graphics::ShaderModel
 };
 
 /** @brief Abstraction of a GPU shader */
-class kF::Graphics::Shader final : public VulkanHandler<VkShaderModule>
+class kF::Graphics::Shader final : public VulkanHandle<VkShaderModule>
 {
 public:
     /** @brief A vector containing binary data */
     using BinaryCode = std::vector<std::uint32_t>;
 
     /** @brief Construct a shader from a path */
-    Shader(Renderer &renderer, const std::string &path) : VulkanHandler<VkShaderModule>(renderer)
+    Shader(Renderer &renderer, const std::string &path) : VulkanHandle<VkShaderModule>(renderer)
         { createShaderModule(path); }
 
     /** @brief Move constructor */

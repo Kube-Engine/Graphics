@@ -32,6 +32,10 @@ public:
     /** @brief Move assignment */
     FrameBufferManager &operator=(FrameBufferManager &&other) noexcept { swap(other); return *this; };
 
+    /** @brief Swap two instances */
+    void swap(FrameBufferManager &other) noexcept;
+
+
     /** @brief Get the frameBuffer list */
     [[nodiscard]] auto &frameBuffers(void) noexcept { return _cachedFrames.caches(); }
     [[nodiscard]] const auto &frameBuffers(void) const noexcept { return _cachedFrames.caches(); }
@@ -39,14 +43,14 @@ public:
     /** @brief Retreive the current frame buffer */
     [[nodiscard]] FrameBufferHandle currentFrameBuffer(void) const noexcept { return _cachedFrames.currentCache(); }
 
-    /** @brief Swap two instances */
-    void swap(FrameBufferManager &other) noexcept;
+
 
     /** @brief Acquire the next frame without releasing current one */
     void acquireNextFrame(void) noexcept;
 
     /** @brief Release a given frame */
     void releaseFrame(const FrameIndex frameIndex) noexcept;
+
 
 private:
     PerFrameCache<FrameBufferHandle> _cachedFrames;

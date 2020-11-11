@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 
 namespace kF::Graphics
 {
@@ -13,11 +13,11 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of a render pass */
-class kF::Graphics::RenderPass final : public VulkanHandler<VkRenderPass>
+class kF::Graphics::RenderPass final : public VulkanHandle<RenderPasshandle>
 {
 public:
     /** @brief Construct a render pass */
-    RenderPass(Renderer &renderer) : VulkanHandler<VkRenderPass>(renderer)
+    RenderPass(Renderer &renderer) : VulkanHandle<RenderPasshandle>(renderer)
         { createRenderPass(); }
 
     /** @brief Move constructor */

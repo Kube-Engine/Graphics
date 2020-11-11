@@ -9,7 +9,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -17,10 +17,10 @@ using namespace kF;
 using namespace kF::Literal;
 
 Graphics::Surface::Surface(Renderer &renderer)
-    : VulkanHandler<VkSurfaceKHR>(renderer)
+    : VulkanHandle<VkSurfaceKHR>(renderer)
 {
     if (!::SDL_Vulkan_CreateSurface(parent().backendWindow(), parent().instance(), &handle()))
-        throw std::runtime_error("Graphics::Surface::Surface: Couldn't create surface '"_str + ::SDL_GetError() + '\'');
+        throw std::runtime_error("Graphics::Surface::Surface: Couldn't create surface '"s + ::SDL_GetError() + '\'');
 }
 
 Graphics::Surface::~Surface(void) noexcept
@@ -33,7 +33,7 @@ Graphics::SurfaceFormat Graphics::Surface::surfaceFormat(void) const
     std::vector<SurfaceFormat> formats;
 
     if (auto res = FillVkContainer(formats, &::vkGetPhysicalDeviceSurfaceFormatsKHR, parent().physicalDevice(), handle()); res != VK_SUCCESS || formats.empty())
-        throw std::runtime_error("Graphics::Surface::surfaceFormat: Couldn't retreive physical device surface format '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Surface::surfaceFormat: Couldn't retreive physical device surface format '"s + ErrorMessage(res) + '\'');
     for (const auto &format : formats) {
         if (format.format != VK_FORMAT_B8G8R8A8_UNORM || format.colorSpace != VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
             continue;
@@ -61,7 +61,7 @@ Graphics::SurfaceCapabilities Graphics::Surface::surfaceCapabilities(void) const
     SurfaceCapabilities capabilities {};
 
     if (auto res = ::vkGetPhysicalDeviceSurfaceCapabilitiesKHR(parent().physicalDevice(), handle(), &capabilities); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Surface::surfaceCapabilities: Couldn't retreive physical device surface capabilities '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Surface::surfaceCapabilities: Couldn't retreive physical device surface capabilities '"s + ErrorMessage(res) + '\'');
     return capabilities;
 }
 

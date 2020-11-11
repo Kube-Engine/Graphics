@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 #include <Kube/Core/Assert.hpp>
 
 #include "Renderer.hpp"
@@ -14,7 +14,7 @@ using namespace kF;
 using namespace kF::Literal;
 
 Graphics::CommandPool::CommandPool(Renderer &renderer)
-    : VulkanHandler<VkCommandPool>(renderer)
+    : VulkanHandle<VkCommandPool>(renderer)
 {
 #ifdef KUBE_HAS_DYNAMIC_WINDOW_RESIZE
     _viewport.maxDepth = 1.0f;
@@ -96,11 +96,11 @@ void Graphics::CommandPool::createCommandPool(void)
         sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         pNext: nullptr,
         flags: VkCommandPoolCreateFlags(),
-        queueFamilyIndex: parent().queueHandler().queueDescriptor(QueueType::Graphics).queueFamilyIndex
+        queueFamilyIndex: parent().queueManager().queueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
     if (auto res = ::vkCreateCommandPool(parent().logicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"s + ErrorMessage(res) + '\'');
 }
 
 void Graphics::CommandPool::allocateCommands(const CommandModel &model, Commands &commands)
@@ -114,7 +114,7 @@ void Graphics::CommandPool::allocateCommands(const CommandModel &model, Commands
     };
 
     if (auto res = ::vkAllocateCommandBuffers(parent().logicalDevice(), &commandInfo, commands.data()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't allocate command buffers '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::CommandPool::addCommand: Couldn't allocate command buffers '"s + ErrorMessage(res) + '\'');
 }
 
 void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &commands)

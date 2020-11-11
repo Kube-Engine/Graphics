@@ -8,42 +8,32 @@
 #include <array>
 #include <memory>
 
+#include <Kube/Core/Vector.hpp>
+
+#include "Vulkan.hpp"
 #include "RendererObject.hpp"
 
 namespace kF::Graphics
 {
-    class QueueHandler;
-
-    /** @brief A vulkan queue */
-    using Queue = VkQueue;
-
-    /** @brief Describes all types of queues */
-    enum class QueueType {
-        Graphics = 0,
-        Compute,
-        Transfer,
-        FastTransfer,
-        Present,
-        Count
-    };
+    class QueueManager;
 
     /** @brief Get a literal of QueueType enumeration */
     [[nodiscard]] constexpr const char *QueueTypeName(const QueueType type) noexcept;
 }
 
 /** @brief Handles a list of queues */
-class kF::Graphics::QueueHandler final : public RendererObject
+class kF::Graphics::QueueManager final : public RendererObject
 {
 public:
     /** @brief a Queue instance has a reference count */
-    using QueueInstance = std::shared_ptr<Queue>;
+    using QueueInstance = std::shared_ptr<QueueHandle>;
 
     /** @brief Describes a queue */
     struct QueueDescriptor
     {
         std::uint32_t queueFamilyIndex {}; // Index of the queue family
         std::uint32_t queueIndex {}; // Index from specific queue family
-        Queue queueHandle {};
+        QueueHandle queueHandle {}; // Handle of the queue
     };
 
     /** @brief The number of different familly queues */
@@ -53,7 +43,7 @@ public:
     using QueuesArray = std::array<QueueDescriptor, QueueCount>;
 
     /** @brief All candidates of a queue family */
-    using QueueCandidates = std::vector<std::pair<std::uint32_t, std::size_t>>;
+    using QueueCandidates = Core::TinyVector<std::pair<std::uint32_t, std::size_t>>;
 
     /** @brief An array containing all available queue candidates */
     using QueueCandidateMap = std::array<QueueCandidates, QueueCount>;
@@ -62,26 +52,26 @@ public:
     using QueueCreateInfo = VkDeviceQueueCreateInfo;
 
     /** @brief Describe how to multiple queues */
-    using QueueCreateInfos = std::vector<QueueCreateInfo>;
+    using QueueCreateInfos = Core::TinyVector<QueueCreateInfo>;
 
     /** @brief Construct queue handler */
-    QueueHandler(Renderer &renderer);
+    QueueManager(Renderer &renderer);
 
     /** @brief Move constructor */
-    QueueHandler(QueueHandler &&other) noexcept = default;
+    QueueManager(QueueManager &&other) noexcept = default;
 
     /** @brief Destroy queue handler */
-    ~QueueHandler(void) noexcept = default;
+    ~QueueManager(void) noexcept = default;
 
     /** @brief Move assignment */
-    QueueHandler &operator=(QueueHandler &&other) noexcept = default;
+    QueueManager &operator=(QueueManager &&other) noexcept = default;
 
     /** @brief Retreive a queue descriptor that match given type and index */
     [[nodiscard]] const QueueDescriptor &queueDescriptor(const QueueType type) const noexcept
         { return _array[static_cast<std::size_t>(type)]; }
 
     /** @brief Retreive a queue that match given type and index */
-    [[nodiscard]] const Queue &getQueue(const QueueType type) const noexcept
+    [[nodiscard]] const QueueHandle &getQueue(const QueueType type) const noexcept
         { return _array[static_cast<std::size_t>(type)].queueHandle; }
 
     /**

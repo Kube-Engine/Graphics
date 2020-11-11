@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -24,14 +24,18 @@ Graphics::FrameBufferManager::FrameBufferManager(Renderer &renderer)
 void Graphics::FrameBufferManager::createFrameBuffers(void)
 {
     const auto count = parent().cachedFrameCount();
-    FrameBufferModel model {
-        imageViews: { 1u },
-        layoutCount: 1u
-    };
+    auto &extent = parent().swapchain().extent();
+    ImageViewHandle imageViewHandle { NullHandle };
+    FrameBufferModel model(
+        FramebufferCreateFlags::None,
+        parent().renderPass(),
+        &imageViewHandle, &imageViewHandle + 1,
+        extent.width, extent.height, 1u
+    );
 
-    _cachedFrames.caches().reserve(count);
+    _cachedFrames.reserve(count);
     for (auto i = 0ul; i < count; ++i) {
-        model.imageViews.front() = parent().swapchain().imageViews()[i];
+        imageViewHandle = parent().swapchain().imageViews()[i];
         _cachedFrames.caches().push(parent(), model);
     }
 }

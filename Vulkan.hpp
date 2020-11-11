@@ -5,15 +5,62 @@
 
 #pragma once
 
-#include <utility>
-#include <cinttypes>
+#include <Kube/Core/Utils.hpp>
 
-#include <vulkan/vulkan.h>
+#include "VulkanEnums.hpp"
 
 namespace kF::Graphics
 {
     /** @brief Null handle alias */
     constexpr auto NullHandle = NullHandle;
+
+    /** @brief 3D extent */
+    using Extent3D = VkExtent3D;
+
+
+    /** @brief Fence handle */
+    using FenceHandle = VkFence;
+
+    /** @brief Fence handle */
+    using SemaphoreHandle = VkFence;
+
+
+    /** @brief Render pass handle */
+    using RenderPassHandle = VkRenderPass;
+
+
+    /** @brief A frame buffer handle */
+    using FrameBufferHandle = VkFramebuffer;
+
+
+    /** @brief A vulkan queue */
+    using QueueHandle = VkQueue;
+
+
+    /** @brief Command handle */
+    using CommandHandle = VkCommandBuffer;
+
+
+    /** @brief Device memory allocation */
+    using MemoryAllocationHandle = VmaAllocation;
+
+
+    /** @brief Vulkan buffer */
+    using BufferHandle = VkBuffer;
+
+    /** @brief Size of a buffer */
+    using BufferSize = VkDeviceSize;
+
+    /** @brief Offset in a buffer */
+    using BufferOffset = VkDeviceSize;
+
+
+    /** @brief Image handle */
+    using ImageHandle = VkImageView;
+
+    /** @brief Image view handle */
+    using ImageViewHandle = VkImageView;
+
 
     /** @brief Get an error message from a vulkan result */
     [[nodiscard]] const char *ErrorMessage(VkResult res);

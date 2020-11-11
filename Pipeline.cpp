@@ -3,7 +3,7 @@
  * @ Description: Pipeline
  */
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -47,7 +47,7 @@ void Graphics::Pipeline::createPipeline(const PipelineModel &model)
     };
 
     if (auto res = ::vkCreateGraphicsPipelines(parent().logicalDevice(), VkPipelineCache(), 1, &pipelineInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Pipeline::createPipeline: Couldn't create pipeline '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::Pipeline::createPipeline: Couldn't create pipeline '"s + ErrorMessage(res) + '\'');
 }
 
 Graphics::Pipeline::ShaderStage Graphics::Pipeline::getShaderStage(const PipelineModel &model) const

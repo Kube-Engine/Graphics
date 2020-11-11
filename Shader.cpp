@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -42,5 +42,5 @@ void Graphics::Shader::createShaderModule(const std::string &path)
     };
 
     if (auto res = ::vkCreateShaderModule(parent().logicalDevice(), &shaderModuleInfo, nullptr, &handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Shader::createShaderModule: Couldn't create shader module '"_str + ErrorMessage(res) + "' at path '" + path + '\'');
+        throw std::runtime_error("Graphics::Shader::createShaderModule: Couldn't create shader module '"s + ErrorMessage(res) + "' at path '" + path + '\'');
 }

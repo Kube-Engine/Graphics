@@ -4,7 +4,7 @@
  */
 
 template<kF::Graphics::CommandModel Model>
-inline kF::Graphics::CommandHandle kF::Graphics::CommandPool::add(const Model &model, const Level level, const Lifecycle lifecycle)
+inline kF::Graphics::CommandHandle kF::Graphics::CommandPool::add(const Model &model, const CommandLevel level, const Lifecycle lifecycle)
 {
     Command command;
 
@@ -14,7 +14,7 @@ inline kF::Graphics::CommandHandle kF::Graphics::CommandPool::add(const Model &m
 
 template<kF::Graphics::CommandModel Model>
 inline void kF::Graphics::CommandPool::add(const Model * const modelFrom, const Model * const modelTo,
-        Command * const commandFrom, Command * const commandTo, const Level level, const Lifecycle lifecycle)
+        Command * const commandFrom, Command * const commandTo, const CommandLevel level, const Lifecycle lifecycle)
 {
     kFAssert(std::distance(modelFrom, modelTo) == std::distance(commandFrom, commandTo),
         throw std::logic_error("Grahpics::CommandPool::add: Mismatching model and command count"));

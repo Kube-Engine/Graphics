@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "VulkanHandler.hpp"
+#include "VulkanHandle.hpp"
 
 namespace kF::Graphics
 {
@@ -15,7 +15,7 @@ namespace kF::Graphics
 }
 
 /** @brief A physical device represent a GPU card in the computer */
-class kF::Graphics::PhysicalDevice final : public VulkanHandler<VkPhysicalDevice>
+class kF::Graphics::PhysicalDevice final : public VulkanHandle<VkPhysicalDevice>
 {
 public:
     /** @brief A list of vulkan devices */

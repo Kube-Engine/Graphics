@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <Kube/Core/Core.hpp>
+#include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
 
@@ -14,7 +14,7 @@ using namespace kF;
 using namespace kF::Literal;
 
 Graphics::PhysicalDevice::PhysicalDevice(Renderer &renderer)
-    : VulkanHandler<VkPhysicalDevice>(renderer)
+    : VulkanHandle<VkPhysicalDevice>(renderer)
 {
     auto devices = getDevices();
 
@@ -34,7 +34,7 @@ Graphics::PhysicalDevice::Devices Graphics::PhysicalDevice::getDevices(void) con
     Devices devices;
 
     if (auto res = FillVkContainer(devices, &::vkEnumeratePhysicalDevices, parent().instance()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::PhysicalDevice::PhysicalDevice: Couldn't enumerate physical devices '"_str + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::PhysicalDevice::PhysicalDevice: Couldn't enumerate physical devices '"s + ErrorMessage(res) + '\'');
     return devices;
 }
 

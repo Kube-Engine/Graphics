@@ -5,35 +5,27 @@
 
 #pragma once
 
-#include <vk_mem_alloc.h>
+#include <concepts>
 
-#include "Kube/Core/Utils.hpp"
-
-#include "Buffer.hpp"
-#include "Image.hpp"
+#include "Vulkan.hpp"
 
 namespace kF::Graphics
 {
     struct MemoryAllocationModel;
 
-    /** @brief All kinds of memory types */
-    enum class MemoryUsage : VmaMemoryUsage {
-        DeviceOnly = VMA_MEMORY_USAGE_GPU_ONLY,
-        HostOnly = VMA_MEMORY_USAGE_CPU_ONLY,
-        DeviceToHost = VMA_MEMORY_USAGE_GPU_TO_CPU,
-        HostToDevice = VMA_MEMORY_USAGE_CPU_TO_GPU
-    };
-
-    /** @brief Type of memory allocated */
-    enum class MemoryType : std::uint32_t {
-        Buffer = 0u,
-        Image
-    };
+    template<typename Type>
+    concept MemoryBindable = std::same_as<Type, BufferHandle> || std::same_as<Type, ImageHandle>;
 }
 
 class kF::Graphics::MemoryAllocationModel
 {
 public:
+    /** @brief Type of internal data */
+    enum class BindType : std::uint32_t {
+        Buffer = 0u,
+        Image
+    };
+
     /** @brief Can either contain a buffer or an image */
     union Data
     {
@@ -42,7 +34,7 @@ public:
     };
 
     /** @brief Construct a new memory allocation */
-    template<typename Type> requires std::same_as<Type, BufferHandle> || std::same_as<Type, ImageHandle>
+    template<MemoryBindable Type>
     MemoryAllocationModel(const Type &value, const MemoryUsage usage) noexcept;
 
     /** @brief Copy constructor */
@@ -52,12 +44,8 @@ public:
     MemoryAllocationModel &operator=(const MemoryAllocationModel &other) noexcept = default;
 
 
-    /** @brief Get the usage of memory */
-    [[nodiscard]] MemoryUsage memoryUsage(void) const noexcept { return _usage; }
-
-
     /** @brief Get the type of memory */
-    [[nodiscard]] MemoryType memoryType(void) const noexcept { return _type; }
+    [[nodiscard]] BindType bindType(void) const noexcept { return _bindType; }
 
     /** @brief Retreive data as a buffer */
     [[nodiscard]] BufferHandle buffer(void) const noexcept { return _data.buffer; }
@@ -65,10 +53,14 @@ public:
     /** @brief Retreive data as an image */
     [[nodiscard]] ImageHandle image(void) const noexcept { return _data.image; }
 
+
+    /** @brief Get the usage of memory */
+    [[nodiscard]] MemoryUsage memoryUsage(void) const noexcept { return _usage; }
+
 private:
     Data _data {};
-    MemoryUsage _usage { MemoryUsage::DeviceOnly };
-    MemoryType _type { MemoryType::Buffer };
+    BindType _bindType { BindType::Buffer };
+    MemoryUsage _usage { MemoryUsage::Unknown };
 };
 
 #include "MemoryAllocationModel.ipp"

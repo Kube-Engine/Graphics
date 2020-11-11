@@ -7,7 +7,7 @@
 
 #include <Kube/Core/Vector.hpp>
 
-#include "QueueHandler.hpp"
+#include "QueueManager.hpp"
 #include "CommandModel.hpp"
 
 namespace kF::Graphics
@@ -15,21 +15,12 @@ namespace kF::Graphics
     class CommandPool;
     class ManualCommandPool;
     class AutoCommandPool;
-
-    /** @brief Command handle */
-    using CommandHandle = VkCommandBuffer;
 }
 
 /** @brief Command pool that allocates command buffers */
-class alignas_half_cacheline kF::Graphics::CommandPool : public VulkanHandler<VkCommandPool>
+class alignas_half_cacheline kF::Graphics::CommandPool : public VulkanHandle<VkCommandPool>
 {
 public:
-    /** @brief Level of commands */
-    enum class Level : VkCommandBufferLevel {
-        Primary = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        Secondary = VK_COMMAND_BUFFER_LEVEL_SECONDARY
-    };
-
     /** @brief Lifecycle of commands inside the pool */
     enum class Lifecycle {
         Manual,
@@ -52,14 +43,14 @@ public:
 
     /** @brief Adds a command to the pool */
     template<CommandModel Model>
-    [[nodiscard]] CommandHandle add(const Model &model, const Level level, const Lifecycle lifecycle);
+    [[nodiscard]] CommandHandle add(const Model &model, const CommandLevel level, const Lifecycle lifecycle);
 
     /** @brief Adds a range of commands to the pool
      *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
     template<CommandModel Model>
     void add(const Model * const modelFrom, const Model * const modelTo,
             CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const Level level, const Lifecycle lifecycle);
+            const CommandLevel level, const Lifecycle lifecycle);
 
     /** @brief Remove a command from the pool */
     void remove(const CommandHandle command) noexcept { remove(&command, &command + 1); }
@@ -81,7 +72,7 @@ private:
     void createCommandPool(const QueueType queueType, const Lifecycle lifecycle);
 
     /** @brief Allocate multiple command buffers */
-    void allocateCommands(CommandHandle * const commandFrom, CommandHandle * const commandTo, const Level level);
+    void allocateCommands(CommandHandle * const commandFrom, CommandHandle * const commandTo, const CommandLevel level);
 
     /** @brief Record render commands */
     void recordRender(const RenderModel * const modelFrom, const RenderModel * const modelTo,
@@ -118,7 +109,7 @@ public:
 
     /** @brief Add a one time submit command */
     template<CommandModel Model>
-    [[nodiscard]] CommandHandle add(const Model &model, const Level level = Level::Primary)
+    [[nodiscard]] CommandHandle add(const Model &model, const CommandLevel level = Level::Primary)
         { return CommandPool::add(model, level, Lifecycle::Auto); }
 
     /** @brief Adds a range of commands to the pool
@@ -126,7 +117,7 @@ public:
     template<CommandModel Model>
     void add(const Model * const modelFrom, const Model * const modelTo,
             CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const Level level = Level::Primary)
+            const CommandLevel level = Level::Primary)
         { CommandPool::add(modelFrom, modelTo, commandFrom, commandTo, level, Lifecycle::Auto); }
 
     /** @brief Clear every commands at once */
@@ -158,14 +149,14 @@ public:
 
     /** @brief Adds a command to the pool */
     template<CommandModel Model>
-    [[nodiscard]] CommandHandle add(const Model &model, const Level level = Level::Primary)
+    [[nodiscard]] CommandHandle add(const Model &model, const CommandLevel level = Level::Primary)
         { return CommandPool::add(model, level, Lifecycle::Manual); }
 
     /** @brief Adds a range of commands to the pool
      *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
     template<CommandModel Model>
     void add(const Model * const modelFrom, const Model * const modelTo,
-            CommandHandle * const commandFrom, CommandHandle * const commandTo, const Level level = Level::Primary)
+            CommandHandle * const commandFrom, CommandHandle * const commandTo, const CommandLevel level = Level::Primary)
         { CommandPool::add(modelFrom, modelTo, commandFrom, commandTo, level, Lifecycle::Manual); }
 
     /** @brief Remove a command from the pool */

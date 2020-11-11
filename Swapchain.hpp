@@ -13,7 +13,7 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of renderer swapchain */
-class akignas_cacheline kF::Graphics::Swapchain final : public VulkanHandler<VkSwapchainKHR>
+class akignas_cacheline kF::Graphics::Swapchain final : public VulkanHandle<VkSwapchainKHR>
 {
 public:
     /** @brief Construct the swapchain */
