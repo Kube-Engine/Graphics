@@ -49,6 +49,17 @@ namespace kF::Graphics
         Type3D = VK_IMAGE_TYPE_3D
     };
 
+    /** @brief Image view type */
+    enum class ImageViewType {
+        Type1D = VK_IMAGE_VIEW_TYPE_1D,
+        Type2D = VK_IMAGE_VIEW_TYPE_2D,
+        Type3D = VK_IMAGE_VIEW_TYPE_3D,
+        TypeCube = VK_IMAGE_VIEW_TYPE_CUBE,
+        TypeArray1D = VK_IMAGE_VIEW_TYPE_1D_ARRAY,
+        TypeArray2D = VK_IMAGE_VIEW_TYPE_2D_ARRAY,
+        TypeArrayCube = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY
+    };
+
     /** @brief Image layout */
     enum class ImageLayout {
         Undefined = VK_IMAGE_LAYOUT_UNDEFINED,

@@ -121,4 +121,15 @@ namespace kF::Graphics
         X32 = VK_SAMPLE_COUNT_32_BIT,
         X64 = VK_SAMPLE_COUNT_64_BIT
     };
+
+
+    /** @brief Image view creation flags */
+    enum class ImageViewCreateFlags : VkImageViewCreateFlags {
+        None = 0x0,
+        Dynamic = VK_IMAGE_VIEW_CREATE_FRAGMENT_DENSITY_MAP_DYNAMIC_BIT_EXT,
+        Defered = VK_IMAGE_VIEW_CREATE_FRAGMENT_DENSITY_MAP_DEFERRED_BIT_EXT
+    };
+
+
+
 }

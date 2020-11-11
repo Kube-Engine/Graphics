@@ -17,11 +17,13 @@ struct kF::Graphics::ImageModel : public VkImageCreateInfo
     /** @brief Initialize constructor */
     ImageModel(const ImageCreateFlags flags_, const ImageType type_, const Format format_, const Extent3D &extent_,
             const std::uint32_t mipLevels_, const std::uint32_t arrayLayers_, const SampleCountFlags samples_,
-            const ImageTiling tiling_, const ImageUsageFlags usage_, const SharingMode sharingMode_, const uint32_t queueFamilyIndexCount_, const uint32_t *pQueueFamilyIndices_) noexcept
+            const ImageTiling tiling_, const ImageUsageFlags usage_, const SharingMode sharingMode_,
+            const uint32_t queueFamilyIndexCount_, const uint32_t *pQueueFamilyIndices_, const ImageLayout initialLayout_)
+        noexcept
         : VkImageCreateInfo(
             sType: VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             pNext: nullptr,
-            flags: createFlags_,
+            flags: flags_,
             imageType: type_,
             format: format_,
             extent: extent_,
@@ -42,9 +44,10 @@ struct kF::Graphics::ImageModel : public VkImageCreateInfo
     ImageModel &operator=(const ImageModel &other) noexcept = default;
     ImageModel &operator=(ImageModel &&other) noexcept = default;
 
-    [[nodiscard]] static ImageModel MakeBasicImage(const ImageType type, const Extent3D &extent, const Format format, const SampleCountFlags samples) noexcept {
+    [[nodiscard]] static ImageModel MakeBasicImage(const ImageType type, const Extent3D &extent, const Format format, const SampleCountFlags samples)
+        noexcept {
         return ImageModel(
-            0,
+            ImageCreateFlags::None,
             type,
             format,
             Extent3D {
@@ -60,7 +63,7 @@ struct kF::Graphics::ImageModel : public VkImageCreateInfo
             SharingMode::Exclusive,
             0,
             nullptr,
-            ImageLayout::Undefined
+            ImageLayout::Undefined,
         );
     }
 
@@ -106,7 +109,7 @@ struct kF::Graphics::ImageModel : public VkImageCreateInfo
 
     [[nodiscard]] static ImageModel MakeLayerImage(const ImageType type, const Extent3D &extent, const Format format, const SampleCountFlags samples, const uint32_t layers) noexcept {
         return ImageModel(
-            0,
+            ImageCreateFlags::None,
             ImageType::Type2D,
             format,
             Extent3D {
@@ -128,7 +131,7 @@ struct kF::Graphics::ImageModel : public VkImageCreateInfo
 
     [[nodiscard]] static ImageModel MakeMipMapImage(const ImageType type, const Extent3D &extent, const Format format, const SampleCountFlags samples, const uint32_t mipLevels) noexcept {
         return ImageModel(
-            0,
+            ImageCreateFlags::None,
             ImageType::Type2D,
             format,
             Extent3D {
