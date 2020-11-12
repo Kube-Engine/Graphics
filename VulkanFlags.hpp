@@ -146,4 +146,123 @@ namespace kF::Graphics
         RenderPassContinue = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
         SimultaneousUse = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT
     };
+
+
+    /** @brief Pipeline creation flags */
+    enum class PipelineCreateFlags : VkPipelineCreateFlags {
+        None = 0x0,
+        DisableOptimization = VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT,
+        AllowDerivatives = VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT,
+        Derivative = VK_PIPELINE_CREATE_DERIVATIVE_BIT,
+        ViewIndexFromDeviceIndex = VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT,
+        DispatchBase = VK_PIPELINE_CREATE_DISPATCH_BASE_BIT,
+        RayTracingNoNullAnyHitShadersKhr = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_ANY_HIT_SHADERS_BIT_KHR,
+        RayTracingNoNullClosestHitShadersKhr = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_CLOSEST_HIT_SHADERS_BIT_KHR,
+        RayTracingNoNullMissShadersKhr = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_MISS_SHADERS_BIT_KHR,
+        RayTracingNoNullIntersectionShadersKhr = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_INTERSECTION_SHADERS_BIT_KHR,
+        RayTracingSkipTrianglesKhr = VK_PIPELINE_CREATE_RAY_TRACING_SKIP_TRIANGLES_BIT_KHR,
+        RayTracingSkipAabbsKhr = VK_PIPELINE_CREATE_RAY_TRACING_SKIP_AABBS_BIT_KHR,
+        DeferCompileNv = VK_PIPELINE_CREATE_DEFER_COMPILE_BIT_NV,
+        CaptureStatisticsKhr = VK_PIPELINE_CREATE_CAPTURE_STATISTICS_BIT_KHR,
+        CaptureInternalRepresentationsKhr = VK_PIPELINE_CREATE_CAPTURE_INTERNAL_REPRESENTATIONS_BIT_KHR,
+        IndirectBindableNv = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV,
+        LibraryKhr = VK_PIPELINE_CREATE_LIBRARY_BIT_KHR,
+        FailOnPipelineCompileRequiredExt = VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_EXT,
+        EarlyReturnOnFailureExt = VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT_EXT,
+        DispatchBase = VK_PIPELINE_CREATE_DISPATCH_BASE,
+        ViewIndexFromDeviceIndexKhr = VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR,
+        DispatchBaseKhr = VK_PIPELINE_CREATE_DISPATCH_BASE_KHR
+    };
+
+    /** @brief Vertex input state creation flags */
+    enum class VertexInputCreateFlags : VkPipelineVertexInputStateCreateFlags {
+        None = 0x0
+    };
+
+
+    /** @brief Shader stage creation flags */
+    enum class ShaderStageCreateFlags : VkPipelineShaderStageCreateFlags {
+        None = 0x0,
+        AllowVaryingSubgroupSizeExt = VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT,
+        RequireFullSubgroupsExt = VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT
+    };
+
+    /** @brief Shader stage flags */
+    enum class ShaderStageFlags : VkShaderStageFlags {
+        None = 0x0
+    };
+
+
+    /** @brief Input assembly creation flags */
+    enum class InputAssemblyCreateFlags : VkPipelineInputAssemblyStateCreateFlags {
+        None = 0x0
+    };
+
+
+    /** @brief Tessellation state assembly creation flags */
+    enum class TessellationCreateFlags : VkPipelineTessellationStateCreateFlags{
+        None = 0x0
+    };
+
+
+    /** @brief Viewport creation flags */
+    enum class ViewportCreateFlags : VkPipelineViewportStateCreateFlags {
+        None = 0x0
+    };
+
+
+    /** @brief Rasterization creation flags */
+    enum class RasterizationCreateFlags : VkPipelineRasterizationStateCreateFlags {
+        None = 0x0
+    };
+
+    /** @brief Cull mode flags */
+    enum class CullModeFlags : VkCullModeFlags {
+        None = 0x0
+    };
+
+
+    /** @brief Multisample creation flags */
+    enum class MultisampleCreateFlags : VkPipelineMultisampleStateCreateFlags {
+        None = 0x0,
+    };
+
+    /** @brief Sample count flags */
+    enum class SampleCountFlags : VkSampleCountFlags {
+        None = 0x0,
+        X1 = VK_SAMPLE_COUNT_1_BIT,
+        X2 = VK_SAMPLE_COUNT_2_BIT,
+        X4 = VK_SAMPLE_COUNT_4_BIT,
+        X8 = VK_SAMPLE_COUNT_8_BIT,
+        X16 = VK_SAMPLE_COUNT_16_BIT,
+        X32 = VK_SAMPLE_COUNT_32_BIT,
+        X64 = VK_SAMPLE_COUNT_64_BIT
+    };
+
+
+    /** @brief Depth stencil creation flags */
+    enum class DepthStencilCreateFlags : VkPipelineDepthStencilStateCreateFlags {
+        None = 0x0
+    };
+
+
+    /** @brief Color blend creation flags */
+    enum class ColorBlendCreateFlags : VkPipelineColorBlendStateCreateFlags {
+        None = 0x0
+    };
+
+    /** @brief Color components flags */
+    enum class ColorComponentFlags : VkColorComponentFlags {
+        None = 0x0,
+        R = VK_COLOR_COMPONENT_R_BIT,
+        G = VK_COLOR_COMPONENT_G_BIT,
+        B = VK_COLOR_COMPONENT_B_BIT,
+        A = VK_COLOR_COMPONENT_A_BIT
+    };
+
+
+    /** @brief Dynamic state creation flags */
+    enum class DynamicStateCreateFlags : VkPipelineDynamicStateCreateFlags {
+        None = 0x0
+    };
 }

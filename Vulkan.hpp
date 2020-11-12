@@ -124,6 +124,32 @@ namespace kF::Graphics
     using SamplerHandle = VkSampler;
 
 
+    /** @brief Vertex input binding description */
+    using VertexInputBindingDescription = VkVertexInputBindingDescription;
+
+    /** @brief Vertex input attribute description */
+    using VertexInputAttributeDescription = VkVertexInputAttributeDescription;
+
+
+    /** @brief Shader module */
+    using ShaderModuleHandle = VkShaderModule;
+
+    /** @brief Shader specialization info */
+    using ShaderSpecializationTable = VkSpecializationInfo;
+
+
+    /** @brief Sample mask */
+    using SampleMask = VkSampleMask;
+
+
+    /** @brief Stencil operation state */
+    using StencilOpState = VkStencilOpState;
+
+
+    /** @brief Color blend attachment state */
+    using ColorBlendAttachmentState = VkPipelineColorBlendAttachmentState;
+
+
     /** @brief Get an error message from a vulkan result */
     [[nodiscard]] const char *ErrorMessage(const VkResult res);
 

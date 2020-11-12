@@ -149,6 +149,118 @@ namespace kF::Graphics
         Always = VK_COMPARE_OP_ALWAYS
     };
 
+    /** @brief Logic operators */
+    enum class LogicOp {
+        Clear = VK_LOGIC_OP_CLEAR,
+        And = VK_LOGIC_OP_AND,
+        AndReverse = VK_LOGIC_OP_AND_REVERSE,
+        Copy = VK_LOGIC_OP_COPY,
+        AndInverted = VK_LOGIC_OP_AND_INVERTED,
+        NoOp = VK_LOGIC_OP_NO_OP,
+        Xor = VK_LOGIC_OP_XOR,
+        Or = VK_LOGIC_OP_OR,
+        Nor = VK_LOGIC_OP_NOR,
+        Equivalent = VK_LOGIC_OP_EQUIVALENT,
+        Invert = VK_LOGIC_OP_INVERT,
+        OrReverse = VK_LOGIC_OP_OR_REVERSE,
+        CopyInverted = VK_LOGIC_OP_COPY_INVERTED,
+        OrInverted = VK_LOGIC_OP_OR_INVERTED,
+        Nand = VK_LOGIC_OP_NAND,
+        Set = VK_LOGIC_OP_SET,
+    };
+
+    /** @brief Stencil operators */
+    enum class StencilOp {
+        Keep = VK_STENCIL_OP_KEEP,
+        Zero = VK_STENCIL_OP_ZERO,
+        Replace = VK_STENCIL_OP_REPLACE,
+        IncrementAndClamp = VK_STENCIL_OP_INCREMENT_AND_CLAMP,
+        DecrementAndClamp = VK_STENCIL_OP_DECREMENT_AND_CLAMP,
+        Invert = VK_STENCIL_OP_INVERT,
+        IncrementAndWrap = VK_STENCIL_OP_INCREMENT_AND_WRAP,
+        DecrementAndWrap = VK_STENCIL_OP_DECREMENT_AND_WRAP
+    };
+
+    /** @brief Blend operators */
+    enum class BlendOp {
+        Add = VK_BLEND_OP_ADD,
+        Subtract = VK_BLEND_OP_SUBTRACT,
+        ReverseSubtract = VK_BLEND_OP_REVERSE_SUBTRACT,
+        Min = VK_BLEND_OP_MIN,
+        Max = VK_BLEND_OP_MAX,
+        ZeroExt = VK_BLEND_OP_ZERO_EXT,
+        SrcExt = VK_BLEND_OP_SRC_EXT,
+        DstExt = VK_BLEND_OP_DST_EXT,
+        SrcOverExt = VK_BLEND_OP_SRC_OVER_EXT,
+        DstOverExt = VK_BLEND_OP_DST_OVER_EXT,
+        SrcInExt = VK_BLEND_OP_SRC_IN_EXT,
+        DstInExt = VK_BLEND_OP_DST_IN_EXT,
+        SrcOutExt = VK_BLEND_OP_SRC_OUT_EXT,
+        DstOutExt = VK_BLEND_OP_DST_OUT_EXT,
+        SrcAtopExt = VK_BLEND_OP_SRC_ATOP_EXT,
+        DstAtopExt = VK_BLEND_OP_DST_ATOP_EXT,
+        XorExt = VK_BLEND_OP_XOR_EXT,
+        MultiplyExt = VK_BLEND_OP_MULTIPLY_EXT,
+        ScreenExt = VK_BLEND_OP_SCREEN_EXT,
+        OverlayExt = VK_BLEND_OP_OVERLAY_EXT,
+        DarkenExt = VK_BLEND_OP_DARKEN_EXT,
+        LightenExt = VK_BLEND_OP_LIGHTEN_EXT,
+        ColordodgeExt = VK_BLEND_OP_COLORDODGE_EXT,
+        ColorburnExt = VK_BLEND_OP_COLORBURN_EXT,
+        HardlightExt = VK_BLEND_OP_HARDLIGHT_EXT,
+        SoftlightExt = VK_BLEND_OP_SOFTLIGHT_EXT,
+        DifferenceExt = VK_BLEND_OP_DIFFERENCE_EXT,
+        ExclusionExt = VK_BLEND_OP_EXCLUSION_EXT,
+        InvertExt = VK_BLEND_OP_INVERT_EXT,
+        InvertRgbExt = VK_BLEND_OP_INVERT_RGB_EXT,
+        LineardodgeExt = VK_BLEND_OP_LINEARDODGE_EXT,
+        LinearburnExt = VK_BLEND_OP_LINEARBURN_EXT,
+        VividlightExt = VK_BLEND_OP_VIVIDLIGHT_EXT,
+        LinearlightExt = VK_BLEND_OP_LINEARLIGHT_EXT,
+        PinlightExt = VK_BLEND_OP_PINLIGHT_EXT,
+        HardmixExt = VK_BLEND_OP_HARDMIX_EXT,
+        HslHueExt = VK_BLEND_OP_HSL_HUE_EXT,
+        HslSaturationExt = VK_BLEND_OP_HSL_SATURATION_EXT,
+        HslColorExt = VK_BLEND_OP_HSL_COLOR_EXT,
+        HslLuminosityExt = VK_BLEND_OP_HSL_LUMINOSITY_EXT,
+        PlusExt = VK_BLEND_OP_PLUS_EXT,
+        PlusClampedExt = VK_BLEND_OP_PLUS_CLAMPED_EXT,
+        PlusClampedAlphaExt = VK_BLEND_OP_PLUS_CLAMPED_ALPHA_EXT,
+        PlusDarkerExt = VK_BLEND_OP_PLUS_DARKER_EXT,
+        MinusExt = VK_BLEND_OP_MINUS_EXT,
+        MinusClampedExt = VK_BLEND_OP_MINUS_CLAMPED_EXT,
+        ContrastExt = VK_BLEND_OP_CONTRAST_EXT,
+        InvertOvgExt = VK_BLEND_OP_INVERT_OVG_EXT,
+        RedExt = VK_BLEND_OP_RED_EXT,
+        GreenExt = VK_BLEND_OP_GREEN_EXT,
+        BlueExt = VK_BLEND_OP_BLUE_EXT
+    };
+
+
+    /** @brief Blend factor */
+    enum class BlendFactor {
+        Zero = VK_BLEND_FACTOR_ZERO,
+        One = VK_BLEND_FACTOR_ONE,
+        SrcColor = VK_BLEND_FACTOR_SRC_COLOR,
+        OneMinusSrcColor = VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR,
+        DstColor = VK_BLEND_FACTOR_DST_COLOR,
+        OneMinusDstColor = VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR,
+        SrcAlpha = VK_BLEND_FACTOR_SRC_ALPHA,
+        OneMinusSrcAlpha = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        DstAlpha = VK_BLEND_FACTOR_DST_ALPHA,
+        OneMinusDstAlpha = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA,
+        ConstantColor = VK_BLEND_FACTOR_CONSTANT_COLOR,
+        OneMinusConstantColor = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR,
+        ConstantAlpha = VK_BLEND_FACTOR_CONSTANT_ALPHA,
+        OneMinusConstantAlpha = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA,
+        SrcAlphaSaturate = VK_BLEND_FACTOR_SRC_ALPHA_SATURATE,
+        Src1Color = VK_BLEND_FACTOR_SRC1_COLOR,
+        OneMinusSrc1Color = VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR,
+        Src1Alpha = VK_BLEND_FACTOR_SRC1_ALPHA,
+        OneMinusSrc1Alpha = VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA
+    };
+
+
     /** @brief Border color */
     enum class BorderColor {
         FloatTransparentBlack = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
@@ -161,6 +273,68 @@ namespace kF::Graphics
         IntCustomExt = VK_BORDER_COLOR_INT_CUSTOM_EXT
     };
 
+
+    /** @brief Primitive rendering topologies */
+    enum class PrimitiveTopology {
+        PointList = VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
+        LineList = VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+        LineStrip = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
+        TriangleList = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+        TriangleStrip = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
+        TriangleFan = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN,
+        LineListWithAdjacency = VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY,
+        LineStripWithAdjacency = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY,
+        TriangleListWithAdjacency = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY,
+        TriangleStripWithAdjacency = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY,
+        PatchList = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST
+    };
+
+    /** @brief Polygon modes */
+    enum class PolygonMode {
+        Fill = VK_POLYGON_MODE_FILL,
+        Line = VK_POLYGON_MODE_LINE,
+        Point = VK_POLYGON_MODE_POINT,
+        FillRectangleNv = VK_POLYGON_MODE_FILL_RECTANGLE_NV
+    };
+
+    /** @brief Front face */
+    enum class FrontFace {
+        CounterClockwise = VK_FRONT_FACE_COUNTER_CLOCKWISE,
+        Clockwise = VK_FRONT_FACE_CLOCKWISE
+    };
+
+
+    /** @brief Dynamic states */
+    enum class DynamicState {
+        Viewport = VK_DYNAMIC_STATE_VIEWPORT,
+        Scissor = VK_DYNAMIC_STATE_SCISSOR,
+        LineWidth = VK_DYNAMIC_STATE_LINE_WIDTH,
+        DepthBias = VK_DYNAMIC_STATE_DEPTH_BIAS,
+        BlendConstants = VK_DYNAMIC_STATE_BLEND_CONSTANTS,
+        DepthBounds = VK_DYNAMIC_STATE_DEPTH_BOUNDS,
+        StencilCompareMask = VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
+        StencilWriteMask = VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
+        StencilReference = VK_DYNAMIC_STATE_STENCIL_REFERENCE,
+        ViewportWScalingNv = VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV,
+        DiscardRectangleExt = VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT,
+        SampleLocationsExt = VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT,
+        ViewportShadingRatePaletteNv = VK_DYNAMIC_STATE_VIEWPORT_SHADING_RATE_PALETTE_NV,
+        ViewportCoarseSampleOrderNv = VK_DYNAMIC_STATE_VIEWPORT_COARSE_SAMPLE_ORDER_NV,
+        ExclusiveScissorNv = VK_DYNAMIC_STATE_EXCLUSIVE_SCISSOR_NV,
+        LineStippleExt = VK_DYNAMIC_STATE_LINE_STIPPLE_EXT,
+        CullModeExt = VK_DYNAMIC_STATE_CULL_MODE_EXT,
+        FrontFaceExt = VK_DYNAMIC_STATE_FRONT_FACE_EXT,
+        PrimitiveTopologyExt = VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY_EXT,
+        ViewportWithCountExt = VK_DYNAMIC_STATE_VIEWPORT_WITH_COUNT_EXT,
+        ScissorWithCountExt = VK_DYNAMIC_STATE_SCISSOR_WITH_COUNT_EXT,
+        VertexInputBindingStrideExt = VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT,
+        DepthTestEnableExt = VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE_EXT,
+        DepthWriteEnableExt = VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE_EXT,
+        DepthCompareOpExt = VK_DYNAMIC_STATE_DEPTH_COMPARE_OP_EXT,
+        DepthBoundsTestEnableExt = VK_DYNAMIC_STATE_DEPTH_BOUNDS_TEST_ENABLE_EXT,
+        StencilTestEnableExt = VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE_EXT,
+        StencilOpExt = VK_DYNAMIC_STATE_STENCIL_OP_EXT
+    };
 
     /** @brief All supported bytes formats */
     enum class Format {
