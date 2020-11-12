@@ -189,7 +189,29 @@ namespace kF::Graphics
 
     /** @brief Shader stage flags */
     enum class ShaderStageFlags : VkShaderStageFlags {
-        None = 0x0
+        None = 0x0,
+        VertexBit = VK_SHADER_STAGE_VERTEX_BIT,
+        TessellationControlBit = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
+        TessellationEvaluationBit = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
+        GeometryBit = VK_SHADER_STAGE_GEOMETRY_BIT,
+        FragmentBit = VK_SHADER_STAGE_FRAGMENT_BIT,
+        ComputeBit = VK_SHADER_STAGE_COMPUTE_BIT,
+        AllGraphics = VK_SHADER_STAGE_ALL_GRAPHICS,
+        All = VK_SHADER_STAGE_ALL,
+        RaygenBitKhr = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
+        AnyHitBitKhr = VK_SHADER_STAGE_ANY_HIT_BIT_KHR,
+        ClosestHitBitKhr = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
+        MissBitKhr = VK_SHADER_STAGE_MISS_BIT_KHR,
+        IntersectionBitKhr = VK_SHADER_STAGE_INTERSECTION_BIT_KHR,
+        CallableBitKhr = VK_SHADER_STAGE_CALLABLE_BIT_KHR,
+        TaskBitNv = VK_SHADER_STAGE_TASK_BIT_NV,
+        MeshBitNv = VK_SHADER_STAGE_MESH_BIT_NV,
+        RaygenBitNv = RaygenBitKhr,
+        AnyHitBitNv = AnyHitBitKhr,
+        ClosestHitBitNv = ClosestHitBitKhr,
+        MissBitNv = MissBitKhr,
+        IntersectionBitNv = IntersectionBitKhr,
+        CallableBitNv = CallableBitKhr
     };
 
 
@@ -264,5 +286,14 @@ namespace kF::Graphics
     /** @brief Dynamic state creation flags */
     enum class DynamicStateCreateFlags : VkPipelineDynamicStateCreateFlags {
         None = 0x0
+    };
+
+
+    /** @brief Descriptor set layout creation flags */
+    enum class DescriptorSetLayoutCreateFlags : VkDescriptorSetLayoutCreateFlagBits {
+        None = 0x0,
+        UpdateAfterBindPool = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT,
+        PushDescriptorKhr = VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR,
+        UpdateAfterBindPoolExt = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT
     };
 }
