@@ -18,10 +18,9 @@ Graphics::Swapchain::Swapchain(Renderer &renderer)
     createSwapchain();
     createImageViews(retreiveImages());
 #if KUBE_DEBUG_BUILD
-    std::cout << "PresentMode: " << Surface::PresentModeName(presentMode()) << std::endl;
+    std::cout << "PresentMode: " << PresentModeName(presentMode()) << std::endl;
     std::cout << "Extent2D: " << extent().width << ", " << extent().height << std::endl;
-    std::cout << "Images: " << images().size() << std::endl;
-    std::cout << "ImageViews: " << imageViews().size() << std::endl;
+    std::cout << "Images: " << _imagePairs.size() << std::endl;
 #endif
 }
 

@@ -19,7 +19,7 @@ Graphics::QueueManager::QueueManager(Renderer &renderer)
     retreiveFamilyQueueIndexes();
 #if KUBE_DEBUG_BUILD
     std::cout << "Queues:" << std::endl;
-    for (auto type = 0u; type < QueueType::Count; ++type) {
+    for (std::size_t type = 0ul; type < static_cast<std::size_t>(QueueType::Count); ++type) {
         std::cout << '\t' << QueueTypeName(static_cast<QueueType>(type)) << ": ";
         if (!_candidates[type].empty()) {
             std::cout << _candidates[type].size() << " queues available: " << std::endl;
@@ -63,7 +63,7 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
 
     for (std::size_t type = 0u; type < static_cast<std::size_t>(QueueType::Count); ++type) {
         if (_candidates[type].empty()) {
-            if (static_cast<QueueType>(type) == QueueType::FastTransfer)
+            if (static_cast<QueueType>(type) == QueueType::FastTransfer || static_cast<QueueType>(type) == QueueType::SparseBinding)
                 continue;
             throw std::runtime_error("Graphics::QueueManager::registerQueues: Couldn't register unsupported queue type '"s + QueueTypeName(static_cast<QueueType>(type)));
         }
@@ -159,6 +159,8 @@ constexpr const char *kF::Graphics::QueueTypeName(const QueueType type) noexcept
         return "Transfer";
     case (QueueType::FastTransfer):
         return "FastTransfer";
+    case (QueueType::SparseBinding):
+        return "SparseBinding";
     case (QueueType::Present):
         return "Present";
     default:

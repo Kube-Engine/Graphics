@@ -33,6 +33,7 @@ public:
         ImageHandle image;
     };
 
+
     /** @brief Construct a new memory allocation */
     template<MemoryBindable Type>
     MemoryAllocationModel(const Type &value, const MemoryUsage usage) noexcept;

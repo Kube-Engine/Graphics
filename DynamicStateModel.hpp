@@ -23,7 +23,7 @@ struct kF::Graphics::DynamicStateModel : public VkPipelineDynamicStateCreateInfo
             pNext: nullptr,
             flags: ToFlags(flags_),
             dynamicStateCount: static_cast<std::uint32_t>(std::distance(stateBegin, stateEnd)),
-            pDynamicStates: stateBegin
+            pDynamicStates: reinterpret_cast<const VkDynamicState * const>(stateBegin)
         } {}
 
     /** @brief POD semantics */

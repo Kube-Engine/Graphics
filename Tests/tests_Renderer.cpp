@@ -5,11 +5,11 @@
 
 #include <gtest/gtest.h>
 
-#include <Kube/Graphics/Renderer.hpp>
+#include "RendererHelper.hpp"
 
 using namespace kF;
 
 TEST(Renderer, InitDestroy)
 {
+    auto renderer = MakeRenderer();
 }
-

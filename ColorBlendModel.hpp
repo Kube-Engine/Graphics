@@ -17,8 +17,8 @@ struct kF::Graphics::ColorBlendModel : public VkPipelineColorBlendStateCreateInf
 {
     /** @brief Initialize constructor */
     ColorBlendModel(const ColorBlendCreateFlags flags_, const bool logicOpEnable_, const LogicOp logicOp_,
-            const ColorBlendAttachmentState * const attachmentBegin, const ColorBlendAttachmentState * const atttachmentEnd,
-            const float blendConstants_[4])
+            const ColorBlendAttachmentState * const attachmentBegin, const ColorBlendAttachmentState * const attachmentEnd,
+            const float blendRed, const float blendGreen, const float blendBlue, const float blendAlpha)
         noexcept
         : VkPipelineColorBlendStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
@@ -28,7 +28,9 @@ struct kF::Graphics::ColorBlendModel : public VkPipelineColorBlendStateCreateInf
             logicOp: static_cast<VkLogicOp>(logicOp),
             attachmentCount: static_cast<std::uint32_t>(std::distance(attachmentBegin, attachmentEnd)),
             pAttachments: attachmentBegin,
-            blendConstants: blendConstants
+            blendConstants: {
+                blendRed, blendGreen, blendBlue, blendAlpha
+            }
         } {}
 
     /** @brief POD semantics */

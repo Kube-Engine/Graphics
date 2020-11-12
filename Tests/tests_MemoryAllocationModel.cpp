@@ -9,16 +9,16 @@
 
 using namespace kF;
 
-TEST(MemoryAllocationModel, InitDestroy)
+TEST(MemoryAllocationModel, Constructor)
 {
     {
-        Graphics::MemoryAllocationModel model(Graphics::BufferHandle{}, Graphics::MemoryUsage::DeviceOnly);
-        ASSERT_EQ(model.memoryUsage(), Graphics::MemoryUsage::DeviceOnly);
-        ASSERT_EQ(model.memoryType(), Graphics::MemoryType::Buffer);
+        Graphics::MemoryAllocationModel model(Graphics::BufferHandle{}, Graphics::MemoryUsage::GpuOnly);
+        ASSERT_EQ(model.bindType(), Graphics::MemoryAllocationModel::BindType::Buffer);
+        ASSERT_EQ(model.memoryUsage(), Graphics::MemoryUsage::GpuOnly);
     }
     {
-        Graphics::MemoryAllocationModel model(Graphics::ImageHandle{}, Graphics::MemoryUsage::DeviceToHost);
-        ASSERT_EQ(model.memoryUsage(), Graphics::MemoryUsage::DeviceToHost);
-        ASSERT_EQ(model.memoryType(), Graphics::MemoryType::Image);
+        Graphics::MemoryAllocationModel model(Graphics::ImageHandle{}, Graphics::MemoryUsage::CpuToGpu);
+        ASSERT_EQ(model.bindType(), Graphics::MemoryAllocationModel::BindType::Image);
+        ASSERT_EQ(model.memoryUsage(), Graphics::MemoryUsage::CpuToGpu);
     }
 }

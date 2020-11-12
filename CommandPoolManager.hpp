@@ -28,18 +28,27 @@ public:
     /** @brief Pool node */
     struct Node;
 
-    /** @brief An atomic pool node */
-    using AtomicNode = std::atomic<Node *>;
-
-    /** @brief An array of pools sorted by queue types */
-    using PerQueueNodeArray = std::array<AtomicNode, static_cast<std::size_t>(QueueType::Count)>;
-
     /** @brief Command pool node */
     struct Node
     {
         AutoCommandPool pool;
         Node *next { nullptr };
     };
+
+    /** @brief An atomic pool node */
+    struct NodePool
+    {
+        std::atomic<Node *> head { nullptr };
+
+        /** @brief Adds POD semantics to atomic */
+        NodePool(void) noexcept = default;
+        NodePool(NodePool &&other) noexcept : head(other.head.load()) {}
+        ~NodePool(void) noexcept = default;
+        NodePool &operator=(NodePool &&other) noexcept { head.store(other.head.load()); return *this; }
+    };
+
+    /** @brief An array of pools sorted by queue types */
+    using PerQueueNodePoolArray = std::array<NodePool, static_cast<std::size_t>(QueueType::Count)>;
 
     /** @brief This class allow to use a command pool in its scope before releasing it in the manager */
     class ScopedCommandPool
@@ -88,7 +97,7 @@ public:
     CommandPoolManager(CommandPoolManager &&other) noexcept = default;
 
     /** @brief Destruct the manager and every pool, not thread safe */
-    ~CommandPoolManager(void) = default;
+    ~CommandPoolManager(void) noexcept_ndebug;
 
     /** @brief Move assignment, not thread safe */
     CommandPoolManager &operator=(CommandPoolManager &&other) noexcept = default;
@@ -110,10 +119,10 @@ public:
 private:
     static inline std::pmr::synchronized_pool_resource _Allocator {};
 
-    PerFrameCache<PerQueueNodeArray> _cachedFrames;
 #if KUBE_DEBUG_BUILD
     std::atomic<std::size_t> _activeScopedCount { 0u };
 #endif
+    PerFrameCache<PerQueueNodePoolArray> _cachedFrames;
 
     /** @brief Allocate and construct a new node using allocator */
     [[nodiscard]] Node *allocate(const QueueType queueType) noexcept;

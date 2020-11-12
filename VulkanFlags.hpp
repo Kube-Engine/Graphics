@@ -112,17 +112,6 @@ namespace kF::Graphics
         FragmentDensityMapExt = VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT
     };
 
-    /** @brief Sample count flags */
-    enum class SampleCountFlags : VkSampleCountFlags {
-        X1 = VK_SAMPLE_COUNT_1_BIT,
-        X2 = VK_SAMPLE_COUNT_2_BIT,
-        X4 = VK_SAMPLE_COUNT_4_BIT,
-        X8 = VK_SAMPLE_COUNT_8_BIT,
-        X16 = VK_SAMPLE_COUNT_16_BIT,
-        X32 = VK_SAMPLE_COUNT_32_BIT,
-        X64 = VK_SAMPLE_COUNT_64_BIT
-    };
-
 
     /** @brief Image view creation flags */
     enum class ImageViewCreateFlags : VkImageViewCreateFlags {
@@ -168,10 +157,7 @@ namespace kF::Graphics
         IndirectBindableNv = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV,
         LibraryKhr = VK_PIPELINE_CREATE_LIBRARY_BIT_KHR,
         FailOnPipelineCompileRequiredExt = VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_EXT,
-        EarlyReturnOnFailureExt = VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT_EXT,
-        DispatchBase = VK_PIPELINE_CREATE_DISPATCH_BASE,
-        ViewIndexFromDeviceIndexKhr = VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR,
-        DispatchBaseKhr = VK_PIPELINE_CREATE_DISPATCH_BASE_KHR
+        EarlyReturnOnFailureExt = VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT_EXT
     };
 
     /** @brief Vertex input state creation flags */

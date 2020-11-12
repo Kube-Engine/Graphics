@@ -60,6 +60,10 @@ namespace kF::Graphics
     using SemaphoreHandle = VkFence;
 
 
+    /** @brief A device pipeline */
+    using PipelineHandle = VkPipeline;
+
+
     /** @brief Pipeline layout handle */
     using PipelineLayoutHandle = VkPipelineLayout;
 

@@ -8,19 +8,19 @@
 
 using namespace kF;
 
-Graphics::CommandPoolManager::CommandPoolManager(Renderer &renderer)
+Graphics::CommandPoolManager::CommandPoolManager(Renderer &renderer) noexcept
    : RendererObject(renderer), _cachedFrames(renderer.cachedFrameCount())
 {
 }
 
-Graphics::CommandPoolManager::~CommandPoolManager(void)
+Graphics::CommandPoolManager::~CommandPoolManager(void) noexcept_ndebug
 {
    kFAssert(!_activeScopedCount.load(),
       throw std::logic_error("Graphics::CommandPoolManager::~CommandPoolManager: Can't destroy manager as there are "
          + std::to_string(_activeScopedCount.load()) + " active scoped command pools"));
    for (auto &cache : _cachedFrames.caches()) {
-      for (auto &node : cache) {
-         auto current = node.load();
+      for (auto &pool : cache) {
+         auto current = pool.head.load();
          decltype(current) next;
          while (current) {
             next = current->next;
@@ -33,8 +33,8 @@ Graphics::CommandPoolManager::~CommandPoolManager(void)
 
 Graphics::CommandPoolManager::ScopedCommandPool Graphics::CommandPoolManager::acquire(const QueueType queueType)
 {
-   auto &cachedNode = _cachedFrames.currentCache()[static_cast<std::size_t>(queueType)];
-   auto expected = cachedNode.load();
+   auto &cachedPool = _cachedFrames.currentCache()[static_cast<std::size_t>(queueType)];
+   auto expected = cachedPool.head.load();
    decltype(expected) desired;
 
 #if KUBE_DEBUG_BUILD
@@ -45,7 +45,7 @@ Graphics::CommandPoolManager::ScopedCommandPool Graphics::CommandPoolManager::ac
          desired = expected->next;
       else [[unlikely]]
          return ScopedCommandPool(allocate(queueType), this);
-      if (cachedNode.compare_exchange_weak(expected, desired)) [[likely]]
+      if (cachedPool.head.compare_exchange_weak(expected, desired)) [[likely]]
          break;
    }
    return ScopedCommandPool(expected, this);
@@ -53,16 +53,16 @@ Graphics::CommandPoolManager::ScopedCommandPool Graphics::CommandPoolManager::ac
 
 void Graphics::CommandPoolManager::takeBack(Node * const node) noexcept
 {
-   auto &cachedNode = _cachedFrames.currentCache()[static_cast<std::size_t>(node->pool.queueType())];
+   auto &cachedPool = _cachedFrames.currentCache()[static_cast<std::size_t>(node->pool.queueType())];
    const auto desired = node;
-   auto expected = cachedNode.load();
+   auto expected = cachedPool.head.load();
 
    while (true) {
       if (expected) [[likely]]
          node->next = expected;
       else [[unlikely]]
          node->next = nullptr;
-      if (cachedNode.compare_exchange_weak(expected, desired)) [[likely]]
+      if (cachedPool.head.compare_exchange_weak(expected, desired)) [[likely]]
          break;
    }
 #if KUBE_DEBUG_BUILD
@@ -74,8 +74,8 @@ void Graphics::CommandPoolManager::releaseFrame(const std::size_t frameIndex) no
 {
    auto &cache = _cachedFrames.cacheAt(frameIndex);
 
-   for (auto &node : cache) {
-      auto current = node.load();
+   for (auto &pool : cache) {
+      auto current = pool.head.load();
       while (current != nullptr) {
          current->pool.clear();
          current = current->next;

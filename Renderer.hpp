@@ -102,7 +102,4 @@ private:
     PipelineManager _pipelineManager;
     FramebufferManager _framebufferManager;
     CommandPoolManager _commandPoolManager;
-
-    /** @brief Initialize the backend window for the renderer context */
-    [[nodiscard]] static BackendWindow *InitializeContextWindow(void);
 };

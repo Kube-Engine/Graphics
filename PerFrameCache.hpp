@@ -26,7 +26,9 @@ public:
     PerFrameCache(void) noexcept = default;
 
     /** @brief Construct the cache with a given frame count */
-    PerFrameCache(const std::size_t count) noexcept : _caches(count) {}
+    PerFrameCache(const std::size_t count) noexcept
+        requires std::default_initializable<Type>
+        : _caches(count) {}
 
     /** @brief Move constructor */
     PerFrameCache(PerFrameCache &&other) noexcept = default;
@@ -40,6 +42,7 @@ public:
     /** @brief Swap two instances */
     void swap(PerFrameCache &other) noexcept
         { _caches.swap(other._caches); std::swap(_currentFrame, other._currentFrame); }
+
 
     /** @brief Get / Set the current frame */
     [[nodiscard]] FrameIndex currentFrame(void) const noexcept { return _currentFrame; }
