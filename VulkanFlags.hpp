@@ -224,7 +224,7 @@ namespace kF::Graphics
 
     /** @brief Multisample creation flags */
     enum class MultisampleCreateFlags : VkPipelineMultisampleStateCreateFlags {
-        None = 0x0,
+        None = 0x0
     };
 
     /** @brief Sample count flags */

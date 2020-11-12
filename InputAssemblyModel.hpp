@@ -22,7 +22,7 @@ struct kF::Graphics::InputAssemblyModel : public VkPipelineInputAssemblyStateCre
             sType: VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
             pNext: nullptr,
             flags: ToFlags(flags_),
-            topology: topology_,
+            topology: static_cast<VkPrimitiveTopology>(topology_),
             primitiveRestartEnable: primitiveRestartEnable_
         } {}
 

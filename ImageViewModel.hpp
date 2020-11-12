@@ -30,7 +30,7 @@ struct kF::Graphics::ImageViewModel : public VkImageViewCreateInfo
             subresourceRange: subresource_
         } {}
 
-        /** @brief POD semantics */
+    /** @brief POD semantics */
     ImageViewModel(const ImageViewModel &other) noexcept = default;
     ImageViewModel(ImageViewModel &&other) noexcept = default;
     ImageViewModel &operator=(const ImageViewModel &other) noexcept = default;

@@ -26,7 +26,7 @@ struct kF::Graphics::PipelineModel : public VkGraphicsPipelineCreateInfo
 {
     /** @brief Initialize constructor */
     PipelineModel(const PipelineCreateFlags flags_,
-            const ShaderStageModel * const stageBegin, const PipelineShaderStageModel * const stageEnd,
+            const ShaderStageModel * const stageBegin, const ShaderStageModel * const stageEnd,
             const VertexInputModel * const pVertexInputState_,
             const InputAssemblyModel * const pInputAssemblyState_,
             const TessellationModel * const pTessellationState_,
