@@ -3,6 +3,7 @@
  * @ Description: CommandDispatcher
  */
 
+#include "Renderer.hpp"
 #include "CommandDispatcher.hpp"
 
 using namespace kF;

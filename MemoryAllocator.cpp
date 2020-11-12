@@ -7,7 +7,7 @@
 #include <vk_mem_alloc.h>
 
 #include "Renderer.hpp"
-#include "MemoryAllocator.hpp" // delete me later
+#include "MemoryAllocator.hpp"
 
 using namespace kF;
 
@@ -17,7 +17,7 @@ Graphics::MemoryAllocator::~MemoryAllocator(void) noexcept
 }
 
 void Graphics::MemoryAllocator::allocate(const MemoryAllocationModel * const modelFrom, const MemoryAllocationModel * const modelTo,
-        MemoryAllocation * const allocationFrom, MemoryAllocation * const allocationTo)
+        MemoryAllocationHandle * const allocationFrom, MemoryAllocationHandle * const allocationTo)
 {
     kFAssert(std::distance(modelFrom, modelTo) == std::distance(allocationFrom, allocationTo),
         throw std::logic_error("Graphics::MemoryAllocator::allocate: Mismatching model count and allocation count"));
@@ -33,7 +33,7 @@ void Graphics::MemoryAllocator::allocate(const MemoryAllocationModel * const mod
             pool: nullptr,
             pUserData: nullptr
         };
-        if (modelIt->memoryType() == MemoryType::Buffer) {
+        if (modelIt->bindType() == MemoryAllocationModel::BindType::Buffer) {
             auto res = ::vmaAllocateMemoryForBuffer(
                 handle(),
                 modelIt->buffer(),
@@ -63,9 +63,9 @@ void Graphics::MemoryAllocator::allocate(const MemoryAllocationModel * const mod
     }
 }
 
-void Graphics::MemoryAllocator::deallocate(const MemoryAllocation * const allocationFrom, const MemoryAllocation * const allocationTo)
+void Graphics::MemoryAllocator::deallocate(const MemoryAllocationHandle * const allocationFrom, const MemoryAllocationHandle * const allocationTo)
 {
-    for (auto allocationIt = allocationFrom; it != allocationTo; ++allocationIt) {
+    for (auto allocationIt = allocationFrom; allocationIt != allocationTo; ++allocationIt) {
         ::vmaFreeMemory(handle(), *allocationIt);
     }
 }
@@ -79,7 +79,7 @@ void Graphics::MemoryAllocator::createMemoryAllocator(void)
         preferredLargeHeapBlockSize: 0u, // 0 for default VkDeviceMemory block size = 256MB
         pAllocationCallbacks: nullptr,
         pDeviceMemoryCallbacks: nullptr,
-        frameInUseCount: parent().framebufferHandler().frameCount(),
+        frameInUseCount: static_cast<std::uint32_t>(parent().cachedFrameCount()),
         pHeapSizeLimit: nullptr, // NULL for no limit on maximum number of bytes that can be allocated on a particular Vulkan heap
         pVulkanFunctions: nullptr,
         pRecordSettings: nullptr,

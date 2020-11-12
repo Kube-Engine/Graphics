@@ -6,7 +6,6 @@
 #pragma once
 
 #include <array>
-#include <memory>
 
 #include <Kube/Core/Vector.hpp>
 
@@ -22,12 +21,9 @@ namespace kF::Graphics
 }
 
 /** @brief Handles a list of queues */
-class kF::Graphics::QueueManager final : public RendererObject
+class alignas_double_cacheline kF::Graphics::QueueManager final : public RendererObject
 {
 public:
-    /** @brief a Queue instance has a reference count */
-    using QueueInstance = std::shared_ptr<QueueHandle>;
-
     /** @brief Describes a queue */
     struct QueueDescriptor
     {
@@ -54,6 +50,7 @@ public:
     /** @brief Describe how to multiple queues */
     using QueueCreateInfos = Core::TinyVector<QueueCreateInfo>;
 
+
     /** @brief Construct queue handler */
     QueueManager(Renderer &renderer);
 
@@ -66,13 +63,15 @@ public:
     /** @brief Move assignment */
     QueueManager &operator=(QueueManager &&other) noexcept = default;
 
+
     /** @brief Retreive a queue descriptor that match given type and index */
     [[nodiscard]] const QueueDescriptor &queueDescriptor(const QueueType type) const noexcept
         { return _array[static_cast<std::size_t>(type)]; }
 
     /** @brief Retreive a queue that match given type and index */
-    [[nodiscard]] const QueueHandle &getQueue(const QueueType type) const noexcept
+    [[nodiscard]] const QueueHandle &queue(const QueueType type) const noexcept
         { return _array[static_cast<std::size_t>(type)].queueHandle; }
+
 
     /**
      * @brief Get a create info list of queues
@@ -90,7 +89,6 @@ private:
 
     /** @brief Retreive every family queue and indexes that the hardware is capable of */
     void retreiveFamilyQueueIndexes(void);
-
-    /** @brief Converts a queue type into its string name */
-    [[nodiscard]] static constexpr std::uint32_t TypeToFlag(const QueueType type) noexcept;
 };
+
+static_assert_alignof_double_cacheline(kF::Graphics::QueueManager);

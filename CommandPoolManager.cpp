@@ -4,6 +4,7 @@
  */
 
 #include "Renderer.hpp"
+#include "CommandPoolManager.hpp"
 
 using namespace kF;
 
@@ -32,7 +33,7 @@ Graphics::CommandPoolManager::~CommandPoolManager(void)
 
 Graphics::CommandPoolManager::ScopedCommandPool Graphics::CommandPoolManager::acquire(const QueueType queueType)
 {
-   auto &cachedNode = _cachedFrames.getCurrentCache()[static_cast<std::size_t>(queueType)];
+   auto &cachedNode = _cachedFrames.currentCache()[static_cast<std::size_t>(queueType)];
    auto expected = cachedNode.load();
    decltype(expected) desired;
 

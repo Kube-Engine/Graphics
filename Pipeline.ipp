@@ -11,6 +11,6 @@ inline kF::Graphics::Pipeline::Pipeline(Renderer &renderer, const PipelineModel 
 
 inline void kF::Graphics::Pipeline::swap(Pipeline &other) noexcept
 {
-    VulkanHandle<VkPipeline>::swap(other);
+    VulkanHandle<PipelineHandle>::swap(other);
     std::swap(_pipelineLayout, other._pipelineLayout);
 }

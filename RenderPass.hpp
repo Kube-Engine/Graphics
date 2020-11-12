@@ -13,11 +13,11 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of a render pass */
-class kF::Graphics::RenderPass final : public VulkanHandle<RenderPasshandle>
+class kF::Graphics::RenderPass final : public VulkanHandle<RenderPassHandle>
 {
 public:
     /** @brief Construct a render pass */
-    RenderPass(Renderer &renderer) : VulkanHandle<RenderPasshandle>(renderer)
+    RenderPass(Renderer &renderer) : VulkanHandle<RenderPassHandle>(renderer)
         { createRenderPass(); }
 
     /** @brief Move constructor */

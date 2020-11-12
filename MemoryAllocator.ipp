@@ -3,7 +3,7 @@
  * @ Description: MemoryAllocator
  */
 
-inline kF::Graphics::MemoryAllocationHandle kF::Graphics::MemoryAllocator::allocate(const MemoryAllocationHandleModel &model)
+inline kF::Graphics::MemoryAllocationHandle kF::Graphics::MemoryAllocator::allocate(const MemoryAllocationModel &model)
 {
     MemoryAllocationHandle allocation;
 

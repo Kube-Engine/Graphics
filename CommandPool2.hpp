@@ -11,7 +11,7 @@
 
 #include "LogicalDevice.hpp"
 #include "QueueManager.hpp"
-#include "FrameBufferManager.hpp"
+#include "FramebufferManager.hpp"
 #include "RenderModel.hpp"
 #include "TransferModel.hpp"
 

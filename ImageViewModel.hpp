@@ -5,51 +5,34 @@
 
 #pragma once
 
-#include "Image.hpp"
+#include "Vulkan.hpp"
 
 namespace kF::Graphics
 {
     struct ImageViewModel;
-
-    /** @brief Image subresource range */
-    using ImageSubresourceRange = VkImageSubresourceRange;
-
-    /** @brief Component mapping */
-    using ComponentMapping = VkComponentMapping;
 };
 
+/** @brief Describe how to create an image view */
 struct kF::Graphics::ImageViewModel : public VkImageViewCreateInfo
 {
     /** @brief Initialize constructor */
-    ImageViewModel(const Image &image_, const ImageViewCreateFlags flags_, const ImageViewType type_, const Format format_,
-            const ImageSubresourceRange &subresource_, const ComponentMapping &component_)
+    ImageViewModel(const ImageViewCreateFlags flags_, const ImageHandle image_, const ImageViewType viewType_, const Format format_,
+            const ComponentMapping &components_, const ImageSubresourceRange &subresource_)
         noexcept
-        : VkImageViewCreateInfo(
+        : VkImageViewCreateInfo {
             sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             pNext: nullptr,
+            flags: ToFlags(flags_),
             image: image_,
-            flags: flags_,
-            viewType: type,
-            format: format_,
-            components: component_,
+            viewType: static_cast<VkImageViewType>(viewType_),
+            format: static_cast<VkFormat>(format_),
+            components: components_,
             subresourceRange: subresource_
-        ) {}
+        } {}
 
         /** @brief POD semantics */
     ImageViewModel(const ImageViewModel &other) noexcept = default;
     ImageViewModel(ImageViewModel &&other) noexcept = default;
     ImageViewModel &operator=(const ImageViewModel &other) noexcept = default;
     ImageViewModel &operator=(ImageViewModel &&other) noexcept = default;
-
 };
-
-// struct alignas_cacheline kF::Graphics::ImageViewModel
-// {
-//     ImageViewCreateFlags flags {};
-//     ImageHandle image {};
-//     ImageViewType viewType {};
-//     Format format {};
-//     ImageSubresourceRange subresourceRange {};
-// };
-
-// static_assert_cacheline(kF::Graphics::ImageViewModel);

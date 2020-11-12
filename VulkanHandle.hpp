@@ -50,5 +50,5 @@ public:
     void swap(VulkanHandle &other) noexcept { RendererObject::swap(other); std::swap(_handle, other._handle); }
 
 private:
-    Type _handle = NullHandle;
+    Type _handle { NullHandle };
 };

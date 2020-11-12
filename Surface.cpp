@@ -3,7 +3,6 @@
  * @ Description: Surface
  */
 
-#include <stdexcept>
 #include <iostream>
 
 #include <SDL2/SDL.h>
@@ -12,15 +11,29 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
+#include "Surface.hpp"
 
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Surface::Surface(Renderer &renderer)
-    : VulkanHandle<VkSurfaceKHR>(renderer)
+const char *Graphics::PresentModeName(const PresentMode type) noexcept
 {
-    if (!::SDL_Vulkan_CreateSurface(parent().backendWindow(), parent().instance(), &handle()))
-        throw std::runtime_error("Graphics::Surface::Surface: Couldn't create surface '"s + ::SDL_GetError() + '\'');
+    switch (type) {
+    case PresentMode::ImmediateKhr:
+        return "ImmediateKhr";
+    case PresentMode::MailboxKhr:
+        return "MailboxKhr";
+    case PresentMode::FifoKhr:
+        return "FifoKhr";
+    case PresentMode::FifoRelaxedKhr:
+        return "FifoRelaxedKhr";
+    case PresentMode::SharedDemandRefreshKhr:
+        return "SharedDemandRefreshKhr";
+    case PresentMode::SharedContinuousRefreshKhr:
+        return "SharedContinuousRefreshKhr";
+    default:
+        return "UnknownPresentMode";
+    }
 }
 
 Graphics::Surface::~Surface(void) noexcept
@@ -28,7 +41,7 @@ Graphics::Surface::~Surface(void) noexcept
     ::vkDestroySurfaceKHR(parent().instance(), handle(), nullptr);
 }
 
-Graphics::SurfaceFormat Graphics::Surface::surfaceFormat(void) const
+Graphics::SurfaceFormat Graphics::Surface::getSurfaceFormat(void) const
 {
     std::vector<SurfaceFormat> formats;
 
@@ -43,20 +56,20 @@ Graphics::SurfaceFormat Graphics::Surface::surfaceFormat(void) const
     return formats[0];
 }
 
-Graphics::PresentMode Graphics::Surface::presentMode(void) const
+Graphics::PresentMode Graphics::Surface::getPresentMode(void) const
 {
-    std::vector<PresentMode> modes;
+    std::vector<VkPresentModeKHR> modes;
 
     if (auto res = FillVkContainer(modes, &::vkGetPhysicalDeviceSurfacePresentModesKHR, parent().physicalDevice(), handle()); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Surface::presentMode: Couldn't retreive physical device present modes");
+        throw std::runtime_error("Graphics::Surface::getPresentMode: Couldn't retreive physical device present modes");
     for (const auto &mode : modes) {
-        if (mode == VK_PRESENT_MODE_MAILBOX_KHR)
-            return mode;
+        if (static_cast<PresentMode>(mode) == PresentMode::MailboxKhr)
+            return static_cast<PresentMode>(mode);
     }
-    return VK_PRESENT_MODE_FIFO_KHR;
+    return PresentMode::FifoKhr;
 }
 
-Graphics::SurfaceCapabilities Graphics::Surface::surfaceCapabilities(void) const
+Graphics::SurfaceCapabilities Graphics::Surface::getSurfaceCapabilities(void) const
 {
     SurfaceCapabilities capabilities {};
 
@@ -65,37 +78,21 @@ Graphics::SurfaceCapabilities Graphics::Surface::surfaceCapabilities(void) const
     return capabilities;
 }
 
-Graphics::Extent Graphics::Surface::extent(const SurfaceCapabilities &capabilities) const
+Graphics::Extent2D Graphics::Surface::getExtent(const SurfaceCapabilities &capabilities) const
 {
     int width = 0, height = 0;
 
     if (capabilities.currentExtent.width != UINT32_MAX && capabilities.currentExtent.height != UINT32_MAX)
         return capabilities.currentExtent;
     ::SDL_GetWindowSize(parent().backendWindow(), &width, &height);
-    return {
-        std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, static_cast<std::uint32_t>(width))),
-        std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, static_cast<std::uint32_t>(height)))
+    return Extent2D {
+        width: std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, static_cast<std::uint32_t>(width))),
+        height: std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, static_cast<std::uint32_t>(height))),
     };
 }
 
-const char *Graphics::Surface::PresentModeName(const PresentMode type) noexcept
+void Graphics::Surface::createSurface(void)
 {
-    switch (type) {
-    case VK_PRESENT_MODE_IMMEDIATE_KHR:
-        return "PRESENT_MODE_IMMEDIATE_KHR";
-    case VK_PRESENT_MODE_MAILBOX_KHR:
-        return "PRESENT_MODE_MAILBOX_KHR";
-    case VK_PRESENT_MODE_FIFO_KHR:
-        return "PRESENT_MODE_FIFO_KHR";
-    case VK_PRESENT_MODE_FIFO_RELAXED_KHR:
-        return "PRESENT_MODE_FIFO_RELAXED_KHR";
-    case VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR:
-        return "PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR";
-    case VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR:
-        return "PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR";
-    // case VK_PRESENT_MODE_RANGE_SIZE_KHR:
-    //     return "PRESENT_MODE_RANGE_SIZE_KHR";
-    default:
-        return "UNKNOWN_PRESENT_MODE";
-    }
+    if (!::SDL_Vulkan_CreateSurface(parent().backendWindow(), parent().instance(), &handle()))
+        throw std::runtime_error("Graphics::Surface::Surface: Couldn't create surface '"s + ::SDL_GetError() + '\'');
 }

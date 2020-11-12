@@ -6,6 +6,7 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
+#include "CommandPool.hpp"
 
 using namespace kF;
 using namespace kF::Literal;
@@ -16,17 +17,20 @@ Graphics::CommandPool::CommandPool(Renderer &renderer, const QueueType queueType
     createCommandPool(queueType, lifecycle);
 }
 
-Graphics::CommandPool::~CommandPool(void)
+Graphics::CommandPool::~CommandPool(void) noexcept
 {
     ::vkDestroyCommandPool(parent().logicalDevice(), handle(), nullptr);
 }
 
-void Graphics::CommandPool::remove(const CommandHandle command)
+void Graphics::CommandPool::remove(const CommandHandle * const commandBegin, const CommandHandle * const commandEnd) noexcept
 {
-    ::vkFreeCommandBuffers(parent().logicalDevice(), handle(), 1u, &command);
+    ::vkFreeCommandBuffers(
+        parent().logicalDevice(), handle(),
+        static_cast<std::size_t>(std::distance(commandBegin, commandEnd)), commandBegin
+    );
 }
 
-void Graphics::CommandPool::clear(void)
+void Graphics::CommandPool::clear(void) noexcept
 {
     ::vkResetCommandPool(parent().logicalDevice(), handle(), VkCommandPoolResetFlags());
 }
@@ -39,6 +43,8 @@ void Graphics::CommandPool::createCommandPool(const QueueType queueType, const L
             return VkCommandPoolCreateFlags();
         case Lifecycle::Auto:
             return VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+        default:
+            return VkCommandPoolCreateFlags();
         }
     };
 
@@ -53,7 +59,7 @@ void Graphics::CommandPool::createCommandPool(const QueueType queueType, const L
         throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"s + ErrorMessage(res) + '\'');
 }
 
-void Graphics::CommandPool::allocateCommands(CommandHandle * const commandFrom, CommandHandle * const commandTo, const CommandLevel level)
+void Graphics::CommandPool::allocateCommands(const CommandLevel level, CommandHandle * const commandFrom, CommandHandle * const commandTo)
 {
     VkCommandBufferAllocateInfo commandInfo {
         sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -64,52 +70,5 @@ void Graphics::CommandPool::allocateCommands(CommandHandle * const commandFrom, 
     };
 
     if (auto res = ::vkAllocateCommandBuffers(parent().logicalDevice(), &commandInfo, commandFrom); res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::CommandPool::
-        : Couldn't allocate command buffers '"s + ErrorMessage(res) + '\'');
-}
-
-void Graphics::CommandPool::recordRender(const RenderModel * const modelFrom, const RenderModel * const modelTo,
-        CommandHandle * const commandFrom, CommandHandle * const commandTo,
-        const VkCommandBufferBeginInfo &commandBeginInfo)
-{
-    static const VkClearValue ClearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-
-    VkRenderPassBeginInfo renderPassBeginInfo {
-        sType: VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        pNext: nullptr,
-        renderPass: parent().renderPass(),
-        frameBuffer: VkFrameBuffer(),
-        renderArea: VkRect2D { { 0, 0 }, parent().swapchain().extent() },
-        clearValueCount: 1u,
-        pClearValues: &ClearColor
-    };
-
-    const auto &renderModel = model.as<RenderModel>();
-    const auto &frameBuffers = parent().frameBufferManager().frameBuffers();
-    auto &pipeline = parent().pipelinePool().getPipeline(renderModel.pipeline);
-    auto max = frameBuffers.size();
-    auto buffers = parent().bufferPool().collectBuffers(renderModel.buffers);
-
-    kFAssert(buffers.size() == renderModel.offsets.size(),
-        throw std::runtime_error("Graphics::CommandPool::recordCommand: Invalid buffer offsets"));
-    for (auto i = 0u; i < max; ++i) {
-        auto &command = commands[i];
-        renderPassBeginInfo.frameBuffer = frameBuffers[i];
-        if (auto res = ::vkBeginCommandBuffer(command, &commandBeginInfo); res != VK_SUCCESS)
-            throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't begin command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
-        ::vkCmdBeginRenderPass(command, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-        ::vkCmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-        if (!buffers.empty())
-            ::vkCmdBindVertexBuffers(command, 0, buffers.size(), buffers.data(), renderModel.offsets.data());
-        ::vkCmdDraw(command, renderModel.vertexCount, renderModel.instanceCount, renderModel.vertexOffset, renderModel.instanceOffset);
-        ::vkCmdEndRenderPass(command);
-        if (auto res = ::vkEndCommandBuffer(command); res != VK_SUCCESS)
-           throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't record command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
-    }
-}
-
-void Graphics::CommandPool::recordTransfer(const TransferModel * const modelFrom, const TransferModel * const modelTo,
-        CommandHandle * const commandFrom, CommandHandle * const commandTo,
-        const VkCommandBufferBeginInfo &commandBeginInfo)
-{
+        throw std::runtime_error("Graphics::CommandPool::allocateCommands: Couldn't allocate command buffers '"s + ErrorMessage(res) + '\'');
 }

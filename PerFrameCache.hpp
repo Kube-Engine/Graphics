@@ -8,13 +8,12 @@
 #include <Kube/Core/Assert.hpp>
 #include <Kube/Core/Vector.hpp>
 
+#include "Vulkan.hpp"
+
 namespace kF::Graphics
 {
     template<typename Type>
     class PerFrameCache;
-
-    /** @brief Index of a frame */
-    using FrameIndex = std::size_t;
 }
 
 template<typename Type>
@@ -22,6 +21,9 @@ class alignas_half_cacheline kF::Graphics::PerFrameCache
 {
 public:
     using CachedFrames = Core::Vector<Type>;
+
+    /** @brief Construct the cache with a given frame count */
+    PerFrameCache(void) noexcept = default;
 
     /** @brief Construct the cache with a given frame count */
     PerFrameCache(const std::size_t count) noexcept : _caches(count) {}
@@ -49,15 +51,15 @@ public:
 
     /** @brief Get the internal cache list */
     [[nodiscard]] auto &caches(void) noexcept { return _caches; }
-    [[nodiscard]] const auto caches(void) const noexcept { return _caches; }
+    [[nodiscard]] const auto &caches(void) const noexcept { return _caches; }
 
     /** @brief Get the cache at given index */
     [[nodiscard]] Type &cacheAt(const std::size_t index) noexcept { return _caches[index]; }
     [[nodiscard]] const Type &cacheAt(const std::size_t index) const noexcept { return _caches[index]; }
 
     /** @brief Get the current cache */
-    [[nodiscard]] Type &currentCache(void) noexcept { return getCache(currentFrame()); }
-    [[nodiscard]] const Type &currentCache(void) const noexcept { return getCache(currentFrame()); }
+    [[nodiscard]] Type &currentCache(void) noexcept { return cacheAt(currentFrame()); }
+    [[nodiscard]] const Type &currentCache(void) const noexcept { return cacheAt(currentFrame()); }
 
 
     /** @brief Resize the number of cache */

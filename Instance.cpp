@@ -13,6 +13,7 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
+#include "Instance.hpp"
 
 using namespace kF;
 using namespace kF::Literal;

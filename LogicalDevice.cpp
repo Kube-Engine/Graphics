@@ -3,7 +3,6 @@
  * @ Description: LogicalDevice
  */
 
-#include <stdexcept>
 #include <cstring>
 #include <algorithm>
 #include <iostream>
@@ -11,6 +10,7 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
+#include "LogicalDevice.hpp"
 
 using namespace kF;
 using namespace kF::Literal;

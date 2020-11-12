@@ -11,11 +11,46 @@
 
 namespace kF::Graphics
 {
+    VK_DEFINE_HANDLE(Handle)
+
     /** @brief Null handle alias */
-    constexpr auto NullHandle = NullHandle;
+    constexpr auto NullHandle = nullptr;
+
+    /** @brief Index of a frame */
+    using FrameIndex = std::size_t;
+
+
+    /** @brief Instance handle */
+    using InstanceHandle = VkInstance;
+
+
+    /** @brief Physical device handle */
+    using PhysicalDeviceHandle = VkPhysicalDevice;
+
+
+    /** @brief Logical device handle */
+    using LogicalDeviceHandle = VkDevice;
+
+
+    /** @brief 2D extent */
+    using Extent2D = VkExtent2D;
 
     /** @brief 3D extent */
     using Extent3D = VkExtent3D;
+
+
+    /** @brief Swapchain handle */
+    using SwapchainHandle = VkSwapchainKHR;
+
+
+    /** @brief Surface handle */
+    using SurfaceHandle = VkSurfaceKHR;
+
+    /** @brief Vulkan surface format */
+    using SurfaceFormat = VkSurfaceFormatKHR;
+
+    /** @brief Vulkan presentation mode*/
+    using SurfaceCapabilities = VkSurfaceCapabilitiesKHR;
 
 
     /** @brief Fence handle */
@@ -25,12 +60,29 @@ namespace kF::Graphics
     using SemaphoreHandle = VkFence;
 
 
+    /** @brief Pipeline layout handle */
+    using PipelineLayoutHandle = VkPipelineLayout;
+
+    /** @brief Descriptor set layout handle */
+    using DescriptorSetLayoutHandle = VkDescriptorSetLayout;
+
+    /** @brief Push constant range */
+    using PushConstantRange = VkPushConstantRange;
+
+
+    /** @brief Vertex input binding description */
+    using VertexInputBinding = VkVertexInputBindingDescription;
+
+    /** @brief Vertex input attribute description */
+    using VertexInputAttribute = VkVertexInputAttributeDescription;
+
+
     /** @brief Render pass handle */
     using RenderPassHandle = VkRenderPass;
 
 
     /** @brief A frame buffer handle */
-    using FrameBufferHandle = VkFramebuffer;
+    using FramebufferHandle = VkFramebuffer;
 
 
     /** @brief A vulkan queue */
@@ -56,14 +108,24 @@ namespace kF::Graphics
 
 
     /** @brief Image handle */
-    using ImageHandle = VkImageView;
+    using ImageHandle = VkImage;
 
     /** @brief Image view handle */
     using ImageViewHandle = VkImageView;
 
+    /** @brief Image subresource range */
+    using ImageSubresourceRange = VkImageSubresourceRange;
+
+    /** @brief Component mapping */
+    using ComponentMapping = VkComponentMapping;
+
+
+    /** @brief Sampler handle */
+    using SamplerHandle = VkSampler;
+
 
     /** @brief Get an error message from a vulkan result */
-    [[nodiscard]] const char *ErrorMessage(VkResult res);
+    [[nodiscard]] const char *ErrorMessage(const VkResult res);
 
     /** @brief Fill a container using a vulkan style getter with VkResult as return type */
     template<typename Container, typename ...FunctionArgs, typename ...Args>
@@ -79,7 +141,7 @@ namespace kF::Graphics
 
     /** @brief Fill a container using a vulkan style getter with void as return type */
     template<typename Container, typename ...FunctionArgs, typename ...Args>
-    void FillVkContainer(Container &container, void(*function)(FunctionArgs...), Args &&...args)
+    auto FillVkContainer(Container &container, void(*function)(FunctionArgs...), Args &&...args)
     {
         std::uint32_t count = 0;
         (*function)(std::forward<Args>(args)..., &count, nullptr);

@@ -85,7 +85,7 @@ void Graphics::Drawer::draw(void)
         throw std::runtime_error("Graphics::Drawer::draw: Couldn't acquire next image '"s + ErrorMessage(res) + '\'');
     retreiveFrameCommands(imageIndex);
     _frameFences[_currentFrame].reset();
-    res = ::vkQueueSubmit(parent().queueManager().getQueue(QueueType::Graphics), 1, &submitInfo, _frameFences[_currentFrame]);
+    res = ::vkQueueSubmit(parent().queueManager().queue(QueueType::Graphics), 1, &submitInfo, _frameFences[_currentFrame]);
     if (res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Drawer::draw: Couldn't submit queue '"s + ErrorMessage(res) + '\'');
     presentImage(imageIndex);
@@ -110,7 +110,7 @@ void Graphics::Drawer::presentImage(const std::uint32_t imageIndex)
         pImageIndices: &imageIndex,
         pResults: nullptr,
     };
-    auto res = ::vkQueuePresentKHR(parent().queueManager().getQueue(QueueType::Present), &presentInfo);
+    auto res = ::vkQueuePresentKHR(parent().queueManager().queue(QueueType::Present), &presentInfo);
 
     if (res == VK_ERROR_OUT_OF_DATE_KHR || res == VK_SUBOPTIMAL_KHR)
         return;

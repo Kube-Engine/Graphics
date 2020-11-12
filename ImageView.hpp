@@ -5,14 +5,12 @@
 
 #pragma once
 
+#include "VulkanHandle.hpp"
 #include "ImageViewModel.hpp"
 
 namespace kF::Graphics
 {
     class ImageView;
-
-    /** @brief Image view handle */
-    using ImageViewHandle = VkImageView;
 };
 
 /** @brief Abstract an image view */

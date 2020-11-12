@@ -3,42 +3,52 @@
  * @ Description: CommandPool
  */
 
-template<kF::Graphics::CommandModel Model>
-inline kF::Graphics::CommandHandle kF::Graphics::CommandPool::add(const Model &model, const CommandLevel level, const Lifecycle lifecycle)
+template<kF::Graphics::RecorderRequirements Recorder>
+inline kF::Graphics::CommandHandle kF::Graphics::CommandPool::add(const Lifecycle lifecycle, const CommandLevel level, Recorder &&recorder)
 {
-    Command command;
+    CommandHandle command;
 
-    add(&model, &model + 1, &command, &command + 1, level, lifecycle);
+    add(lifecycle, level, &command, &command + 1, std::forward<Recorder>(recorder));
     return command;
 }
 
-template<kF::Graphics::CommandModel Model>
-inline void kF::Graphics::CommandPool::add(const Model * const modelFrom, const Model * const modelTo,
-        Command * const commandFrom, Command * const commandTo, const CommandLevel level, const Lifecycle lifecycle)
+template<typename ...Recorders> requires (... && kF::Graphics::RecorderRequirements<Recorders>)
+inline void kF::Graphics::CommandPool::add(const Lifecycle lifecycle, const CommandLevel level,
+        CommandHandle * const commandFrom, CommandHandle * const commandTo,
+        Recorders &&...recorders)
 {
-    kFAssert(std::distance(modelFrom, modelTo) == std::distance(commandFrom, commandTo),
-        throw std::logic_error("Grahpics::CommandPool::add: Mismatching model and command count"));
+    constexpr auto GetCommandUsageFlags = [](const Lifecycle lifecycle) {
+        switch (lifecycle) {
+        case Lifecycle::Manual:
+            return CommandBufferUsageFlags::None;
+        case Lifecycle::Auto:
+            return CommandBufferUsageFlags::OneTimeSubmit;
+        }
+    };
 
-    VkCommandBufferBeginInfo commandBeginInfo {
+    constexpr auto Begin = [](const CommandHandle command, const VkCommandBufferBeginInfo &commandBeginInfo) {
+        if (auto res = ::vkBeginCommandBuffer(command, &commandBeginInfo); res != VK_SUCCESS)
+            throw std::runtime_error("Graphics::CommandPool::add: Couldn't begin command buffer '" + std::string(ErrorMessage(res)) + '\'');
+    };
+
+    constexpr auto End = [](const CommandHandle command) {
+        if (auto res = ::vkEndCommandBuffer(command); res != VK_SUCCESS)
+            throw std::runtime_error("Graphics::CommandPool::add: Couldn't begin command buffer '" + std::string(ErrorMessage(res)) + '\'');
+    };
+
+    kFAssert(sizeof...(Recorders) == std::distance(commandFrom, commandTo),
+        throw std::logic_error("Grahpics::CommandPool::add: Mismatching recorder and command count"));
+
+    allocateCommands(level, commandFrom, commandTo);
+
+    const VkCommandBufferBeginInfo commandBeginInfo {
         sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         pNext: nullptr,
-        flags: GetCommandUsageFlags(lifecycle),
+        flags: ToFlags(GetCommandUsageFlags(lifecycle)),
         pInheritanceInfo: nullptr
     };
 
-    allocateCommands(commandFrom, commandTo, level);
-    if constexpr (std::is_same_v<Model, RenderModel>)
-        recordRender(modelFrom, modelTo, commandFrom, commandTo, commandBeginInfo);
-    else
-        recordTransfer(modelFrom, modelTo, commandFrom, commandTo, commandBeginInfo);
-}
-
-inline VkCommandBufferUsageFlags kF::Graphics::CommandPool::GetCommandUsageFlags(const Lifecycle lifecycle)
-{
-    switch (lifecycle) {
-    case Lifecycle::Manual:
-        return VkCommandBufferUsageFlags();
-    case Lifecycle::Auto:
-        return VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    }
+    auto commandIt = commandFrom;
+    // Unroll every recorder to record their respective command buffers
+    (... , (Begin(*commandIt, commandBeginInfo), recorders(*commandIt), End(*(commandIt++))));
 }

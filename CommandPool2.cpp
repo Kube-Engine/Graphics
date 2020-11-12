@@ -36,7 +36,7 @@ Graphics::CommandIndex Graphics::CommandPool::addCommand(const CommandModel &mod
         index = _commandMap.crbegin()->first + 1;
     // ATTENTION ICI ON MULTIPLIE LA COMMAND PAR LE NOMBRE DE FRAME
     // A CHANGER
-    auto &pair = _commandMap.emplace_back(index, std::make_unique<Commands>(parent().frameBufferManager().frameBuffers().size()));
+    auto &pair = _commandMap.emplace_back(index, std::make_unique<Commands>(parent().framebufferManager().framebuffers().size()));
     allocateCommands(model, *pair.second);
     recordCommands(model, *pair.second);
     _modelMap.emplace_back(std::make_unique<CommandModel>(model));
@@ -142,22 +142,22 @@ void Graphics::CommandPool::recordCommands(const CommandModel &model, Commands &
         sType: VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         pNext: nullptr,
         renderPass: parent().renderPass(),
-        frameBuffer: VkFrameBuffer(),
+        framebuffer: VkFramebuffer(),
         renderArea: VkRect2D { { 0, 0 }, parent().swapchain().extent() },
         clearValueCount: 1,
         pClearValues: &clearColor
     };
     const auto &renderModel = model.as<RenderModel>();
-    const auto &frameBuffers = parent().frameBufferManager().frameBuffers();
-    auto &pipeline = parent().pipelinePool().getPipeline(renderModel.pipeline);
-    auto max = frameBuffers.size();
+    const auto &framebuffers = parent().framebufferManager().framebuffers();
+    auto &pipeline = parent().pipelineManager().getPipeline(renderModel.pipeline);
+    auto max = framebuffers.size();
     auto buffers = parent().bufferPool().collectBuffers(renderModel.buffers);
 
     kFAssert(buffers.size() == renderModel.offsets.size(),
         throw std::runtime_error("Graphics::CommandPool::recordCommand: Invalid buffer offsets"));
     for (auto i = 0u; i < max; ++i) {
         auto &command = commands[i];
-        renderPassBeginInfo.frameBuffer = frameBuffers[i];
+        renderPassBeginInfo.framebuffer = framebuffers[i];
         if (auto res = ::vkBeginCommandBuffer(command, &commandBeginInfo); res != VK_SUCCESS)
             throw std::runtime_error("Graphics::CommandPool::recordCommand: Couldn't begin command buffer " + std::to_string(i) + " '" + ErrorMessage(res) + '\'');
         ::vkCmdBeginRenderPass(command, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);

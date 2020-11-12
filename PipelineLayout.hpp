@@ -5,16 +5,15 @@
 
 #pragma once
 
+#include "VulkanHandle.hpp"
 #include "PipelineLayoutModel.hpp"
 
 namespace kF::Graphics
 {
     class PipelineLayout;
-
-    /** @brief A device pipeline layout */
-    using PipelineLayoutHandle = VkPipelineLayout;
 }
 
+/** @brief Abstract a pipeline layout */
 class kF::Graphics::PipelineLayout : public VulkanHandle<PipelineLayoutHandle>
 {
 public:

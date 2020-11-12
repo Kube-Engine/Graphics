@@ -6,48 +6,83 @@ find_package(SDL2 REQUIRED)
 get_filename_component(KubeGraphicsDir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
 set(KubeGraphicsSources
+    ${KubeGraphicsDir}/VulkanFlags.hpp
+    ${KubeGraphicsDir}/VulkanEnums.hpp
     ${KubeGraphicsDir}/Vulkan.hpp
     ${KubeGraphicsDir}/Vulkan.cpp
+
+    ${KubeGraphicsDir}/VulkanHandle.hpp
+
     ${KubeGraphicsDir}/RendererObject.hpp
+
     ${KubeGraphicsDir}/Renderer.hpp
     ${KubeGraphicsDir}/Renderer.cpp
+
     ${KubeGraphicsDir}/Instance.hpp
     ${KubeGraphicsDir}/Instance.cpp
+
     ${KubeGraphicsDir}/Surface.hpp
     ${KubeGraphicsDir}/Surface.cpp
+
     ${KubeGraphicsDir}/PhysicalDevice.hpp
     ${KubeGraphicsDir}/PhysicalDevice.cpp
+
     ${KubeGraphicsDir}/QueueManager.hpp
     ${KubeGraphicsDir}/QueueManager.cpp
+
     ${KubeGraphicsDir}/LogicalDevice.hpp
     ${KubeGraphicsDir}/LogicalDevice.cpp
+
     ${KubeGraphicsDir}/Swapchain.hpp
     ${KubeGraphicsDir}/Swapchain.cpp
+
     ${KubeGraphicsDir}/Shader.hpp
     ${KubeGraphicsDir}/Shader.cpp
+
     ${KubeGraphicsDir}/RenderPass.hpp
     ${KubeGraphicsDir}/RenderPass.cpp
+
+    ${KubeGraphicsDir}/PipelineLayout.hpp
+    ${KubeGraphicsDir}/PipelineLayout.cpp
+    ${KubeGraphicsDir}/PipelineLayoutModel.hpp
+
     ${KubeGraphicsDir}/Pipeline.hpp
     ${KubeGraphicsDir}/Pipeline.cpp
-    ${KubeGraphicsDir}/PipelinePool.hpp
-    ${KubeGraphicsDir}/PipelinePool.cpp
-    ${KubeGraphicsDir}/FrameBufferManager.hpp
-    ${KubeGraphicsDir}/FrameBufferManager.cpp
+
+    ${KubeGraphicsDir}/PipelineManager.hpp
+    ${KubeGraphicsDir}/PipelineManager.cpp
+
+    ${KubeGraphicsDir}/Framebuffer.hpp
+    ${KubeGraphicsDir}/Framebuffer.cpp
+    ${KubeGraphicsDir}/FramebufferModel.hpp
+
+    ${KubeGraphicsDir}/FramebufferManager.hpp
+    ${KubeGraphicsDir}/FramebufferManager.cpp
+
     ${KubeGraphicsDir}/CommandPool.hpp
     ${KubeGraphicsDir}/CommandPool.cpp
-    ${KubeGraphicsDir}/Drawer.hpp
-    ${KubeGraphicsDir}/Drawer.cpp
+
     ${KubeGraphicsDir}/Semaphore.hpp
     ${KubeGraphicsDir}/Semaphore.cpp
+
     ${KubeGraphicsDir}/Fence.hpp
     ${KubeGraphicsDir}/Fence.cpp
-    ${KubeGraphicsDir}/BufferPool.hpp
-    ${KubeGraphicsDir}/BufferPool.cpp
+
     ${KubeGraphicsDir}/Buffer.hpp
     ${KubeGraphicsDir}/Buffer.cpp
     ${KubeGraphicsDir}/BufferModel.hpp
+
+    ${KubeGraphicsDir}/Image.hpp
+    ${KubeGraphicsDir}/Image.cpp
+    ${KubeGraphicsDir}/ImageModel.hpp
+
+    ${KubeGraphicsDir}/ImageView.hpp
+    ${KubeGraphicsDir}/ImageView.cpp
+    ${KubeGraphicsDir}/ImageViewModel.hpp
+
     ${KubeGraphicsDir}/MemoryAllocator.hpp
     ${KubeGraphicsDir}/MemoryAllocator.cpp
+
     ${KubeGraphicsDir}/MemoryAllocationModel.hpp
     ${KubeGraphicsDir}/MemoryAllocationModel.ipp
 )

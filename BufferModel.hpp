@@ -12,45 +12,39 @@ namespace kF::Graphics
     struct BufferModel;
 }
 
-/** @brief A buffer model describes a buffer that should be copied to GPU memory */
+/** @brief Describe how to create a buffer */
 struct kF::Graphics::BufferModel : public VkBufferCreateInfo
 {
     /** @brief Helper used to create a staging buffer model */
-    [[nodiscard]] static inline auto MakeStaging(const BufferSize size) noexcept
-        { return BufferModel(0u, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE); }
-
+    [[nodiscard]] static BufferModel MakeStaging(const BufferSize size) noexcept;
 
     /** @brief Helper used to create a local (GPU only) vertex buffer model */
-    [[nodiscard]] static inline auto MakeVertexLocal(const BufferSize size) noexcept
-        { return BufferModel(0u, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_SHARING_MODE_EXCLUSIVE); }
+    [[nodiscard]] static BufferModel MakeVertexLocal(const BufferSize size) noexcept;
 
     /** @brief Helper used to create a shared (CPU & GPU) vertex buffer model */
-    [[nodiscard]] static inline auto MakeVertexShared(const BufferSize size) noexcept
-        { return BufferModel(0u, size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_SHARING_MODE_EXCLUSIVE); }
-
+    [[nodiscard]] static BufferModel MakeVertexShared(const BufferSize size) noexcept;
 
     /** @brief Helper used to create a local (GPU only) index buffer model */
-    [[nodiscard]] static inline auto MakeIndexLocal(const BufferSize size) noexcept
-        { return BufferModel(0u, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_SHARING_MODE_EXCLUSIVE); }
+    [[nodiscard]] static BufferModel MakeIndexLocal(const BufferSize size) noexcept;
 
     /** @brief Helper used to create a shared (CPU & GPU) index buffer model */
-    [[nodiscard]] static inline auto MakeIndexShared(const BufferSize size) noexcept
-        { return BufferModel(0u, size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_SHARING_MODE_EXCLUSIVE); }
+    [[nodiscard]] static BufferModel MakeIndexShared(const BufferSize size) noexcept;
 
 
     /** @brief Initialize constructor */
-    BufferModel(const BufferCreateFlags flags_, const BufferSize size_, const BufferUsageFlags usage_, const SharingMode sharingMode_)
+    BufferModel(const BufferCreateFlags flags_, const BufferSize size_, const BufferUsageFlags usage_, const SharingMode sharingMode_,
+            const std::uint32_t * const queueFamilyIndexBegin, const std::uint32_t * const queueFamilyIndexEnd)
         noexcept
-        : VkBufferCreateInfo(
+        : VkBufferCreateInfo {
             sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
             pNext: nullptr,
-            flags: flags_,
+            flags: ToFlags(flags_),
             size: size_,
-            usage: usage_,
-            sharingMode: sharingMode_,
-            queueFamilyIndexCount: 0,
-            pQueueFamilyIndices: nullptr,
-        ) {}
+            usage: ToFlags(usage_),
+            sharingMode: static_cast<VkSharingMode>(sharingMode_),
+            queueFamilyIndexCount: static_cast<std::uint32_t>(std::distance(queueFamilyIndexBegin, queueFamilyIndexEnd)),
+            pQueueFamilyIndices: queueFamilyIndexBegin
+        } {}
 
     /** @brief POD semantics */
     BufferModel(const BufferModel &other) noexcept = default;

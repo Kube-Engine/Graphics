@@ -21,16 +21,17 @@ public:
     /** @brief An array of command sorted by queue types */
     struct alignas_double_cacheline PerQueueCommandArray
     {
-        using Array = std::array<Core::TinyVector<CommandHandle>, static_cast<std::size_t>(QueueType::Count)>;
+        using Commands = Core::TinyVector<CommandHandle>;
+        using Array = std::array<Commands, static_cast<std::size_t>(QueueType::Count)>;
 
+        alignas(Commands) Array array;
 #if KUBE_DEBUG_BUILD
-        alignas(alignof(Array)) bool cleared { true };
+        bool cleared { true };
 #endif
-        Array array;
     };
 
     /** @brief Construct the command dispatcher */
-    CommandDispatcher(Renderer &renderer);
+    CommandDispatcher(Renderer &renderer) noexcept : RendererObject(renderer), _cachedFrames(renderer.cachedFrameCount()) {}
 
     /** @brief Move constructor */
     CommandDispatcher(CommandDispatcher &&other) noexcept = default;

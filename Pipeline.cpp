@@ -6,11 +6,12 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
+#include "Pipeline.hpp"
 
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Pipeline::~Pipeline(void)
+Graphics::Pipeline::~Pipeline(void) noexcept
 {
     ::vkDestroyPipeline(parent().logicalDevice(), handle(), nullptr);
 }

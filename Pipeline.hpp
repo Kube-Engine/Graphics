@@ -42,20 +42,21 @@ public:
     Pipeline(Renderer &renderer, const PipelineModel &model);
 
     /** @brief Move constructor */
-    Pipeline(Pipeline &&other) noexcept : VulkanHandle<VkPipeline>(other.parent()) { swap(other); }
+    Pipeline(Pipeline &&other) noexcept = default;
 
     /** @brief Destruct the pipeline */
-    ~Pipeline(void);
+    ~Pipeline(void) noexcept;
 
     /** @brief Move assignment */
-    Pipeline &operator=(Pipeline &&other) noexcept { swap(other); return *this; }
-
-    /** @brief Get the pipeline layout */
-    [[nodiscard]] PipelineLayout &getPipelineLayout(void) noexcept { return _pipelineLayout; }
-    [[nodiscard]] const PipelineLayout &getPipelineLayout(void) const noexcept { return _pipelineLayout; }
+    Pipeline &operator=(Pipeline &&other) noexcept = default;
 
     /** @brief Swap two instances */
     void swap(Pipeline &other) noexcept;
+
+
+    /** @brief Get the pipeline layout */
+    [[nodiscard]] PipelineLayout &pipelineLayout(void) noexcept { return _pipelineLayout; }
+    [[nodiscard]] const PipelineLayout &pipelineLayout(void) const noexcept { return _pipelineLayout; }
 
 private:
     PipelineLayout _pipelineLayout;
@@ -81,7 +82,6 @@ private:
     /** @brief Build dynamic stage from model */
     [[nodiscard]] DynamicStage getDynamicStage(const PipelineModel &model) const noexcept;
 };
-
 
 
 /** @brief Describes shader stage of the pipeline */

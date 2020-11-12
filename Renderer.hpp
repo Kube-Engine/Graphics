@@ -12,12 +12,10 @@
 #include "QueueManager.hpp"
 #include "LogicalDevice.hpp"
 #include "Swapchain.hpp"
-#include "PipelinePool.hpp"
+#include "PipelineManager.hpp"
 #include "RenderPass.hpp"
-#include "FrameBufferManager.hpp"
+#include "FramebufferManager.hpp"
 #include "CommandPoolManager.hpp"
-#include "BufferPool.hpp"
-#include "Drawer.hpp"
 
 namespace kF::Graphics
 {
@@ -28,11 +26,8 @@ namespace kF::Graphics
 class kF::Graphics::Renderer
 {
 public:
-    /** @brief A queue of draw commands */
-    using DrawQueue = std::vector<Command>;
-
     /** @brief Construct a renderer using a backend window */
-    Renderer(BackendWindow *window, const Version applicationVersion = Version());
+    Renderer(BackendWindow * const window, const Version applicationVersion = Version());
 
     /** @brief Move constructor */
     Renderer(Renderer &&renderer) noexcept = default;
@@ -76,12 +71,12 @@ public:
     [[nodiscard]] const RenderPass &renderPass(void) const noexcept { return _renderPass; }
 
     /** @brief Get the pipeline pool */
-    [[nodiscard]] PipelinePool &pipelinePool(void) noexcept { return _pipelinePool; }
-    [[nodiscard]] const PipelinePool &pipelinePool(void) const noexcept { return _pipelinePool; }
+    [[nodiscard]] PipelineManager &pipelineManager(void) noexcept { return _pipelineManager; }
+    [[nodiscard]] const PipelineManager &pipelineManager(void) const noexcept { return _pipelineManager; }
 
-    /** @brief Get the frameBuffer handler */
-    [[nodiscard]] FrameBufferManager &frameBufferManager(void) noexcept { return _frameBufferManager; }
-    [[nodiscard]] const FrameBufferManager &frameBufferManager(void) const noexcept { return _frameBufferManager; }
+    /** @brief Get the framebuffer handler */
+    [[nodiscard]] FramebufferManager &framebufferManager(void) noexcept { return _framebufferManager; }
+    [[nodiscard]] const FramebufferManager &framebufferManager(void) const noexcept { return _framebufferManager; }
 
     /** @brief Get the command pool manager */
     [[nodiscard]] CommandPoolManager &commandPoolManager(void) noexcept { return _commandPoolManager; }
@@ -89,7 +84,7 @@ public:
 
 
     /** @brief Get the number of cached frame */
-    [[nodiscard]] std::size_t cachedFrameCount(void) const noexcept { return swapchain().imageViews().size(); }
+    [[nodiscard]] std::size_t cachedFrameCount(void) const noexcept { return swapchain().imageCount(); }
 
 
     /** @brief Callback on render view size changed */
@@ -104,8 +99,8 @@ private:
     LogicalDevice _logicalDevice;
     Swapchain _swapchain;
     RenderPass _renderPass;
-    PipelinePool _pipelinePool;
-    FrameBufferManager _frameBufferManager;
+    PipelineManager _pipelineManager;
+    FramebufferManager _framebufferManager;
     CommandPoolManager _commandPoolManager;
 
     /** @brief Initialize the backend window for the renderer context */

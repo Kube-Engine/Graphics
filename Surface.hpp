@@ -12,25 +12,17 @@ namespace kF::Graphics
 {
     class Surface;
 
-    /** @brief Vulkan surface format */
-    using SurfaceFormat = VkSurfaceFormatKHR;
-
-    /** @brief Vulkan presentation mode*/
-    using PresentMode = VkPresentModeKHR;
-
-    /** @brief Vulkan presentation mode*/
-    using SurfaceCapabilities = VkSurfaceCapabilitiesKHR;
-
-    /** @brief Vulkan extent */
-    using Extent = VkExtent2D;
+    /** @brief Get literal of a 'PresentMode' enumeration */
+    [[nodiscard]] const char *PresentModeName(const PresentMode type) noexcept;
 }
 
 /** @brief Abstraction of a render surface */
-class kF::Graphics::Surface final : public VulkanHandle<VkSurfaceKHR>
+class kF::Graphics::Surface final : public VulkanHandle<SurfaceHandle>
 {
 public:
     /** @brief Construct a surface */
-    Surface(Renderer &renderer);
+    Surface(Renderer &renderer) : VulkanHandle<SurfaceHandle>(renderer)
+        { createSurface(); }
 
     /** @brief Move constructor */
     Surface(Surface &&other) noexcept = default;
@@ -42,19 +34,18 @@ public:
     Surface &operator=(Surface &&other) noexcept = default;
 
     /** @brief Get the surface format */
-    [[nodiscard]] SurfaceFormat surfaceFormat(void) const;
+    [[nodiscard]] SurfaceFormat getSurfaceFormat(void) const;
 
     /** @brief Get the presentation mode */
-    [[nodiscard]] PresentMode presentMode(void) const;
+    [[nodiscard]] PresentMode getPresentMode(void) const;
 
     /** @brief Get the surface capabilities */
-    [[nodiscard]] SurfaceCapabilities surfaceCapabilities(void) const;
+    [[nodiscard]] SurfaceCapabilities getSurfaceCapabilities(void) const;
 
     /** @brief Get the extent */
-    [[nodiscard]] Extent extent(const SurfaceCapabilities &capabilities) const;
-
-    /** @brief Get literal of a 'PresentMode' enumeration */
-    [[nodiscard]] static const char *PresentModeName(const PresentMode type) noexcept;
+    [[nodiscard]] Extent2D getExtent(const SurfaceCapabilities &capabilities) const;
 
 private:
+    /** @brief Create a surface */
+    void createSurface(void);
 };

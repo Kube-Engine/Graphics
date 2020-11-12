@@ -82,7 +82,7 @@ public:
 
 
     /** @brief Contruct the manager */
-    CommandPoolManager(Renderer &renderer) = default;
+    CommandPoolManager(Renderer &renderer) noexcept;
 
     /** @brief Move constructor, not thread safe */
     CommandPoolManager(CommandPoolManager &&other) noexcept = default;
@@ -119,7 +119,7 @@ private:
     [[nodiscard]] Node *allocate(const QueueType queueType) noexcept;
 
     /** @brief Destruct and deallocate a node using allocator */
-    [[nodiscard]] Node *deallocate(Node * const node) noexcept;
+    void deallocate(Node * const node) noexcept;
 };
 
 static_assert_fit_cacheline(kF::Graphics::CommandPoolManager);

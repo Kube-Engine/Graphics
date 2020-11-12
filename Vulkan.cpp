@@ -7,7 +7,7 @@
 
 using namespace kF;
 
-const char *Graphics::ErrorMessage(VkResult res)
+const char *Graphics::ErrorMessage(const VkResult res)
 {
     switch (res)
     {

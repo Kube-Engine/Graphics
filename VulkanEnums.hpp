@@ -9,6 +9,28 @@
 
 namespace kF::Graphics
 {
+    /** @brief Describes all types of queues */
+    enum class QueueType : std::size_t {
+        Graphics = 0u,
+        Compute,
+        Transfer,
+        FastTransfer,
+        SparseBinding,
+        Present,
+        Count
+    };
+
+    /** @brief Presentation mode */
+    enum class PresentMode {
+        ImmediateKhr = VK_PRESENT_MODE_IMMEDIATE_KHR,
+        MailboxKhr = VK_PRESENT_MODE_MAILBOX_KHR,
+        FifoKhr = VK_PRESENT_MODE_FIFO_KHR,
+        FifoRelaxedKhr = VK_PRESENT_MODE_FIFO_RELAXED_KHR,
+        SharedDemandRefreshKhr = VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR,
+        SharedContinuousRefreshKhr = VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR
+    };
+
+
     /** @brief Memory usage */
     enum class MemoryUsage {
         Unknown = VMA_MEMORY_USAGE_UNKNOWN,
@@ -51,13 +73,13 @@ namespace kF::Graphics
 
     /** @brief Image view type */
     enum class ImageViewType {
-        Type1D = VK_IMAGE_VIEW_TYPE_1D,
-        Type2D = VK_IMAGE_VIEW_TYPE_2D,
-        Type3D = VK_IMAGE_VIEW_TYPE_3D,
-        TypeCube = VK_IMAGE_VIEW_TYPE_CUBE,
-        TypeArray1D = VK_IMAGE_VIEW_TYPE_1D_ARRAY,
-        TypeArray2D = VK_IMAGE_VIEW_TYPE_2D_ARRAY,
-        TypeArrayCube = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY
+        Image1D = VK_IMAGE_VIEW_TYPE_1D,
+        Image2D = VK_IMAGE_VIEW_TYPE_2D,
+        Image3D = VK_IMAGE_VIEW_TYPE_3D,
+        Cube = VK_IMAGE_VIEW_TYPE_CUBE,
+        Array1D = VK_IMAGE_VIEW_TYPE_1D_ARRAY,
+        Array2D = VK_IMAGE_VIEW_TYPE_2D_ARRAY,
+        ArrayCube = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY
     };
 
     /** @brief Image layout */
@@ -87,6 +109,56 @@ namespace kF::Graphics
         DepthReadOnlyOptimalKhr = VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL_KHR,
         StencilAttachmentOptimalKhr = VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL_KHR,
         StencilReadOnlyOptimalKhr = VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL_KHR,
+    };
+
+
+    /** @brief Sampler mimap mode */
+    enum class SamplerMipmapMode {
+        Nearest = VK_SAMPLER_MIPMAP_MODE_NEAREST,
+        Linear = VK_SAMPLER_MIPMAP_MODE_LINEAR
+    };
+
+    /** @brief Sampler adress mode */
+    enum class SamplerAddressMode {
+        Repeat = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        MirroredRepeat = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT,
+        ClampToEdge = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+        ClampToBorder = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
+        MirrorClampToEdge = VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE,
+        MirrorClampToEdgeKhr = VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE_KHR,
+    };
+
+
+    /** @brief Sampler filter */
+    enum class Filter {
+        Nearest = VK_FILTER_NEAREST,
+        Linear = VK_FILTER_LINEAR,
+        CubicImg = VK_FILTER_CUBIC_IMG,
+        CubicExt = VK_FILTER_CUBIC_EXT
+    };
+
+    /** @brief Compare operators */
+    enum class CompareOp {
+        Never = VK_COMPARE_OP_NEVER,
+        Less = VK_COMPARE_OP_LESS,
+        Equal = VK_COMPARE_OP_EQUAL,
+        LessOrEqual = VK_COMPARE_OP_LESS_OR_EQUAL,
+        Greater = VK_COMPARE_OP_GREATER,
+        NotEqual = VK_COMPARE_OP_NOT_EQUAL,
+        GreaterOrEqual = VK_COMPARE_OP_GREATER_OR_EQUAL,
+        Always = VK_COMPARE_OP_ALWAYS
+    };
+
+    /** @brief Border color */
+    enum class BorderColor {
+        FloatTransparentBlack = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
+        IntTransparentBlack = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK,
+        FloatOpaqueBlack = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK,
+        IntOpaqueBlack = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+        FloatOpaqueWhite = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
+        IntOpaqueWhite = VK_BORDER_COLOR_INT_OPAQUE_WHITE,
+        FloatCustomExt = VK_BORDER_COLOR_FLOAT_CUSTOM_EXT,
+        IntCustomExt = VK_BORDER_COLOR_INT_CUSTOM_EXT
     };
 
 

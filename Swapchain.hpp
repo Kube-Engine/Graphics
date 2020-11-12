@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Image.hpp"
+#include "ImageView.hpp"
 
 namespace kF::Graphics
 {
@@ -13,7 +14,7 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of renderer swapchain */
-class akignas_cacheline kF::Graphics::Swapchain final : public VulkanHandle<VkSwapchainKHR>
+class alignas_cacheline kF::Graphics::Swapchain final : public VulkanHandle<SwapchainHandle>
 {
 public:
     /** @brief Construct the swapchain */
@@ -37,35 +38,35 @@ public:
     [[nodiscard]] const PresentMode &presentMode(void) const noexcept { return _presentMode; }
 
     /** @brief Get the extent */
-    [[nodiscard]] Extent &extent(void) noexcept { return _extent; }
-    [[nodiscard]] const Extent &extent(void) const noexcept { return _extent; }
+    [[nodiscard]] Extent2D &extent(void) noexcept { return _extent; }
+    [[nodiscard]] const Extent2D &extent(void) const noexcept { return _extent; }
 
-    /** @brief Get the images buffer of theswapchain */
-    [[nodiscard]] auto &images(void) noexcept { return _images; }
-    [[nodiscard]] const auto &images(void) const noexcept { return _images; }
+    /** @brief Get the number of cached image */
+    [[nodiscard]] std::size_t imageCount(void) const noexcept { return _imagePairs.size(); }
 
-    /** @brief Get the image views buffer */
-    [[nodiscard]] auto &imageViews(void) noexcept { return _imageViews; }
-    [[nodiscard]] const auto &imageViews(void) const noexcept { return _imageViews; }
+    /** @brief Get an image of the swapchain */
+    [[nodiscard]] ImageHandle imageAt(const FrameIndex frameIndex) const noexcept { return _imagePairs.at(frameIndex).first; }
+
+    /** @brief Get an image of the swapchain */
+    [[nodiscard]] ImageViewHandle imageViewAt(const FrameIndex frameIndex) const noexcept { return _imagePairs.at(frameIndex).second; }
 
     /** @brief Swap two swapchains */
     void swap(Swapchain &other) noexcept;
 
 private:
-    SurfaceFormat _surfaceFormat;
-    PresentMode _presentMode;
-    Extent _extent;
-    Core::TinyVector<ImageHandle> _images;
-    Core::TinyVector<ImageView> _imageViews;
+    Core::Vector<std::pair<ImageHandle, ImageView>> _imagePairs {};
+    Extent2D _extent {};
+    SurfaceFormat _surfaceFormat {};
+    PresentMode _presentMode { PresentMode::ImmediateKhr };
 
     /** @brief Create the swapchain */
     void createSwapchain(void);
 
     /** @brief Create swapchain images */
-    void retreiveImages(void);
+    [[nodiscard]] Core::Vector<ImageHandle> retreiveImages(void);
 
     /** @brief Create swapchain image views */
-    void createImageViews(void);
+    void createImageViews(Core::Vector<ImageHandle> &&images);
 };
 
 static_assert_fit_cacheline(kF::Graphics::Swapchain);

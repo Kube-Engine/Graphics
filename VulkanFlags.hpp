@@ -6,31 +6,32 @@
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 
+#include <concepts>
+
 namespace kF::Graphics
 {
     /** @brief Any flag base */
     using Flags = VkFlags;
 
     /** @brief Helper used to combine protected enum flags */
-    template<typename FlagsType, FlagsType ...Values> requires std::convertible_to<FlagsType, Flags>
-    [[nodiscard]] constexpr Flags MakeFlags(Values ...values) noexcept
-        { return ... | static_cast<Flags>(values); }
+    template<typename FlagsType, typename ...Values> requires std::conjunction_v<std::is_same<Values, FlagsType>...>
+    [[nodiscard]] constexpr FlagsType MakeFlags(const FlagsType first, Values ...following) noexcept
+        { return static_cast<FlagsType>((ToFlags(first) | ... | ToFlags(following))); }
+
+    /** @brief Helper used to combine protected enum flags */
+    template<typename FlagsType> requires requires { static_cast<Flags>(std::declval<FlagsType>()); }
+    [[nodiscard]] constexpr Flags ToFlags(const FlagsType value) noexcept
+        { return static_cast<Flags>(value); }
 
 
-    /** @brief Describes all types of queues */
-    enum class QueueType : VkQueueFlags {
-        Graphics = VK_QUEUE_GRAPHICS_BIT,
-        Compute = VK_QUEUE_COMPUTE_BIT,
-        Transfer = VK_QUEUE_TRANSFER_BIT,
-        SparseBinding = VK_QUEUE_SPARSE_BINDING_BIT,
-        Protected = VK_QUEUE_PROTECTED_BIT,
-        Present,
-        Count
+    /** @brief Pipeline layout creation flags */
+    enum class PipelineLayoutCreateFlags : VkPipelineLayoutCreateFlags {
+        None = 0x0
     };
 
 
     /** @brief Frame buffer creation flags */
-    enum class FrameBufferCreateFlags : VkFramebufferCreateFlags {
+    enum class FramebufferCreateFlags : VkFramebufferCreateFlags {
         None = 0x0,
         Imageless = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT,
         ImagelessKhr = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT_KHR
@@ -40,34 +41,34 @@ namespace kF::Graphics
     /** @brief Buffer creation flags */
     enum class BufferCreateFlags : VkBufferCreateFlags {
         None = 0x0,
-        SparseBindingBit = VK_BUFFER_CREATE_SPARSE_BINDING_BIT,
-        SparseResidencyBit = VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT,
-        SparseAliasedBit = VK_BUFFER_CREATE_SPARSE_ALIASED_BIT,
-        ProtectedBit = VK_BUFFER_CREATE_PROTECTED_BIT,
-        DeviceAddressCaptureReplayBit = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT,
-        DeviceAddressCaptureReplayBitExt = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_EXT,
-        DeviceAddressCaptureReplayBitKhr = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR
+        SparseBinding = VK_BUFFER_CREATE_SPARSE_BINDING_BIT,
+        SparseResidency = VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT,
+        SparseAliased = VK_BUFFER_CREATE_SPARSE_ALIASED_BIT,
+        Protected = VK_BUFFER_CREATE_PROTECTED_BIT,
+        DeviceAddressCaptureReplay = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT,
+        DeviceAddressCaptureReplayExt = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_EXT,
+        DeviceAddressCaptureReplayKhr = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR
     };
 
     /** @brief Buffer usage flags */
     enum class BufferUsageFlags : VkBufferUsageFlags {
-        TransferSrcBit = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-        TransferDstBit = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-        UniformTexelBufferBit = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
-        StorageTexelBufferBit = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT,
-        UniformBufferBit = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-        StorageBufferBit = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-        IndexBufferBit = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-        VertexBufferBit = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-        IndirectBufferBit = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
-        ShaderDeviceAddressBit = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-        TransformFeedbackBufferBitExt = VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT,
-        TransformFeedbackCounterBufferBitExt = VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT,
-        ConditionalRenderingBitExt = VK_BUFFER_USAGE_CONDITIONAL_RENDERING_BIT_EXT,
-        RayTracingBitKhr = VK_BUFFER_USAGE_RAY_TRACING_BIT_KHR,
-        RayTracingBitNv = VK_BUFFER_USAGE_RAY_TRACING_BIT_NV,
-        ShaderDeviceAddressBitExt = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT_EXT,
-        ShaderDeviceAddressBitKhr = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT_KHR
+        TransferSrc = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        TransferDst = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        UniformTexelBuffer = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
+        StorageTexelBuffer = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT,
+        UniformBuffer = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+        StorageBuffer = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+        IndexBuffer = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+        VertexBuffer = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+        IndirectBuffer = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
+        ShaderDeviceAddress = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+        TransformFeedbackBufferExt = VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT,
+        TransformFeedbackCounterBufferExt = VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT,
+        ConditionalRenderingExt = VK_BUFFER_USAGE_CONDITIONAL_RENDERING_BIT_EXT,
+        RayTracingKhr = VK_BUFFER_USAGE_RAY_TRACING_BIT_KHR,
+        RayTracingNv = VK_BUFFER_USAGE_RAY_TRACING_BIT_NV,
+        ShaderDeviceAddressExt = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT_EXT,
+        ShaderDeviceAddressKhr = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT_KHR
     };
 
 
@@ -99,16 +100,16 @@ namespace kF::Graphics
 
     /** @brief Image usage flags */
     enum class ImageUsageFlags : VkImageUsageFlags {
-        TransferSrcBit = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-        TransferDstBit = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-        SampledBit = VK_IMAGE_USAGE_SAMPLED_BIT,
-        StorageBit = VK_IMAGE_USAGE_STORAGE_BIT,
-        ColorAttachmentBit = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        DepthStencilAttachmentBit = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-        TransientAttachmentBit = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT,
-        InputAttachmentBit = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
-        ShadingRateImageBitNv = VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV,
-        FragmentDensityMapBitExt = VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT
+        TransferSrc = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+        TransferDst = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+        Sampled = VK_IMAGE_USAGE_SAMPLED_BIT,
+        Storage = VK_IMAGE_USAGE_STORAGE_BIT,
+        ColorAttachment = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        DepthStencilAttachment = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+        TransientAttachment = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT,
+        InputAttachment = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+        ShadingRateImageNv = VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV,
+        FragmentDensityMapExt = VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT
     };
 
     /** @brief Sample count flags */
@@ -130,6 +131,19 @@ namespace kF::Graphics
         Defered = VK_IMAGE_VIEW_CREATE_FRAGMENT_DENSITY_MAP_DEFERRED_BIT_EXT
     };
 
+    /** @brief Sampler creation flags */
+    enum class SamplerCreateFlags : VkSamplerCreateFlags {
+        None = 0x0,
+        SubsampledExt = VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT,
+        SubsampledCoarseReconstructionExt = VK_SAMPLER_CREATE_SUBSAMPLED_COARSE_RECONSTRUCTION_BIT_EXT
+    };
 
 
+    /** @brief Command buffer usage flags */
+    enum class CommandBufferUsageFlags : VkCommandBufferUsageFlags {
+        None = 0x0,
+        OneTimeSubmit = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+        RenderPassContinue = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
+        SimultaneousUse = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT
+    };
 }

@@ -1,36 +1,37 @@
 /**
  * @ Author: Matthieu Moinvaziri
- * @ Description: Layout instruction model
+ * @ Description: PipelineLayoutModel
  */
 
 #pragma once
-
-#include <Kube/Core/Vector.hpp>
 
 #include "Vulkan.hpp"
 
 namespace kF::Graphics
 {
     struct PipelineLayoutModel;
-
-    /** @brief Vulkan layout binding description */
-    using VertexInputBinding = VkVertexInputBindingDescription;
-
-    /** @brief List of layout bindings */
-    using VertexInputBindings = Core::TinyVector<VertexInputBinding>;
-
-    /** @brief Vulkan layout attribute description */
-    using VertexInputAttribute = VkVertexInputAttributeDescription;
-
-    /** @brief A list of layout attributes */
-    using VertexInputAttributes = Core::TinyVector<LayoutAttribute>;
-}
-
-/** @brief Model describing a memory layout of a pipeline */
-struct alignas_half_cacheline kF::Graphics::PipelineLayoutModel
-{
-    VertexInputBindings bindings;
-    VertexInputAttributes attributes;
 };
 
-static_assert_fit_half_cacheline(kF::Graphics::PipelineLayoutModel);
+/** @brief Describe how to create a sampler */
+struct kF::Graphics::PipelineLayoutModel : public VkPipelineLayoutCreateInfo
+{
+    /** @brief Initialize constructor */
+    PipelineLayoutModel(const DescriptorSetLayoutHandle * const setLayoutBegin, const DescriptorSetLayoutHandle * const setLayoutEnd,
+            const PushConstantRange * const pushConstantBegin, const PushConstantRange * const pushConstantEnd)
+        noexcept
+        : VkPipelineLayoutCreateInfo {
+            sType: VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+            pNext: nullptr,
+            flags: ToFlags(PipelineLayoutCreateFlags::None),
+            setLayoutCount: static_cast<std::uint32_t>(std::distance(setLayoutBegin, setLayoutEnd)),
+            pSetLayouts: setLayoutBegin,
+            pushConstantRangeCount: static_cast<std::uint32_t>(std::distance(pushConstantBegin, pushConstantEnd)),
+            pPushConstantRanges: pushConstantBegin
+        } {}
+
+    /** @brief POD semantics */
+    PipelineLayoutModel(const PipelineLayoutModel &other) noexcept = default;
+    PipelineLayoutModel(PipelineLayoutModel &&other) noexcept = default;
+    PipelineLayoutModel &operator=(const PipelineLayoutModel &other) noexcept = default;
+    PipelineLayoutModel &operator=(PipelineLayoutModel &&other) noexcept = default;
+};

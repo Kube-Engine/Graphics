@@ -5,16 +5,18 @@
 
 #pragma once
 
-#include <Kube/Core/Vector.hpp>
-
-#include "QueueManager.hpp"
-#include "CommandModel.hpp"
+#include "VulkanHandle.hpp"
 
 namespace kF::Graphics
 {
     class CommandPool;
     class ManualCommandPool;
     class AutoCommandPool;
+
+    template<typename Recorder>
+    concept RecorderRequirements = requires {
+        std::declval<Recorder>().operator()(std::declval<const CommandHandle>());
+    };
 }
 
 /** @brief Command pool that allocates command buffers */
@@ -35,28 +37,27 @@ public:
     CommandPool(CommandPool &&other) noexcept = default;
 
     /** @brief Destruct the command pool */
-    ~CommandPool(void) noexcept_ndebug;
+    ~CommandPool(void) noexcept;
 
     /** @brief Move assignment */
     CommandPool &operator=(CommandPool &&other) noexcept = default;
 
 
     /** @brief Adds a command to the pool */
-    template<CommandModel Model>
-    [[nodiscard]] CommandHandle add(const Model &model, const CommandLevel level, const Lifecycle lifecycle);
+    template<RecorderRequirements Recorder>
+    [[nodiscard]] CommandHandle add(const Lifecycle lifecycle, const CommandLevel level, Recorder &&recorder);
 
-    /** @brief Adds a range of commands to the pool
-     *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
-    template<CommandModel Model>
-    void add(const Model * const modelFrom, const Model * const modelTo,
+    /** @brief Adds a range of commands to the pool */
+    template<typename ...Recorders> requires (... && RecorderRequirements<Recorders>)
+    void add(const Lifecycle lifecycle, const CommandLevel level,
             CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const CommandLevel level, const Lifecycle lifecycle);
+            Recorders &&...recorders);
 
     /** @brief Remove a command from the pool */
     void remove(const CommandHandle command) noexcept { remove(&command, &command + 1); }
 
     /** @brief Remove a range commands from the pool */
-    void remove(const CommandHandle * const from, const CommandHandle * const to) noexcept;
+    void remove(const CommandHandle * const commandBegin, const CommandHandle * const commandEnd) noexcept;
 
     /** @brief Clear every commands at once */
     void clear(void) noexcept;
@@ -72,20 +73,7 @@ private:
     void createCommandPool(const QueueType queueType, const Lifecycle lifecycle);
 
     /** @brief Allocate multiple command buffers */
-    void allocateCommands(CommandHandle * const commandFrom, CommandHandle * const commandTo, const CommandLevel level);
-
-    /** @brief Record render commands */
-    void recordRender(const RenderModel * const modelFrom, const RenderModel * const modelTo,
-            CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const VkCommandBufferBeginInfo &commandBeginInfo);
-
-    /** @brief Record transfer commands */
-    void recordTransfer(const TransferModel * const modelFrom, const TransferModel * const modelTo,
-            CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const VkCommandBufferBeginInfo &commandBeginInfo);
-
-    /** @brief Helper toretreive command usage flags out of lifecycle */
-    [[nodiscard]] static VkCommandBufferUsageFlags GetCommandUsageFlags(const Lifecycle lifecycle);
+    void allocateCommands(const CommandLevel level, CommandHandle * const commandFrom, CommandHandle * const commandTo);
 };
 
 static_assert_fit_half_cacheline(kF::Graphics::CommandPool);
@@ -108,17 +96,14 @@ public:
 
 
     /** @brief Add a one time submit command */
-    template<CommandModel Model>
-    [[nodiscard]] CommandHandle add(const Model &model, const CommandLevel level = Level::Primary)
-        { return CommandPool::add(model, level, Lifecycle::Auto); }
+    template<RecorderRequirements Recorder>
+    [[nodiscard]] CommandHandle add(const CommandLevel level, Recorder &&recorder)
+        { return CommandPool::add(Lifecycle::Auto, level, std::forward<Recorder>(recorder)); }
 
-    /** @brief Adds a range of commands to the pool
-     *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
-    template<CommandModel Model>
-    void add(const Model * const modelFrom, const Model * const modelTo,
-            CommandHandle * const commandFrom, CommandHandle * const commandTo,
-            const CommandLevel level = Level::Primary)
-        { CommandPool::add(modelFrom, modelTo, commandFrom, commandTo, level, Lifecycle::Auto); }
+    /** @brief Adds a range of one time submit commands to the pool */
+    template<typename ...Recorders> requires (... && RecorderRequirements<Recorders>)
+    void add(const CommandLevel level, CommandHandle * const commandFrom, CommandHandle * const commandTo, Recorders &&...recorders)
+        { CommandPool::add(Lifecycle::Auto, level, commandFrom, commandTo, std::forward<Recorders>(recorders)...); }
 
     /** @brief Clear every commands at once */
     using CommandPool::clear;
@@ -141,23 +126,21 @@ public:
     ManualCommandPool(ManualCommandPool &&other) noexcept = default;
 
     /** @brief Destruct the command pool */
-    ~ManualCommandPool(void) = default;
+    ~ManualCommandPool(void) noexcept = default;
 
     /** @brief Move assignment */
     ManualCommandPool &operator=(ManualCommandPool &&other) noexcept = default;
 
 
-    /** @brief Adds a command to the pool */
-    template<CommandModel Model>
-    [[nodiscard]] CommandHandle add(const Model &model, const CommandLevel level = Level::Primary)
-        { return CommandPool::add(model, level, Lifecycle::Manual); }
+    /** @brief Add a removable command */
+    template<RecorderRequirements Recorder>
+    [[nodiscard]] CommandHandle add(const CommandLevel level, Recorder &&recorder)
+        { return CommandPool::add(Lifecycle::Manual, level, std::forward<Recorder>(recorder)); }
 
-    /** @brief Adds a range of commands to the pool
-     *  If the number of models is 1 (modelTo - modelFrom), we duplicate the command for each output commands (commandTo - commandFrom) */
-    template<CommandModel Model>
-    void add(const Model * const modelFrom, const Model * const modelTo,
-            CommandHandle * const commandFrom, CommandHandle * const commandTo, const CommandLevel level = Level::Primary)
-        { CommandPool::add(modelFrom, modelTo, commandFrom, commandTo, level, Lifecycle::Manual); }
+    /** @brief Adds a range of removable commands to the pool */
+    template<typename ...Recorders> requires (... && RecorderRequirements<Recorders>)
+    void add(const CommandLevel level, CommandHandle * const commandFrom, CommandHandle * const commandTo, Recorders &&...recorders)
+        { CommandPool::add(Lifecycle::Manual, level, commandFrom, commandTo, std::forward<Recorders>(recorders)...); }
 
     /** @brief Remove a command from the pool */
     using CommandPool::remove;

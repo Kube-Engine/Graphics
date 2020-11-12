@@ -9,6 +9,7 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
+#include "PhysicalDevice.hpp"
 
 using namespace kF;
 using namespace kF::Literal;

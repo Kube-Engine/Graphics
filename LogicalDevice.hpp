@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <vector>
+#include <Kube/Core/Vector.hpp>
 
 #include "VulkanHandle.hpp"
 
@@ -19,7 +19,7 @@ class kF::Graphics::LogicalDevice final : public VulkanHandle<VkDevice>
 {
 public:
     /** @brief Logical device extension list */
-    using Extensions = std::vector<const char *>;
+    using Extensions = Core::Vector<const char *>;
 
     /** @brief Create a logical device */
     LogicalDevice(Renderer &renderer) : VulkanHandle<VkDevice>(renderer)

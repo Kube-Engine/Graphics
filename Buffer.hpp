@@ -18,7 +18,7 @@ class kF::Graphics::Buffer final : public VulkanHandle<BufferHandle>
 {
 public:
     /** @brief Construct a nw buffer using a buffer model */
-    Buffer(Renderer &renderer, const BufferModel &model) : VulkanHandle<BufferHandle>()
+    Buffer(Renderer &renderer, const BufferModel &model) : VulkanHandle<BufferHandle>(renderer)
         { createBuffer(model); }
 
     /** @brief Move constructor */

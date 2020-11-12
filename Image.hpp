@@ -13,6 +13,7 @@ namespace kF::Graphics
     class Image;
 };
 
+/** @brief Abstract an image */
 class kF::Graphics::Image final : public VulkanHandle<ImageHandle>
 {
 public:
@@ -31,5 +32,5 @@ public:
 
 private:
     /** @brief Create an image */
-    void createImage(const ImageModel &model)
+    void createImage(const ImageModel &model);
 };

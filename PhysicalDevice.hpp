@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <vector>
+#include <Kube/Core/Vector.hpp>
 
 #include "VulkanHandle.hpp"
 
@@ -15,11 +15,11 @@ namespace kF::Graphics
 }
 
 /** @brief A physical device represent a GPU card in the computer */
-class kF::Graphics::PhysicalDevice final : public VulkanHandle<VkPhysicalDevice>
+class kF::Graphics::PhysicalDevice final : public VulkanHandle<PhysicalDeviceHandle>
 {
 public:
     /** @brief A list of vulkan devices */
-    using Devices = std::vector<VkPhysicalDevice>;
+    using Devices = Core::TinyVector<PhysicalDeviceHandle>;
 
     /** @brief Construct a physical device */
     PhysicalDevice(Renderer &renderer);

@@ -8,6 +8,7 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
+#include "QueueManager.hpp"
 
 using namespace kF;
 using namespace kF::Literal;
@@ -57,12 +58,12 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
 {
     static const float priority = 1.0f;
 
-    std::vector<std::uint32_t> usedIndexes;
+    Core::TinyVector<std::uint32_t> usedIndexes;
     QueueCreateInfos queues;
 
-    for (std::size_t type = 0; type < QueueType::Count; ++type) {
+    for (std::size_t type = 0u; type < static_cast<std::size_t>(QueueType::Count); ++type) {
         if (_candidates[type].empty()) {
-            if (type == QueueType::FastTransfer)
+            if (static_cast<QueueType>(type) == QueueType::FastTransfer)
                 continue;
             throw std::runtime_error("Graphics::QueueManager::registerQueues: Couldn't register unsupported queue type '"s + QueueTypeName(static_cast<QueueType>(type)));
         }
@@ -72,7 +73,7 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
             const std::size_t score = std::count(usedIndexes.begin(), usedIndexes.end(), queueFamilyIndex);
             if (score < queueCount) {
                 if (!score)
-                    queues.emplace_back(QueueCreateInfo {
+                    queues.push(QueueCreateInfo {
                         sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
                         pNext: nullptr,
                         flags: VkDeviceQueueCreateFlags(),
@@ -87,7 +88,7 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
                             break;
                         }
                     }
-                usedIndexes.emplace_back(queueFamilyIndex);
+                usedIndexes.push(queueFamilyIndex);
                 _array[type].queueFamilyIndex = queueFamilyIndex;
                 _array[type].queueIndex = score;
                 found = true;
@@ -98,7 +99,7 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
             }
         }
         if (!found) {
-            usedIndexes.emplace_back(best.first);
+            usedIndexes.push(best.first);
             _array[type].queueFamilyIndex = best.first;
             _array[type].queueIndex = 0;
         }
@@ -108,7 +109,21 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
 
 void Graphics::QueueManager::retreiveFamilyQueueIndexes(void)
 {
-    std::vector<VkQueueFamilyProperties> properties;
+    constexpr auto TypeToFlags = [](const QueueType type) -> VkQueueFlags {
+        switch (type) {
+        case QueueType::Graphics:
+            return VK_QUEUE_GRAPHICS_BIT;
+        case QueueType::Compute:
+            return VK_QUEUE_COMPUTE_BIT;
+        case QueueType::Transfer:
+        case QueueType::FastTransfer:
+            return VK_QUEUE_TRANSFER_BIT;
+        default:
+            return VK_QUEUE_FAMILY_IGNORED;
+        }
+    };
+
+    Core::Vector<VkQueueFamilyProperties> properties;
     std::uint32_t queueFamilyIndex = 0;
     VkBool32 isPresent = false;
 
@@ -117,30 +132,19 @@ void Graphics::QueueManager::retreiveFamilyQueueIndexes(void)
         if (auto res = ::vkGetPhysicalDeviceSurfaceSupportKHR(parent().physicalDevice(), queueFamilyIndex, parent().surface(), &isPresent); res != VK_SUCCESS)
             throw std::runtime_error("Graphics::QueueManager::registerQueues: Couldn't get physical device surface support '"s + ErrorMessage(res) + '\'');
         if (isPresent)
-            _candidates[QueueType::Present].emplace_back(queueFamilyIndex, property.queueCount);
-        if (property.queueFlags & TypeToFlag(QueueType::Graphics))
-            _candidates[QueueType::Graphics].emplace_back(queueFamilyIndex, property.queueCount);
-        if (property.queueFlags & TypeToFlag(QueueType::Compute))
-            _candidates[QueueType::Compute].emplace_back(queueFamilyIndex, property.queueCount);
-        if (property.queueFlags & TypeToFlag(QueueType::Transfer))
-            _candidates[QueueType::Transfer].emplace_back(queueFamilyIndex, property.queueCount);
-        if (property.queueFlags & TypeToFlag(QueueType::Transfer) && !(property.queueFlags & TypeToFlag(QueueType::Graphics)) && !(property.queueFlags & TypeToFlag(QueueType::Compute)) )
-            _candidates[QueueType::FastTransfer].emplace_back(queueFamilyIndex, property.queueCount);
+            _candidates[static_cast<std::size_t>(QueueType::Present)].push(queueFamilyIndex, property.queueCount);
+        if (property.queueFlags & TypeToFlags(QueueType::Graphics))
+            _candidates[static_cast<std::size_t>(QueueType::Graphics)].push(queueFamilyIndex, property.queueCount);
+        if (property.queueFlags & TypeToFlags(QueueType::Compute))
+            _candidates[static_cast<std::size_t>(QueueType::Compute)].push(queueFamilyIndex, property.queueCount);
+        if (property.queueFlags & TypeToFlags(QueueType::SparseBinding))
+            _candidates[static_cast<std::size_t>(QueueType::Compute)].push(queueFamilyIndex, property.queueCount);
+        if (property.queueFlags & TypeToFlags(QueueType::Transfer)) {
+            _candidates[static_cast<std::size_t>(QueueType::Transfer)].push(queueFamilyIndex, property.queueCount);
+            if (!(property.queueFlags & TypeToFlags(QueueType::Graphics)) && !(property.queueFlags & TypeToFlags(QueueType::Compute)) )
+                _candidates[static_cast<std::size_t>(QueueType::FastTransfer)].push(queueFamilyIndex, property.queueCount);
+        }
         ++queueFamilyIndex;
-    }
-}
-
-constexpr std::uint32_t Graphics::QueueManager::TypeToFlag(const QueueType type) noexcept
-{
-    switch (type) {
-    case QueueType::Graphics:
-        return VK_QUEUE_GRAPHICS_BIT;
-    case QueueType::Compute:
-        return VK_QUEUE_COMPUTE_BIT;
-    case QueueType::Transfer:
-        return VK_QUEUE_TRANSFER_BIT;
-    default:
-        return VK_QUEUE_FAMILY_IGNORED;
     }
 }
 
