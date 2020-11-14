@@ -41,6 +41,25 @@ namespace kF::Graphics
     };
 
 
+    /** @brief Descriptor type */
+    enum class DescriptorType {
+        Sampler = VK_DESCRIPTOR_TYPE_SAMPLER,
+        SampledImage = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+        CombinedImageSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        StorageImage = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+        UniformTexelBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
+        StorageTexelBuffer = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,
+        UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+        UniformBufferDynamic = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+        StorageBufferDynamic = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+        InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+        InlineUniformBlockExt = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT,
+        AccelerationStructureKhr = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+        AccelerationStructureNv = AccelerationStructureKhr
+    }
+
+
     /** @brief Command buffer level */
     enum class CommandLevel {
         Primary = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
