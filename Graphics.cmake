@@ -81,6 +81,9 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/Fence.hpp
     ${KubeGraphicsDir}/Fence.cpp
 
+    ${KubeGraphicsDir}/Event.hpp
+    ${KubeGraphicsDir}/Event.cpp
+
     ${KubeGraphicsDir}/Buffer.hpp
     ${KubeGraphicsDir}/Buffer.cpp
     ${KubeGraphicsDir}/BufferModel.hpp
