@@ -9,6 +9,7 @@
 
 #include "Renderer.hpp"
 #include "CommandDispatcher.hpp"
+#include "Fence.hpp"
 
 using namespace kF;
 using namespace kF::Literal;
@@ -28,12 +29,12 @@ void Graphics::CommandDispatcher::dispatch(const QueueType queueType,
         fence
     );
     if (res != VK_SUCCESS)
-        throw std::runtime_error("Graphics::Drawer::draw: Couldn't submit to queue '"s + ErrorMessage(res) + '\'');
+        throw std::runtime_error("Graphics::CommandDispatcher::dispatch: Couldn't submit to queue '"s + ErrorMessage(res) + '\'');
 }
 
 bool Graphics::CommandDispatcher::tryAcquireNextFrame(void)
 {
-    constexpr auto UnrollClear = []<std::size_t ...Indexes>(SemaphoreCache * const data, std::index_sequence<Indexes...>) {
+    constexpr auto UnrollClear = []<typename Type, std::size_t ...Indexes>(Type * const data, std::index_sequence<Indexes...>) {
         (... , data[Indexes].clear());
     };
 
@@ -58,37 +59,45 @@ bool Graphics::CommandDispatcher::tryAcquireNextFrame(void)
         if (res == VK_TIMEOUT || res == VK_ERROR_OUT_OF_DATE_KHR || res == VK_SUBOPTIMAL_KHR)
             return false;
         else
-            throw std::runtime_error("Graphics::Drawer::draw: Couldn't acquire next image '"s + ErrorMessage(res) + '\'');
+            throw std::runtime_error("Graphics::CommandDispatcher::tryAcquireNextFrame: Couldn't acquire next image '"s + ErrorMessage(res) + '\'');
     }
 
-    // Update the new current frame and its 'available' semaphore then clear old frame data
+    // Update the new current frame
     _cachedFrames.setCurrentFrame(retreivedFrame);
     auto &cache = _cachedFrames.currentCache();
+
+    // Wait until the frame index finished all computes
+    if (!cache.fenceCache.empty())
+        Fence::Wait(cache.fenceCache.begin(), cache.fenceCache.end());
+
+    // Set frame 'available' semaphore then clear old frame data
     auto &cachedSemaphore = cache.frameAvailable;
     if (cachedSemaphore.has_value()) [[likely]]
         _availableSemaphores.push(std::move(cachedSemaphore.value()));
     cachedSemaphore.emplace(std::move(semaphore));
     UnrollClear(cache.perQueueSemaphoreCache.data(), PerQueueIndexSequence);
+    UnrollClear(cache.perQueueFenceCache.data(), PerQueueIndexSequence);
     cache.semaphoreCache.clear();
+    cache.fenceCache.clear();
     parent().dispatchFrameAcquired(retreivedFrame);
     return true;
 }
 
 void Graphics::CommandDispatcher::presentFrame(void)
 {
-    constexpr auto UnrollAccumulate = []<std::size_t ...Indexes>(const SemaphoreCache * const data, std::index_sequence<Indexes...>) -> std::size_t {
+    constexpr auto UnrollAccumulate = []<std::size_t ...Indexes>(const auto * const data, std::index_sequence<Indexes...>) -> std::size_t {
         return (... + data[Indexes].size());
     };
 
-    constexpr auto UnrollMerge = []<std::size_t ...Indexes>(const SemaphoreCache * const data, SemaphoreCache &to, std::index_sequence<Indexes...>) -> void {
+    constexpr auto UnrollMerge = []<std::size_t ...Indexes>(const auto * const data, auto &to, std::index_sequence<Indexes...>) -> void {
         (... , to.insert(to.end(), data[Indexes].begin(), data[Indexes].end()));
     };
 
     // Collect every semaphore in use for the current frame
     auto &cache = _cachedFrames.currentCache();
-    const auto count = UnrollAccumulate(cache.perQueueSemaphoreCache.data(), PerQueueIndexSequence);
-    if (count) [[likely]] {
-        cache.semaphoreCache.resize(count);
+    const auto semaphoreCount = UnrollAccumulate(cache.perQueueSemaphoreCache.data(), PerQueueIndexSequence);
+    if (semaphoreCount) [[likely]] {
+        cache.semaphoreCache.reserve(semaphoreCount);
         UnrollMerge(cache.perQueueSemaphoreCache.data(), cache.semaphoreCache, PerQueueIndexSequence);
     }
 
@@ -105,7 +114,13 @@ void Graphics::CommandDispatcher::presentFrame(void)
         pResults: nullptr,
     };
     const auto res = ::vkQueuePresentKHR(parent().queueManager().queue(QueueType::Present), &presentInfo);
-    if (res != VK_ERROR_OUT_OF_DATE_KHR && res != VK_SUBOPTIMAL_KHR)
-        throw std::runtime_error("Graphics::Drawer::draw: Couldn't setup queue present '"s + ErrorMessage(res) + '\'');
-    cache.semaphoreCache.clear();
+    if (res != VK_SUCCESS && res != VK_ERROR_OUT_OF_DATE_KHR && res != VK_SUBOPTIMAL_KHR)
+        throw std::runtime_error("Graphics::CommandDispatcher::presentFrame: Couldn't setup present queue '"s + ErrorMessage(res) + '\'');
+
+    // Collect every fence in use for the current frame
+    const auto fenceCount = UnrollAccumulate(cache.perQueueFenceCache.data(), PerQueueIndexSequence);
+    if (fenceCount) [[likely]] {
+        cache.fenceCache.reserve(fenceCount);
+        UnrollMerge(cache.perQueueFenceCache.data(), cache.fenceCache, PerQueueIndexSequence);
+    }
 }

@@ -6,7 +6,6 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
-#include "Fence.hpp"
 
 using namespace kF;
 using namespace kF::Literal;

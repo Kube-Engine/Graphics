@@ -7,7 +7,12 @@
 
 using namespace kF;
 
-alignas(alignof(Graphics::Renderer)) static std::byte ParentRendererBytes[sizeof(Graphics::Renderer)];
+struct alignas(alignof(Graphics::Renderer)) RendererCache
+{
+    std::byte bytes[sizeof(Graphics::Renderer)];
+};
+
+static RendererCache ParentRendererBytes {};
 
 Graphics::Renderer &Graphics::RendererObject::Parent(void) noexcept
 {

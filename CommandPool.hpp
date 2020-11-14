@@ -6,6 +6,7 @@
 #pragma once
 
 #include "VulkanHandle.hpp"
+#include "CommandRecording.hpp"
 
 namespace kF::Graphics
 {

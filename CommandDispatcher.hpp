@@ -9,33 +9,39 @@
 
 #include "PerFrameCache.hpp"
 #include "Semaphore.hpp"
+#include "Fence.hpp"
 #include "SubmitInfo.hpp"
 #include "CommandPool.hpp"
 
 namespace kF::Graphics
 {
-    class CommandPoolInstance;
     class CommandDispatcher;
 }
 
 /** @brief Command dispatcher collect commands and dispatch them later */
-class alignas_double_cacheline kF::Graphics::CommandDispatcher : public CachedRendererObject
+class alignas_cacheline kF::Graphics::CommandDispatcher : public CachedRendererObject
 {
 public:
     /** @brief Cache of semaphore handle */
     using SemaphoreCache = Core::TinyVector<SemaphoreHandle>;
 
+    /** @brief Cache of fence handle */
+    using FenceCache = Core::TinyVector<FenceHandle>;
+
     /** @brief An array of command sorted by queue types */
     struct alignas_double_cacheline FrameCache
     {
         std::array<SemaphoreCache, QueueCount> perQueueSemaphoreCache {};
+        std::array<FenceCache, QueueCount> perQueueFenceCache {};
         SemaphoreCache semaphoreCache {};
+        FenceCache fenceCache {};
         std::optional<Semaphore> frameAvailable {};
 
         FrameCache(void) noexcept = default; // Default constructor not existing, optional bug ?
     };
 
-    static_assert_fit_double_cacheline(FrameCache);
+    static_assert_alignof_double_cacheline(FrameCache);
+    static_assert_sizeof(FrameCache, Core::CacheLineSize * 4);
 
 
     /** @brief Construct the command dispatcher */
@@ -59,7 +65,9 @@ public:
             const FenceHandle fence);
 
     /** @brief Add dependencies to presentation of current frame (thread safe for different queue type calls) */
-    void addPresentDependencies(const QueueType queueType, const SemaphoreHandle * const waitbegin, const SemaphoreHandle *waitEnd) noexcept;
+    void addPresentDependencies(const QueueType queueType,
+            const SemaphoreHandle * const semaphoreBegin, const SemaphoreHandle *semaphoreEnd,
+            const FenceHandle * const fenceBegin, const FenceHandle *fenceEnd) noexcept;
 
 
     /** @brief Try to acquire the next frame */
@@ -76,10 +84,10 @@ public:
     void onViewSizeChanged(void) noexcept { clear(); }
 
 private:
-    PerFrameCache<FrameCache> _cachedFrames;
     Core::TinyVector<Semaphore> _availableSemaphores {};
+    PerFrameCache<FrameCache> _cachedFrames;
 };
 
-static_assert_fit_double_cacheline(kF::Graphics::CommandDispatcher);
+static_assert_fit_cacheline(kF::Graphics::CommandDispatcher);
 
 #include "CommandDispatcher.ipp"

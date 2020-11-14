@@ -17,7 +17,7 @@ Graphics::Renderer::GlobalInstance::GlobalInstance(BackendWindow * const window,
     if (_Constructed)
         throw std::logic_error("Graphics::Renderer::GlobalInstance: Renderer already instantiated");
     _Constructed = true;
-    new (&RendererObject::Parent()) Renderer(window, applicationVersion);
+    _renderer = new (&RendererObject::Parent()) Renderer(window, applicationVersion);
 }
 
 Graphics::Renderer::GlobalInstance::~GlobalInstance(void)
@@ -36,7 +36,7 @@ void Graphics::Renderer::dispatchFrameAcquired(const FrameIndex frameIndex)
 {
     _framebufferManager.onFrameAquired(frameIndex);
     _commandPoolManager.onFrameAquired(frameIndex);
-    _viewSizeDispatcher.dispatch();
+    _frameAcquiredDispatcher.dispatch(frameIndex);
 }
 
 void Graphics::Renderer::dispatchViewSizeChanged(void)

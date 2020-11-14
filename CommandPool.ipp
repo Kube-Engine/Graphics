@@ -23,6 +23,8 @@ inline void kF::Graphics::CommandPool::add(const Lifecycle lifecycle, const Comm
             return CommandBufferUsageFlags::None;
         case Lifecycle::Auto:
             return CommandBufferUsageFlags::OneTimeSubmit;
+        default:
+            return CommandBufferUsageFlags::None;
         }
     };
 

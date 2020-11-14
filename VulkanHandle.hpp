@@ -57,7 +57,7 @@ public:
     [[nodiscard]] const Type &handle(void) const noexcept { return _handle; }
 
     /** @brief Implicit convertion to handle */
-    [[nodiscard]] operator const Type(void) const noexcept { return _handle; }
+    [[nodiscard]] operator Type(void) const noexcept { return _handle; }
 
 private:
     Type _handle { NullHandle };

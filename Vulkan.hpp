@@ -28,6 +28,16 @@ namespace kF::Graphics
     using FrameIndex = std::size_t;
 
 
+    /** @brief Clear value */
+    using ClearValue = VkClearValue;
+
+    /** @brief Clear color value */
+    using ClearColorValue = VkClearColorValue;
+
+    /** @brief Depth stencil clear */
+    using ClearDepthStencilValue = VkClearDepthStencilValue;
+
+
     /** @brief Instance handle */
     using InstanceHandle = VkInstance;
 
@@ -45,6 +55,12 @@ namespace kF::Graphics
 
     /** @brief 3D extent */
     using Extent3D = VkExtent3D;
+
+    /** @brief 2D rectangle */
+    using Rect2D = VkRect2D;
+
+    /** @brief 2D offset */
+    using Offset2D = VkOffset2D;
 
 
     /** @brief Swapchain handle */

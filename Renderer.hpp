@@ -18,6 +18,7 @@
 #include "RenderPass.hpp"
 #include "FramebufferManager.hpp"
 #include "CommandPoolManager.hpp"
+#include "CommandDispatcher.hpp"
 
 namespace kF::Graphics
 {
@@ -99,6 +100,10 @@ public:
     [[nodiscard]] CommandPoolManager &commandPoolManager(void) noexcept { return _commandPoolManager; }
     [[nodiscard]] const CommandPoolManager &commandPoolManager(void) const noexcept { return _commandPoolManager; }
 
+    /** @brief Get the command dispatcher */
+    [[nodiscard]] CommandDispatcher &commandDispatcher(void) noexcept { return _commandDispatcher; }
+    [[nodiscard]] const CommandDispatcher &commandDispatcher(void) const noexcept { return _commandDispatcher; }
+
 
     /** @brief Get the number of cached frame */
     [[nodiscard]] std::size_t cachedFrameCount(void) const noexcept { return swapchain().imageCount(); }
@@ -120,15 +125,16 @@ public:
 private:
     BackendWindow *_window { nullptr };
     Instance _instance;
-    Surface _surface;
-    PhysicalDevice _physicalDevice;
-    QueueManager _queueManager;
-    LogicalDevice _logicalDevice;
-    Swapchain _swapchain;
-    RenderPass _renderPass;
-    PipelineManager _pipelineManager;
-    FramebufferManager _framebufferManager;
-    CommandPoolManager _commandPoolManager;
+    Surface _surface {};
+    PhysicalDevice _physicalDevice {};
+    QueueManager _queueManager {};
+    LogicalDevice _logicalDevice {};
+    Swapchain _swapchain {};
+    RenderPass _renderPass {};
+    PipelineManager _pipelineManager {};
+    FramebufferManager _framebufferManager {};
+    CommandPoolManager _commandPoolManager {};
+    CommandDispatcher _commandDispatcher {};
     Core::TrivialDispatcher<void(const FrameIndex)> _frameAcquiredDispatcher {};
     Core::TrivialDispatcher<void(void)> _viewSizeDispatcher {};
 

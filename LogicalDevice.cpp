@@ -27,8 +27,8 @@ void Graphics::LogicalDevice::waitIdle(void) noexcept
 
 void Graphics::LogicalDevice::createLogicalDevice(void)
 {
-    auto extensions = getExtensions();
-    auto queueInfos = parent().queueManager().registerQueues();
+    const auto extensions = getExtensions();
+    const auto queueInfos = parent().queueManager().registerQueues();
     VkDeviceCreateInfo deviceInfo {
         sType: VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         pNext: nullptr,
@@ -47,14 +47,14 @@ void Graphics::LogicalDevice::createLogicalDevice(void)
     parent().queueManager().retreiveQueuesHandlers();
 #if KUBE_DEBUG_BUILD
     std::cout << "Logical Extensions:" << std::endl;
-    for (auto &extension : extensions)
+    for (const auto &extension : extensions)
         std::cout << '\t' << extension << std::endl;
 #endif
 }
 
 Graphics::LogicalDevice::Extensions Graphics::LogicalDevice::getExtensions(void) const
 {
-    Extensions extensions { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+    const Extensions extensions { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
     std::vector<VkExtensionProperties> properties;
 
     if (auto res = FillVkContainer(properties, &::vkEnumerateDeviceExtensionProperties, parent().physicalDevice(), nullptr); res != VK_SUCCESS)
