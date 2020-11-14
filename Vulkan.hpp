@@ -66,6 +66,18 @@ namespace kF::Graphics
     /** @brief Descriptor set layout handle */
     using DescriptorSetLayoutHandle = VkDescriptorSetLayout;
 
+    /** @brief Descriptor set handle */
+    using DescriptorSet = VkDescriptorSet;
+
+    /** @brief Descriptor set write handle */
+    using DescriptorSetWrite = VkWriteDescriptorSet;
+
+    /** @brief Descriptor buffer info */
+    using DescriptorBufferInfo = VkDescriptorBufferInfo;
+
+    /** @brief Descriptor buffer info */
+    using DescriptorImageInfo = VkDescriptorImageInfo;
+
     /** @brief Push constant range */
     using PushConstantRange = VkPushConstantRange;
 
@@ -105,6 +117,9 @@ namespace kF::Graphics
 
     /** @brief Offset in a buffer */
     using BufferOffset = VkDeviceSize;
+
+    /** @brief Buffer view handle */
+    using BufferViewHandle = VkBufferView;
 
 
     /** @brief Image handle */

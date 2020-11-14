@@ -290,10 +290,18 @@ namespace kF::Graphics
 
 
     /** @brief Descriptor set layout creation flags */
-    enum class DescriptorSetLayoutCreateFlags : VkDescriptorSetLayoutCreateFlagBits {
+    enum class DescriptorSetLayoutCreateFlags : VkDescriptorSetLayoutCreateFlags {
         None = 0x0,
         UpdateAfterBindPool = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT,
         PushDescriptorKhr = VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR,
         UpdateAfterBindPoolExt = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT
+    };
+
+    /** @brief Descriptor pool creation flags */
+    enum class DescriptorPoolCreateFlags : VkDescriptorPoolCreateFlags {
+        None = 0x0,
+        FreeDescriptorSet = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+        UpdateAfterBind = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
+        UpdateAfterBindBit = UpdateAfterBind,
     };
 }
