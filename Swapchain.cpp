@@ -12,8 +12,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Swapchain::Swapchain(Renderer &renderer)
-    : VulkanHandle<SwapchainHandle>(renderer)
+Graphics::Swapchain::Swapchain(void)
 {
     createSwapchain();
     createImageViews(retreiveImages());
@@ -22,12 +21,6 @@ Graphics::Swapchain::Swapchain(Renderer &renderer)
     std::cout << "Extent2D: " << extent().width << ", " << extent().height << std::endl;
     std::cout << "Images: " << _imagePairs.size() << std::endl;
 #endif
-}
-
-Graphics::Swapchain::~Swapchain(void) noexcept
-{
-    // _imagePairs.clear(); ?
-    ::vkDestroySwapchainKHR(parent().logicalDevice(), handle(), nullptr);
 }
 
 void Graphics::Swapchain::createSwapchain(void)
@@ -63,6 +56,12 @@ void Graphics::Swapchain::createSwapchain(void)
     _extent = extent;
     _surfaceFormat = surfaceFormat;
     _presentMode = presentMode;
+}
+
+void Graphics::Swapchain::destroySwapchain(void) noexcept
+{
+    _imagePairs.clear();
+    ::vkDestroySwapchainKHR(parent().logicalDevice(), handle(), nullptr);
 }
 
 Core::Vector<Graphics::ImageHandle> Graphics::Swapchain::retreiveImages(void)
@@ -101,6 +100,6 @@ void Graphics::Swapchain::createImageViews(Core::Vector<ImageHandle> &&images)
     for (auto i = 0ul; i < count; ++i) {
         const auto image = images[i];
         imageViewModel.image = image;
-        _imagePairs.push(image, ImageView(parent(), imageViewModel));
+        _imagePairs.push(image, imageViewModel);
     }
 }

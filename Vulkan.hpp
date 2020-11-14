@@ -180,5 +180,4 @@ namespace kF::Graphics
         container.resize(count);
         (*function)(std::forward<Args>(args)..., &count, container.data());
     }
-
 }

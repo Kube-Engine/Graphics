@@ -15,14 +15,14 @@ namespace kF::Graphics
 }
 
 /** @brief A physical device represent a GPU card in the computer */
-class kF::Graphics::PhysicalDevice final : public VulkanHandle<PhysicalDeviceHandle>
+class kF::Graphics::PhysicalDevice final : public CachedVulkanHandle<PhysicalDeviceHandle>
 {
 public:
     /** @brief A list of vulkan devices */
     using Devices = Core::TinyVector<PhysicalDeviceHandle>;
 
     /** @brief Construct a physical device */
-    PhysicalDevice(Renderer &renderer);
+    PhysicalDevice(void);
 
     /** @brief Move constructor */
     PhysicalDevice(PhysicalDevice &&other) noexcept = default;

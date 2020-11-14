@@ -19,15 +19,14 @@ class kF::Graphics::Fence final : public VulkanHandle<VkFence>
 {
 public:
     /** @brief Wait fences to be signaled */
-    static bool Wait(Renderer &renderer, const FenceHandle * const begin, const FenceHandle * const end, const bool waitAll = true, const std::uint64_t timeout = UINT64_MAX);
+    static bool Wait(const FenceHandle * const begin, const FenceHandle * const end, const bool waitAll = true, const std::uint64_t timeout = UINT64_MAX);
 
     /** @brief Reset fences to be signaled */
-    static void Reset(Renderer &renderer, const FenceHandle * const begin, const FenceHandle * const end) noexcept;
+    static void Reset(const FenceHandle * const begin, const FenceHandle * const end) noexcept;
 
 
     /** @brief Construct the fence */
-    Fence(Renderer &renderer) : VulkanHandle<VkFence>(renderer)
-        { createFence(); }
+    Fence(void) { createFence(); }
 
     /** @brief Move constructor */
     Fence(Fence &&other) noexcept = default;
@@ -41,11 +40,11 @@ public:
 
     /** @brief Wait the fence to be signaled */
     bool wait(const std::uint64_t timeout = UINT64_MAX) const
-        { return Wait(parent(), &handle(), &handle() + 1, true, timeout); }
+        { return Wait(&handle(), &handle() + 1, true, timeout); }
 
     /** @brief Reset the fence */
     void reset(void) noexcept
-        { Reset(parent(), &handle(), &handle() + 1); }
+        { Reset(&handle(), &handle() + 1); }
 
 private:
     /** @brief Create the fence */

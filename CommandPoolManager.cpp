@@ -8,8 +8,8 @@
 
 using namespace kF;
 
-Graphics::CommandPoolManager::CommandPoolManager(Renderer &renderer) noexcept
-   : RendererObject(renderer), _cachedFrames(renderer.cachedFrameCount())
+Graphics::CommandPoolManager::CommandPoolManager(void) noexcept
+   : _cachedFrames(parent().cachedFrameCount())
 {
 }
 
@@ -68,17 +68,4 @@ void Graphics::CommandPoolManager::takeBack(Node * const node) noexcept
 #if KUBE_DEBUG_BUILD
    --_activeScopedCount;
 #endif
-}
-
-void Graphics::CommandPoolManager::releaseFrame(const std::size_t frameIndex) noexcept
-{
-   auto &cache = _cachedFrames.cacheAt(frameIndex);
-
-   for (auto &pool : cache) {
-      auto current = pool.head.load();
-      while (current != nullptr) {
-         current->pool.clear();
-         current = current->next;
-      }
-   }
 }

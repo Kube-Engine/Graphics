@@ -18,8 +18,7 @@ class kF::Graphics::Framebuffer : public VulkanHandle<FramebufferHandle>
 {
 public:
     /** @brief Construct a pipeline using a model */
-    Framebuffer(Renderer &renderer, const FramebufferModel &model)
-        : VulkanHandle<FramebufferHandle>(renderer) { createFramebuffer(model); }
+    Framebuffer(const FramebufferModel &model) { createFramebuffer(model); }
 
     /** @brief Move constructor */
     Framebuffer(Framebuffer &&other) noexcept = default;

@@ -15,12 +15,11 @@ namespace kF::Graphics
     class MemoryAllocator;
 }
 
-class kF::Graphics::MemoryAllocator : public VulkanHandle<VmaAllocator>
+class kF::Graphics::MemoryAllocator : public CachedVulkanHandle<VmaAllocator>
 {
 public:
     /** @brief Construct a new memory allocator using VMA */
-    MemoryAllocator(Renderer &renderer) : VulkanHandle<VmaAllocator>(renderer)
-        { createMemoryAllocator(); }
+    MemoryAllocator(void) { createMemoryAllocator(); }
 
     /** @brief Move constructor */
     MemoryAllocator(MemoryAllocator &&other) noexcept = default;

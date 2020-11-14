@@ -11,8 +11,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::CommandPool::CommandPool(Renderer &renderer, const QueueType queueType, const Lifecycle lifecycle)
-    : VulkanHandle<VkCommandPool>(renderer)
+Graphics::CommandPool::CommandPool(const QueueType queueType, const Lifecycle lifecycle)
 {
     createCommandPool(queueType, lifecycle);
 }

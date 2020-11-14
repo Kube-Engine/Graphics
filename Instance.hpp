@@ -18,7 +18,7 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of the low-level API instance */
-class kF::Graphics::Instance final : public VulkanHandle<VkInstance>
+class kF::Graphics::Instance final : public CachedVulkanHandle<VkInstance>
 {
 public:
     /** @brief Instance extension list */
@@ -28,8 +28,7 @@ public:
     using Layers = std::vector<const char *>;
 
     /** @brief Construct an instance */
-    Instance(Renderer &renderer, const Version applicationVersion) : VulkanHandle<VkInstance>(renderer)
-        { createInstance(applicationVersion); }
+    Instance(const Version applicationVersion) { createInstance(applicationVersion); }
 
     /** @brief Move constructor */
     Instance(Instance &&other) noexcept = default;

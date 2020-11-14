@@ -17,10 +17,10 @@ class kF::Graphics::Sampler final : public VulkanHandle<SamplerHandle>
 {
 public:
     /** @brief Construct the sampler using its model */
-    Sampler(Renderer &renderer, const SamplerModel &model);
+    Sampler(const SamplerModel &model) { createSampler(model); }
 
     /** @brief Move constructor */
-    Sampler(Sampler &&other) noexcept : VulkanHandle<SamplerHandle>(other.parent()) { swap(other); }
+    Sampler(Sampler &&other) noexcept = default;
 
     /** @brief Destruct the buffer */
     ~Sampler(void) noexcept;

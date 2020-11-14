@@ -20,7 +20,7 @@ namespace kF::Graphics
 }
 
 /** @brief Command pool that allocates command buffers */
-class alignas_half_cacheline kF::Graphics::CommandPool : public VulkanHandle<VkCommandPool>
+class alignas_half_cacheline kF::Graphics::CommandPool : public CachedVulkanHandle<VkCommandPool>
 {
 public:
     /** @brief Lifecycle of commands inside the pool */
@@ -31,7 +31,7 @@ public:
 
 
     /** @brief Construct the command pool */
-    CommandPool(Renderer &renderer, const QueueType queueType, const Lifecycle lifecycle);
+    CommandPool(const QueueType queueType, const Lifecycle lifecycle);
 
     /** @brief Move constructor */
     CommandPool(CommandPool &&other) noexcept = default;
@@ -83,7 +83,7 @@ class kF::Graphics::AutoCommandPool : public CommandPool
 {
 public:
     /** @brief Construct the command pool */
-    AutoCommandPool(Renderer &renderer, const QueueType queueType) : CommandPool(renderer, queueType, Lifecycle::Auto) {}
+    AutoCommandPool(const QueueType queueType) : CommandPool(queueType, Lifecycle::Auto) {}
 
     /** @brief Move constructor */
     AutoCommandPool(AutoCommandPool &&other) noexcept = default;
@@ -120,7 +120,7 @@ class kF::Graphics::ManualCommandPool : public CommandPool
 {
 public:
     /** @brief Construct the command pool */
-    ManualCommandPool(Renderer &renderer, const QueueType queueType) : CommandPool(renderer, queueType, Lifecycle::Manual) {}
+    ManualCommandPool(const QueueType queueType) : CommandPool(queueType, Lifecycle::Manual) {}
 
     /** @brief Move constructor */
     ManualCommandPool(ManualCommandPool &&other) noexcept = default;

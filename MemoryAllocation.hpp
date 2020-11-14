@@ -18,8 +18,7 @@ class kF::Graphics::MemoryAllocation final : public VulkanHandle<MemoryAllocatio
 {
 public:
     /** @brief Construct a nw buffer using a buffer model */
-    MemoryAllocation(Renderer &renderer, const MemoryAllocationModel &model) : VulkanHandle<MemoryAllocationHandle>()
-        { createMemoryAllocation(model); }
+    MemoryAllocation(const MemoryAllocationModel &model) { createMemoryAllocation(model); }
 
     /** @brief Move constructor */
     MemoryAllocation(MemoryAllocation &&other) noexcept = default;

@@ -13,8 +13,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::QueueManager::QueueManager(Renderer &renderer)
-    : RendererObject(renderer)
+Graphics::QueueManager::QueueManager(void)
 {
     retreiveFamilyQueueIndexes();
 #if KUBE_DEBUG_BUILD
@@ -63,8 +62,6 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
 
     for (std::size_t type = 0u; type < static_cast<std::size_t>(QueueType::Count); ++type) {
         if (_candidates[type].empty()) {
-            if (static_cast<QueueType>(type) == QueueType::FastTransfer || static_cast<QueueType>(type) == QueueType::SparseBinding)
-                continue;
             throw std::runtime_error("Graphics::QueueManager::registerQueues: Couldn't register unsupported queue type '"s + QueueTypeName(static_cast<QueueType>(type)));
         }
         bool found = false;
@@ -109,20 +106,6 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
 
 void Graphics::QueueManager::retreiveFamilyQueueIndexes(void)
 {
-    constexpr auto TypeToFlags = [](const QueueType type) -> VkQueueFlags {
-        switch (type) {
-        case QueueType::Graphics:
-            return VK_QUEUE_GRAPHICS_BIT;
-        case QueueType::Compute:
-            return VK_QUEUE_COMPUTE_BIT;
-        case QueueType::Transfer:
-        case QueueType::FastTransfer:
-            return VK_QUEUE_TRANSFER_BIT;
-        default:
-            return VK_QUEUE_FAMILY_IGNORED;
-        }
-    };
-
     Core::Vector<VkQueueFamilyProperties> properties;
     std::uint32_t queueFamilyIndex = 0;
     VkBool32 isPresent = false;
@@ -133,16 +116,12 @@ void Graphics::QueueManager::retreiveFamilyQueueIndexes(void)
             throw std::runtime_error("Graphics::QueueManager::registerQueues: Couldn't get physical device surface support '"s + ErrorMessage(res) + '\'');
         if (isPresent)
             _candidates[static_cast<std::size_t>(QueueType::Present)].push(queueFamilyIndex, property.queueCount);
-        if (property.queueFlags & TypeToFlags(QueueType::Graphics))
+        if (property.queueFlags & ToFlags(QueueFlags::Graphics))
             _candidates[static_cast<std::size_t>(QueueType::Graphics)].push(queueFamilyIndex, property.queueCount);
-        if (property.queueFlags & TypeToFlags(QueueType::Compute))
+        if (property.queueFlags & ToFlags(QueueFlags::Compute))
             _candidates[static_cast<std::size_t>(QueueType::Compute)].push(queueFamilyIndex, property.queueCount);
-        if (property.queueFlags & TypeToFlags(QueueType::SparseBinding))
-            _candidates[static_cast<std::size_t>(QueueType::Compute)].push(queueFamilyIndex, property.queueCount);
-        if (property.queueFlags & TypeToFlags(QueueType::Transfer)) {
+        if (property.queueFlags & ToFlags(QueueFlags::Transfer)) {
             _candidates[static_cast<std::size_t>(QueueType::Transfer)].push(queueFamilyIndex, property.queueCount);
-            if (!(property.queueFlags & TypeToFlags(QueueType::Graphics)) && !(property.queueFlags & TypeToFlags(QueueType::Compute)) )
-                _candidates[static_cast<std::size_t>(QueueType::FastTransfer)].push(queueFamilyIndex, property.queueCount);
         }
         ++queueFamilyIndex;
     }
@@ -157,13 +136,9 @@ constexpr const char *kF::Graphics::QueueTypeName(const QueueType type) noexcept
         return "Compute";
     case (QueueType::Transfer):
         return "Transfer";
-    case (QueueType::FastTransfer):
-        return "FastTransfer";
-    case (QueueType::SparseBinding):
-        return "SparseBinding";
     case (QueueType::Present):
         return "Present";
     default:
-        return "InvalidQueueIndex";
+        return "UnknownQueueType";
     }
 }

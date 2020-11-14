@@ -48,9 +48,6 @@ public:
     [[nodiscard]] FrameIndex currentFrame(void) const noexcept { return _currentFrame; }
     void setCurrentFrame(const FrameIndex frameIndex) noexcept { _currentFrame = frameIndex; }
 
-    /** @brief Set the current frame to the next one */
-    void incrementFrame(void) noexcept { _currentFrame = (_currentFrame + 1) % _caches.size(); }
-
 
     /** @brief Get the internal cache list */
     [[nodiscard]] auto &caches(void) noexcept { return _caches; }

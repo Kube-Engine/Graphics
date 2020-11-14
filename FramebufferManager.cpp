@@ -10,8 +10,7 @@
 
 using namespace kF;
 
-Graphics::FramebufferManager::FramebufferManager(Renderer &renderer)
-    : RendererObject(renderer), _cachedFrames()
+Graphics::FramebufferManager::FramebufferManager(void)
 {
     createFramebuffers();
 #if KUBE_DEBUG_BUILD
@@ -34,12 +33,6 @@ void Graphics::FramebufferManager::createFramebuffers(void)
     _cachedFrames.caches().reserve(count);
     for (auto i = 0ul; i < count; ++i) {
         imageViewHandle = parent().swapchain().imageViewAt(i);
-        _cachedFrames.caches().push(parent(), model);
+        _cachedFrames.caches().push(model);
     }
-}
-
-void Graphics::FramebufferManager::onViewSizeChanged(void)
-{
-    _cachedFrames.caches().clear();
-    createFramebuffers();
 }

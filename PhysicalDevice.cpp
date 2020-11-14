@@ -14,8 +14,7 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::PhysicalDevice::PhysicalDevice(Renderer &renderer)
-    : VulkanHandle<VkPhysicalDevice>(renderer)
+Graphics::PhysicalDevice::PhysicalDevice(void)
 {
     auto devices = getDevices();
 

@@ -9,13 +9,11 @@
 
 namespace kF::Graphics
 {
-    /** @brief Describes all types of queues */
+    /** @brief Describes all supported queue types */
     enum class QueueType : std::size_t {
         Graphics = 0u,
         Compute,
         Transfer,
-        FastTransfer,
-        SparseBinding,
         Present,
         Count
     };

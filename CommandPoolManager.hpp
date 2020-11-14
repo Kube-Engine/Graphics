@@ -22,7 +22,7 @@ namespace kF::Graphics
  *  Manager is used to acquire access to an auto command pool for a given frame: each command is one time submit
  *  If you wish to reuse command buffers, please use a ManualCommandPool instead of the CommandPoolManager
  */
-class alignas_cacheline kF::Graphics::CommandPoolManager final : public RendererObject
+class alignas_cacheline kF::Graphics::CommandPoolManager final : public CachedRendererObject
 {
 public:
     /** @brief Pool node */
@@ -91,7 +91,7 @@ public:
 
 
     /** @brief Contruct the manager */
-    CommandPoolManager(Renderer &renderer) noexcept;
+    CommandPoolManager(void) noexcept;
 
     /** @brief Move constructor, not thread safe */
     CommandPoolManager(CommandPoolManager &&other) noexcept = default;
@@ -110,11 +110,8 @@ public:
     void takeBack(Node *node) noexcept;
 
 
-    /** @brief Acquire the next frame without releasing current one, not thread safe */
-    void acquireNextFrame(void) noexcept_ndebug;
-
-    /** @brief Release a given frame, not thread safe */
-    void releaseFrame(const FrameIndex frameIndex) noexcept;
+    /** @brief Callback triggered when renderer is processing a new frame */
+    void onFrameAquired(const FrameIndex frameIndex) noexcept_ndebug;
 
 private:
     static inline std::pmr::synchronized_pool_resource _Allocator {};

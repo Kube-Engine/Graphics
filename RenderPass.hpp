@@ -1,6 +1,6 @@
 /**
  * @ Author: Matthieu Moinvaziri
- * @ Description: Render Pass
+ * @ Description: RenderPass
  */
 
 #pragma once
@@ -13,23 +13,31 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of a render pass */
-class kF::Graphics::RenderPass final : public VulkanHandle<RenderPassHandle>
+class kF::Graphics::RenderPass final : public CachedVulkanHandle<RenderPassHandle>
 {
 public:
     /** @brief Construct a render pass */
-    RenderPass(Renderer &renderer) : VulkanHandle<RenderPassHandle>(renderer)
-        { createRenderPass(); }
+    RenderPass(void) { createRenderPass(); }
 
     /** @brief Move constructor */
     RenderPass(RenderPass &&other) noexcept = default;
 
     /** @brief Destruct the render pass */
-    ~RenderPass(void) noexcept;
+    ~RenderPass(void) noexcept { destroyRenderPass(); }
 
     /** @brief Move assignment */
     RenderPass &operator=(RenderPass &&other) noexcept = default;
 
+
+    /** @brief Callback on render view size changed */
+    void onViewSizeChanged(void);
+
 private:
     /** @brief Create a render pass */
     void createRenderPass(void);
+
+    /** @brief Destroy render pass */
+    void destroyRenderPass(void) noexcept;
 };
+
+#include "RenderPass.ipp"

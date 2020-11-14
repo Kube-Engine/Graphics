@@ -14,11 +14,11 @@ namespace kF::Graphics
 }
 
 /** @brief A framebuffer handler holds a set of framebuffers */
-class alignas_cacheline kF::Graphics::FramebufferManager final : public RendererObject
+class alignas_cacheline kF::Graphics::FramebufferManager final : public CachedRendererObject
 {
 public:
     /** @brief Construct a framebuffer handler */
-    FramebufferManager(Renderer &renderer);
+    FramebufferManager(void);
 
     /** @brief Move constructor */
     FramebufferManager(FramebufferManager &&other) noexcept = default;
@@ -27,10 +27,7 @@ public:
     ~FramebufferManager(void) noexcept = default;
 
     /** @brief Move assignment */
-    FramebufferManager &operator=(FramebufferManager &&other) noexcept { swap(other); return *this; };
-
-    /** @brief Swap two instances */
-    void swap(FramebufferManager &other) noexcept;
+    FramebufferManager &operator=(FramebufferManager &&other) noexcept = default;
 
 
     /** @brief Get the framebuffer list */
@@ -41,18 +38,14 @@ public:
     [[nodiscard]] FramebufferHandle currentFramebuffer(void) const noexcept { return _cachedFrames.currentCache(); }
 
 
-    /** @brief Acquire the next frame without releasing current one */
-    void acquireNextFrame(void) noexcept;
-
-    /** @brief Release a given frame */
-    void releaseFrame(const FrameIndex frameIndex) noexcept;
-
+    /** @brief Callback triggered when renderer is processing a new frame */
+    void onFrameAquired(const FrameIndex frameIndex) noexcept;
 
     /** @brief Callback on render view size changed */
     void onViewSizeChanged(void);
 
 private:
-    PerFrameCache<Framebuffer> _cachedFrames;
+    PerFrameCache<Framebuffer> _cachedFrames {};
 
     /** @brief Create a set of framebuffer */
     void createFramebuffers(void);

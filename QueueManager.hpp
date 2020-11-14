@@ -21,10 +21,10 @@ namespace kF::Graphics
 }
 
 /** @brief Handles a list of queues */
-class alignas_double_cacheline kF::Graphics::QueueManager final : public RendererObject
+class alignas_double_cacheline kF::Graphics::QueueManager final : public CachedRendererObject
 {
 public:
-    /** @brief Describes a queue */
+    /** @brief Describes a queue family and handle */
     struct QueueDescriptor
     {
         std::uint32_t queueFamilyIndex {}; // Index of the queue family
@@ -52,7 +52,7 @@ public:
 
 
     /** @brief Construct queue handler */
-    QueueManager(Renderer &renderer);
+    QueueManager(void);
 
     /** @brief Move constructor */
     QueueManager(QueueManager &&other) noexcept = default;

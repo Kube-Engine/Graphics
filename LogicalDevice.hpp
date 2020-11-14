@@ -15,15 +15,14 @@ namespace kF::Graphics
 }
 
 /** @brief The logical device abstracts the communication with a physical device */
-class kF::Graphics::LogicalDevice final : public VulkanHandle<VkDevice>
+class kF::Graphics::LogicalDevice final : public CachedVulkanHandle<VkDevice>
 {
 public:
     /** @brief Logical device extension list */
     using Extensions = Core::Vector<const char *>;
 
     /** @brief Create a logical device */
-    LogicalDevice(Renderer &renderer) : VulkanHandle<VkDevice>(renderer)
-        { createLogicalDevice(); }
+    LogicalDevice(void) { createLogicalDevice(); }
 
     /** @brief Move constructor */
     LogicalDevice(LogicalDevice &&other) noexcept = default;

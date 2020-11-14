@@ -18,8 +18,7 @@ class kF::Graphics::ImageView final : public VulkanHandle<ImageViewHandle>
 {
 public:
     /** @brief Construct a new ImageView using ImageView model */
-    ImageView(Renderer &renderer, const ImageViewModel model) : VulkanHandle<ImageViewHandle>(renderer)
-        { createImageView(model); }
+    ImageView(const ImageViewModel &model) { createImageView(model); }
 
     /** @brief Move constructor */
     ImageView(ImageView &&other) noexcept = default;

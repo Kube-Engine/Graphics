@@ -18,8 +18,7 @@ class kF::Graphics::PipelineLayout : public VulkanHandle<PipelineLayoutHandle>
 {
 public:
     /** @brief Construct a pipeline using a model */
-    PipelineLayout(Renderer &renderer, const PipelineLayoutModel &model)
-        : VulkanHandle<PipelineLayoutHandle>(renderer) { createPipelineLayout(model); }
+    PipelineLayout(const PipelineLayoutModel &model) { createPipelineLayout(model); }
 
     /** @brief Move constructor */
     PipelineLayout(PipelineLayout &&other) noexcept = default;

@@ -14,20 +14,24 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of renderer swapchain */
-class alignas_cacheline kF::Graphics::Swapchain final : public VulkanHandle<SwapchainHandle>
+class alignas_cacheline kF::Graphics::Swapchain final : public CachedVulkanHandle<SwapchainHandle>
 {
 public:
     /** @brief Construct the swapchain */
-    Swapchain(Renderer &renderer);
+    Swapchain(void);
 
     /** @brief Move constructor */
     Swapchain(Swapchain &&other) noexcept = default;
 
     /** @brief Destrut the swapchain */
-    ~Swapchain(void) noexcept;
+    ~Swapchain(void) noexcept { destroySwapchain(); }
 
     /** @brief Move assignment */
     Swapchain &operator=(Swapchain &&other) noexcept { swap(other); return *this; }
+
+    /** @brief Swap two swapchains */
+    void swap(Swapchain &other) noexcept;
+
 
     /** @brief Get the surface format */
     [[nodiscard]] SurfaceFormat &surfaceFormat(void) noexcept { return _surfaceFormat; }
@@ -41,6 +45,7 @@ public:
     [[nodiscard]] Extent2D &extent(void) noexcept { return _extent; }
     [[nodiscard]] const Extent2D &extent(void) const noexcept { return _extent; }
 
+
     /** @brief Get the number of cached image */
     [[nodiscard]] std::size_t imageCount(void) const noexcept { return _imagePairs.size(); }
 
@@ -50,8 +55,9 @@ public:
     /** @brief Get an image of the swapchain */
     [[nodiscard]] ImageViewHandle imageViewAt(const FrameIndex frameIndex) const noexcept { return _imagePairs.at(frameIndex).second; }
 
-    /** @brief Swap two swapchains */
-    void swap(Swapchain &other) noexcept;
+
+    /** @brief Callback on render view size changed */
+    void onViewSizeChanged(void);
 
 private:
     Core::Vector<std::pair<ImageHandle, ImageView>> _imagePairs {};
@@ -61,6 +67,9 @@ private:
 
     /** @brief Create the swapchain */
     void createSwapchain(void);
+
+    /** @brief Destroy the swapchain */
+    void destroySwapchain(void) noexcept;
 
     /** @brief Create swapchain images */
     [[nodiscard]] Core::Vector<ImageHandle> retreiveImages(void);

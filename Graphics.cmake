@@ -14,6 +14,7 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/VulkanHandle.hpp
 
     ${KubeGraphicsDir}/RendererObject.hpp
+    ${KubeGraphicsDir}/RendererObject.cpp
 
     ${KubeGraphicsDir}/Renderer.hpp
     ${KubeGraphicsDir}/Renderer.cpp
@@ -35,12 +36,14 @@ set(KubeGraphicsSources
 
     ${KubeGraphicsDir}/Swapchain.hpp
     ${KubeGraphicsDir}/Swapchain.cpp
+    ${KubeGraphicsDir}/Swapchain.ipp
 
     ${KubeGraphicsDir}/Shader.hpp
     ${KubeGraphicsDir}/Shader.cpp
 
     ${KubeGraphicsDir}/RenderPass.hpp
     ${KubeGraphicsDir}/RenderPass.cpp
+    ${KubeGraphicsDir}/RenderPass.ipp
 
     ${KubeGraphicsDir}/PipelineLayout.hpp
     ${KubeGraphicsDir}/PipelineLayout.cpp

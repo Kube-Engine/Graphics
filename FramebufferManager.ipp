@@ -3,18 +3,13 @@
  * @ Description: FramebufferManager
  */
 
-inline void kF::Graphics::FramebufferManager::swap(FramebufferManager &other) noexcept
+inline void kF::Graphics::FramebufferManager::onFrameAquired(const FrameIndex frameIndex) noexcept
 {
-    RendererObject::swap(other);
-    _cachedFrames.swap(other._cachedFrames);
+    _cachedFrames.setCurrentFrame(frameIndex);
 }
 
-inline void kF::Graphics::FramebufferManager::acquireNextFrame(void) noexcept
+inline void kF::Graphics::FramebufferManager::onViewSizeChanged(void)
 {
-    _cachedFrames.incrementFrame();
-}
-
-inline void kF::Graphics::FramebufferManager::releaseFrame(const FrameIndex) noexcept
-{
-
+    _cachedFrames.caches().clear();
+    createFramebuffers();
 }

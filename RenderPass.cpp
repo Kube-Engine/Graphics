@@ -10,11 +10,6 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::RenderPass::~RenderPass(void) noexcept
-{
-    ::vkDestroyRenderPass(parent().logicalDevice(), handle(), nullptr);
-}
-
 void Graphics::RenderPass::createRenderPass(void)
 {
     VkAttachmentDescription colorAttachment {
@@ -58,4 +53,9 @@ void Graphics::RenderPass::createRenderPass(void)
 
     if (auto res = ::vkCreateRenderPass(parent().logicalDevice(), &renderPassInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::RenderPass::createRenderPass: Couldn't create render pass '"s + ErrorMessage(res) + '\'');
+}
+
+void Graphics::RenderPass::destroyRenderPass(void) noexcept
+{
+    ::vkDestroyRenderPass(parent().logicalDevice(), handle(), nullptr);
 }

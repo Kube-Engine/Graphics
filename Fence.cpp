@@ -11,18 +11,18 @@
 using namespace kF;
 using namespace kF::Literal;
 
-bool Graphics::Fence::Wait(Renderer &renderer, const FenceHandle * const begin, const FenceHandle * const end, const bool waitAll, const std::uint64_t timeout)
+bool Graphics::Fence::Wait(const FenceHandle * const begin, const FenceHandle * const end, const bool waitAll, const std::uint64_t timeout)
 {
-    if (auto res = ::vkWaitForFences(renderer.logicalDevice(), std::distance(begin, end), begin, waitAll, timeout); res == VK_TIMEOUT)
+    if (auto res = ::vkWaitForFences(Parent().logicalDevice(), std::distance(begin, end), begin, waitAll, timeout); res == VK_TIMEOUT)
         return false;
     else if (res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Fence::Wait: Error on waiting fence(s) '"s + ErrorMessage(res) + '\'');
     return true;
 }
 
-void Graphics::Fence::Reset(Renderer &renderer, const FenceHandle * const begin, const FenceHandle * const end) noexcept
+void Graphics::Fence::Reset(const FenceHandle * const begin, const FenceHandle * const end) noexcept
 {
-    ::vkResetFences(renderer.logicalDevice(), std::distance(begin, end), begin);
+    ::vkResetFences(Parent().logicalDevice(), std::distance(begin, end), begin);
 }
 
 Graphics::Fence::~Fence(void) noexcept

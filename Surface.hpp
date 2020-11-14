@@ -17,12 +17,11 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of a render surface */
-class kF::Graphics::Surface final : public VulkanHandle<SurfaceHandle>
+class kF::Graphics::Surface final : public CachedVulkanHandle<SurfaceHandle>
 {
 public:
     /** @brief Construct a surface */
-    Surface(Renderer &renderer) : VulkanHandle<SurfaceHandle>(renderer)
-        { createSurface(); }
+    Surface(void) { createSurface(); }
 
     /** @brief Move constructor */
     Surface(Surface &&other) noexcept = default;

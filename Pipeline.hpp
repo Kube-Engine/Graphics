@@ -19,8 +19,7 @@ class kF::Graphics::Pipeline final : public VulkanHandle<PipelineHandle>
 {
 public:
     /** @brief Construct a pipeline using a model */
-    Pipeline(Renderer &renderer, const PipelineModel &model) : VulkanHandle<PipelineHandle>(renderer)
-        { createPipeline(model); }
+    Pipeline(const PipelineModel &model) { createPipeline(model); }
 
     /** @brief Move constructor */
     Pipeline(Pipeline &&other) noexcept = default;

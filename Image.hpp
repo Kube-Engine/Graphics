@@ -18,8 +18,7 @@ class kF::Graphics::Image final : public VulkanHandle<ImageHandle>
 {
 public:
     /** @brief Construct a new Image using image model */
-    Image(Renderer &renderer, const ImageModel model) : VulkanHandle<ImageHandle>(renderer)
-        { createImage(model); }
+    Image(const ImageModel &model) { createImage(model); }
 
     /** @brief Move constructor */
     Image(Image &&other) noexcept = default;

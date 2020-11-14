@@ -24,6 +24,51 @@ namespace kF::Graphics
         { return static_cast<Flags>(value); }
 
 
+    /** @brief Queue flags */
+    enum class QueueFlags : VkQueueFlags {
+        None = 0x0,
+        Graphics = VK_QUEUE_GRAPHICS_BIT,
+        Compute = VK_QUEUE_COMPUTE_BIT,
+        Transfer = VK_QUEUE_TRANSFER_BIT,
+        SparseBinding = VK_QUEUE_SPARSE_BINDING_BIT,
+        Protected = VK_QUEUE_PROTECTED_BIT
+    };
+
+
+    /** @brief Pipeline stage flags */
+    enum PipelineStageFlags : VkPipelineStageFlags {
+        None = 0x0,
+        TopOfPipe = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+        DrawIndirect = VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
+        VertexInput = VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,
+        VertexShader = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
+        TessellationControlShader = VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT,
+        TessellationEvaluationShader = VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT,
+        GeometryShader = VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT,
+        FragmentShader = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+        EarlyFragmentTests = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+        LateFragmentTests = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+        ColorAttachmentOutput = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        ComputeShader = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+        Transfer = VK_PIPELINE_STAGE_TRANSFER_BIT,
+        BottomOfPipe = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+        Host = VK_PIPELINE_STAGE_HOST_BIT,
+        AllGraphics = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
+        AllCommands = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        TransformFeedbackExt = VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT,
+        ConditionalRenderingExt = VK_PIPELINE_STAGE_CONDITIONAL_RENDERING_BIT_EXT,
+        RayTracingShaderKhr = VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR,
+        AccelerationStructureBuildKhr = VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
+        ShadingRateImageNv = VK_PIPELINE_STAGE_SHADING_RATE_IMAGE_BIT_NV,
+        TaskShaderNv = VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV,
+        MeshShaderNv = VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV,
+        FragmentDensityProcessExt = VK_PIPELINE_STAGE_FRAGMENT_DENSITY_PROCESS_BIT_EXT,
+        CommandPreprocessNv = VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,
+        RayTracingShaderNv = VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_NV,
+        AccelerationStructureBuildNv = VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV
+    };
+
+
     /** @brief Pipeline layout creation flags */
     enum class PipelineLayoutCreateFlags : VkPipelineLayoutCreateFlags {
         None = 0x0

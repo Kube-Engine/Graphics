@@ -22,8 +22,7 @@ class kF::Graphics::Semaphore final : public VulkanHandle<VkSemaphore>
 {
 public:
     /** @brief Construct a semaphore */
-    Semaphore(Renderer &renderer) : VulkanHandle<VkSemaphore>(renderer)
-        { createSemaphore(); }
+    Semaphore(void) { createSemaphore(); }
 
     /** @brief Move constructor */
     Semaphore(Semaphore &&other) noexcept = default;

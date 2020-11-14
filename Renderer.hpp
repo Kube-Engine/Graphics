@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <Kube/Core/TrivialDispatcher.hpp>
+
 #include "BackendWindow.hpp"
 #include "Instance.hpp"
 #include "Surface.hpp"
@@ -23,20 +25,35 @@ namespace kF::Graphics
 }
 
 /** @brief Instance of the renderer tree, used to access the low-level GPU api */
-class kF::Graphics::Renderer
+class alignas_double_cacheline kF::Graphics::Renderer
 {
 public:
-    /** @brief Construct a renderer using a backend window */
-    Renderer(BackendWindow * const window, const Version applicationVersion = Version());
+    /** @brief A renderer cannot be directly created, you must instead use GlobalInstance to handle its lifetime globally */
+    class GlobalInstance
+    {
+    public:
+        /** @brief Construct a global renderer using a backend window */
+        GlobalInstance(BackendWindow * const window, const Version applicationVersion = Version());
 
-    /** @brief Move constructor */
-    Renderer(Renderer &&renderer) noexcept = default;
+        /** @brief Destroy the global renderer */
+        ~GlobalInstance(void);
+
+        /** @brief Access operator */
+        [[nodiscard]] Renderer *operator->(void) noexcept { return _renderer; }
+        [[nodiscard]] const Renderer *operator->(void) const noexcept { return _renderer; }
+
+        /** @brief Dereference operator */
+        [[nodiscard]] Renderer &operator*(void) noexcept { return *_renderer; }
+        [[nodiscard]] const Renderer &operator*(void) const noexcept { return *_renderer; }
+
+    private:
+        Renderer *_renderer { nullptr };
+
+        static inline bool _Constructed = false;
+    };
 
     /** @brief Destruct the whole renderer tree */
     ~Renderer(void) = default;
-
-    /** @brief Move assignment */
-    Renderer &operator=(Renderer &&other) noexcept = default;
 
 
     /** @brief Get the assigned backend window */
@@ -87,8 +104,18 @@ public:
     [[nodiscard]] std::size_t cachedFrameCount(void) const noexcept { return swapchain().imageCount(); }
 
 
-    /** @brief Callback on render view size changed */
-    void onViewSizeChanged(void);
+    /** @brief Dispatch every known and registered 'onFrameAcquired' callback */
+    void dispatchFrameAcquired(const FrameIndex frameIndex);
+
+    /** @brief Dispatch every known and registered 'onViewSizeChanged' callback */
+    void dispatchViewSizeChanged(void);
+
+
+    /** @brief Get the 'onFrameAcquired' dispatcher */
+    [[nodiscard]] auto &frameAcquiredDispatcher(void) noexcept { return _frameAcquiredDispatcher; }
+
+    /** @brief Get the 'onViewSizeChanged' dispatcher */
+    [[nodiscard]] auto &viewSizeDispatcher(void) noexcept { return _viewSizeDispatcher; }
 
 private:
     BackendWindow *_window { nullptr };
@@ -102,4 +129,11 @@ private:
     PipelineManager _pipelineManager;
     FramebufferManager _framebufferManager;
     CommandPoolManager _commandPoolManager;
+    Core::TrivialDispatcher<void(const FrameIndex)> _frameAcquiredDispatcher {};
+    Core::TrivialDispatcher<void(void)> _viewSizeDispatcher {};
+
+    /** @brief Construct a renderer using a backend window */
+    Renderer(BackendWindow * const window, const Version applicationVersion = Version());
 };
+
+static_assert_alignof_double_cacheline(kF::Graphics::Renderer);

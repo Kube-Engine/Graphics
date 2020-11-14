@@ -5,7 +5,9 @@
 
 #pragma once
 
-#include "PerFrameCache.hpp"
+#include "Semaphore.hpp"
+#include "Fence.hpp"
+#include "SubmitInfo.hpp"
 #include "CommandPool.hpp"
 
 namespace kF::Graphics
@@ -15,23 +17,31 @@ namespace kF::Graphics
 }
 
 /** @brief Command dispatcher collect commands and dispatch them later */
-class kF::Graphics::CommandDispatcher : public RendererObject
+class alignas_double_cacheline kF::Graphics::CommandDispatcher : public CachedRendererObject
 {
 public:
-    /** @brief An array of command sorted by queue types */
-    struct alignas_double_cacheline PerQueueCommandArray
-    {
-        using Commands = Core::TinyVector<CommandHandle>;
-        using Array = std::array<Commands, static_cast<std::size_t>(QueueType::Count)>;
+    static constexpr auto QueueCount = static_cast<std::size_t>(QueueType::Count);
 
-        alignas(Commands) Array array;
-#if KUBE_DEBUG_BUILD
-        bool cleared { true };
-#endif
+    /** @brief Cache of semaphore handle */
+    using SemaphoreCache = Core::TinyVector<SemaphoreHandle>;
+
+    /** @brief Cache of fence handle */
+    using FenceCache = Core::TinyVector<FenceHandle>;
+
+    /** @brief An array of command sorted by queue types */
+    struct alignas_cacheline FrameCache
+    {
+        std::array<SemaphoreCache, QueueCount> _perQueueSemaphoreCache {};
+        std::array<FenceCache, QueueCount> _perQueueFenceCache {};
+        SemaphoreCache _semaphoreCache {};
+        FenceCache _fenceCache {};
+        Semaphore _frameAvailable;
     };
 
+    static_assert_alignof_cacheline(FrameCache);
+
     /** @brief Construct the command dispatcher */
-    CommandDispatcher(Renderer &renderer) noexcept : RendererObject(renderer), _cachedFrames(renderer.cachedFrameCount()) {}
+    CommandDispatcher(void) noexcept;
 
     /** @brief Move constructor */
     CommandDispatcher(CommandDispatcher &&other) noexcept = default;
@@ -40,40 +50,28 @@ public:
     ~CommandDispatcher(void) noexcept = default;
 
     /** @brief Move assignment */
-    CommandDispatcher &operator=(CommandDispatcher &&other) noexcept { swap(other); return *this; }
-
-    /** @brief Swap two instances */
-    void swap(CommandDispatcher &other) noexcept;
+    CommandDispatcher &operator=(CommandDispatcher &&other) noexcept = default;
 
 
-    /** @brief Prepare a single command to be dispatcher in a specific queue */
-    void prepare(const QueueType queueType, const CommandHandle command) noexcept
-        { prepare(queueType, &command, &command + 1); }
-
-    /** @brief Prepare a set of commands of the same queue type to be dispatched */
-    void prepare(const QueueType queueType, const CommandHandle * const from, const CommandHandle * const to) noexcept;
+    /** @brief Dispatch commands of a given queue (only thread safe if the underlying hardward queue is not already submitting) */
+    void dispatch(const QueueType queueType, const SubmitInfo * const submitBegin, const SubmitInfo * const submitEnd, const FenceHandle fence);
 
 
-    /** @brief Dispatch all cached commands of a same queue (only thread safe if the underlying hardward queue is not already submitting) */
-    void dispatch(const QueueType queueType);
+    /** @brief Try to acquire the next frame */
+    [[nodiscard]] bool tryAcquireNextFrame(void);
 
 
-    /** @brief Acquire the next frame without releasing current one */
-    void acquireNextFrame(void) noexcept_ndebug;
-
-    /** @brief Release a given frame */
-    void releaseFrame(const FrameIndex frameIndex) noexcept;
+    /** @brief Prepare current presentation */
+    void presentFrame(void);
 
 
     /** @brief Clear every cached command of every frame */
     void clear(void) noexcept;
 
-
-    /** @brief Callback on render view size changed */
-    void onViewSizeChanged(void) noexcept { clear(); }
-
 private:
-    PerFrameCache<PerQueueCommandArray> _cachedFrames;
+    PerFrameCache<FrameCache> _cachedFrames;
 };
 
-#include "CommandDispatcher.ipp
+static_assert_fit_double_cacheline(kF::Graphics::CommandDispatcher);
+
+#include "CommandDispatcher.ipp"

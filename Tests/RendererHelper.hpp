@@ -12,7 +12,7 @@
 
 auto MakeRenderer(void)
 {
-    return kF::Graphics::Renderer(
+    return kF::Graphics::Renderer::GlobalInstance(
         ::SDL_CreateWindow(
             "KubeBenchmarks",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,

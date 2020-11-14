@@ -17,11 +17,11 @@ namespace kF::Graphics
 }
 
 /** @brief Abstraction of a pipeline pool */
-class kF::Graphics::PipelineManager final : public RendererObject
+class kF::Graphics::PipelineManager final : public CachedRendererObject
 {
 public:
     /** @brief Construct a pool of pipelines */
-    PipelineManager(Renderer &renderer) : RendererObject(renderer) {}
+    PipelineManager(void) noexcept = default;
 
     /** @brief Move constructor */
     PipelineManager(PipelineManager &&other) noexcept = default;
@@ -36,14 +36,16 @@ public:
     /** @brief Add a pipeline to the pool using a model */
     [[nodiscard]] PipelineHandle add(const PipelineModel &model);
 
-    /** @brief Remove a pipeline from the pool using its index */
+    /** @brief Remove a pipeline from the pool using its handle */
     void remove(const PipelineHandle pipeline) noexcept_ndebug;
+
+    /** @brief Remove every pipeline from the pool */
+    void clear(void) noexcept { _pipelines.clear(); }
 
 
     /** @brief Callback on render view size changed */
-    void onViewSizeChanged(void);
+    void onViewSizeChanged(void) { clear(); }
 
 private:
     Core::TinyVector<Pipeline> _pipelines;
-    Core::TinyVector<std::unique_ptr<PipelineModel>> _models;
 };
