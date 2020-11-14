@@ -98,7 +98,7 @@ namespace kF::Graphics
     using DescriptorSetLayoutHandle = VkDescriptorSetLayout;
 
     /** @brief Descriptor set handle */
-    using DescriptorSet = VkDescriptorSet;
+    using DescriptorSetHandle = VkDescriptorSet;
 
     /** @brief Descriptor set write handle */
     using DescriptorSetWrite = VkWriteDescriptorSet;

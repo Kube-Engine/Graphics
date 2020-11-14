@@ -15,12 +15,11 @@ namespace kF::Graphics
 };
 
 /** @brief Abstract an DescriptorPool */
-class kF::Graphics::DescriptorPool final : public VulkanHandle<VkDescriptorPool>
+class kF::Graphics::DescriptorPool final : public CachedVulkanHandle<VkDescriptorPool>
 {
 public:
     /** @brief Construct a new DescriptorPool using DescriptorPool model */
-    DescriptorPool(Renderer &renderer, const DescriptorPoolModel &model) : VulkanHandle<DescriptorPoolHandle>(renderer)
-        { createDescriptorPool(model); }
+    DescriptorPool(const DescriptorPoolModel &model) { createDescriptorPool(model); }
 
     /** @brief Move constructor */
     DescriptorPool(DescriptorPool &&other) noexcept = default;
@@ -31,13 +30,13 @@ public:
     /** @brief Move assignment */
     DescriptorPool &operator=(DescriptorPool &&other) noexcept = default;
 
+
     /** @brief Allocate descriptor sets from descriptor set layouts */
-    void allocateDescriptorSets(const DescriptorSetLayout * const layoutBengin, const DescriptorSetLayout * const layoutEnd,
-            const DescriptorSet * descriptorSetBegin, const DescriptorSet * descriptorSetEnd);
+    void allocateDescriptorSets(
+            const DescriptorSetLayoutHandle * const layoutBengin, const DescriptorSetLayoutHandle * const layoutEnd,
+            DescriptorSetHandle * const descriptorSetBegin, DescriptorSetHandle * const descriptorSetEnd);
 
 private:
     /** @brief Create an DescriptorPool */
     void createDescriptorPool(const DescriptorPoolModel &model);
 };
-
-#include "DescriptorPool.ipp"

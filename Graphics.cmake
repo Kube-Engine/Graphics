@@ -100,6 +100,27 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/MemoryAllocator.cpp
     ${KubeGraphicsDir}/MemoryAllocator.ipp
     ${KubeGraphicsDir}/MemoryAllocationModel.hpp
+
+    ${KubeGraphicsDir}/DescriptorPool.hpp
+    ${KubeGraphicsDir}/DescriptorPool.cpp
+    ${KubeGraphicsDir}/DescriptorPoolModel.hpp
+    ${KubeGraphicsDir}/DescriptorPoolSize.hpp
+
+    ${KubeGraphicsDir}/DescriptorSetLayout.hpp
+    ${KubeGraphicsDir}/DescriptorSetLayout.cpp
+    ${KubeGraphicsDir}/DescriptorSetLayout.ipp
+    ${KubeGraphicsDir}/DescriptorSetLayoutModel.hpp
+
+    ${KubeGraphicsDir}/DescriptorSetLayoutBinding.hpp
+    ${KubeGraphicsDir}/DescriptorSetLayoutBinding.ipp
+
+    ${KubeGraphicsDir}/DescriptorSetWriteModel.hpp
+    ${KubeGraphicsDir}/DescriptorSetCopyModel.hpp
+
+    ${KubeGraphicsDir}/DescriptorSetUpdate.hpp
+    ${KubeGraphicsDir}/DescriptorSetUpdate.cpp
+
+
 )
 
 add_library(${PROJECT_NAME} ${KubeGraphicsSources})

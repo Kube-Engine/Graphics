@@ -19,17 +19,12 @@ class kF::Graphics::DescriptorSetLayout final : public VulkanHandle<DescriptorSe
 public:
     /** @brief Helper that construct a descriptor set layout out of descriptor set layout bindings */
     template<typename ...Bindings>
-        requires (... && std::is_same_as_v<Bindings, DescriptorSetLayoutBinding>)
-    [[nodiscard]] static DescriptorSetLayoutModel Make(Renderer &renderer,
-            const DescriptorSetLayoutCreateFlags flags, Bindings &&...bindings) noexcept;
-
-    [[nodiscard]] static DescriptorSetLayoutModel MakeUniformBuffers(Renderer &renderer,
-            const DescriptorSetLayoutCreateFlags flags, const std::uint32_t bindingCount) noexcept;
+        requires (... && std::is_same_v<Bindings, DescriptorSetLayoutBinding>)
+    [[nodiscard]] static DescriptorSetLayout Make(const DescriptorSetLayoutCreateFlags flags, Bindings &&...bindings) noexcept;
 
 
     /** @brief Construct a new DescriptorSetLayout using DescriptorSetLayout model */
-    DescriptorSetLayout(Renderer &renderer, const DescriptorSetLayoutModel model) : VulkanHandle<DescriptorSetLayoutHandle>(renderer)
-        { createDescriptorSetLayout(model); }
+    DescriptorSetLayout(const DescriptorSetLayoutModel model) { createDescriptorSetLayout(model); }
 
     /** @brief Move constructor */
     DescriptorSetLayout(DescriptorSetLayout &&other) noexcept = default;

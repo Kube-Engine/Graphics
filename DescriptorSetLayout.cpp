@@ -18,6 +18,6 @@ Graphics::DescriptorSetLayout::~DescriptorSetLayout(void) noexcept
 
 void Graphics::DescriptorSetLayout::createDescriptorSetLayout(const DescriptorSetLayoutModel &model)
 {
-    if (auto res = ::vkCreateDescriptorSetLayout(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateDescriptorSetLayout(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::DescriptorSetLayout::createDescriptorSetLayout: Couldn't create descriptor set layout '"s + ErrorMessage(res) + '\'');
 }

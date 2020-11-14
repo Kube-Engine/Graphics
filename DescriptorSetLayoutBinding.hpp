@@ -18,8 +18,6 @@ struct kF::Graphics::DescriptorSetLayoutBinding : public VkDescriptorSetLayoutBi
     [[nodiscard]] static DescriptorSetLayoutBinding MakeUniformBinding(const std::uint32_t binding, const std::uint32_t descriptorCount,
             const ShaderStageFlags shaderStageFlags) noexcept;
 
-    [[nodiscard]] static DescriptorSetLayoutBinding MakeSamplerBinding(const std::uint32_t binding, const std::uint32_t descriptorCount,
-            const ShaderStageFlags shaderStageFlags) noexcept;
 
     /** @brief Initialize constructor */
     DescriptorSetLayoutBinding(const std::uint32_t binding_, const DescriptorType type_, const std::uint32_t descriptorCount_,

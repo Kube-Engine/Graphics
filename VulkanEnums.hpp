@@ -57,7 +57,7 @@ namespace kF::Graphics
         InlineUniformBlockExt = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT,
         AccelerationStructureKhr = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
         AccelerationStructureNv = AccelerationStructureKhr
-    }
+    };
 
 
     /** @brief Command buffer level */
