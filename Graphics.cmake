@@ -54,6 +54,7 @@ set(KubeGraphicsSources
 
     ${KubeGraphicsDir}/PipelineManager.hpp
     ${KubeGraphicsDir}/PipelineManager.cpp
+    ${KubeGraphicsDir}/PipelineManager.ipp
 
     ${KubeGraphicsDir}/Framebuffer.hpp
     ${KubeGraphicsDir}/Framebuffer.cpp
@@ -61,12 +62,15 @@ set(KubeGraphicsSources
 
     ${KubeGraphicsDir}/FramebufferManager.hpp
     ${KubeGraphicsDir}/FramebufferManager.cpp
+    ${KubeGraphicsDir}/FramebufferManager.ipp
 
     ${KubeGraphicsDir}/CommandPool.hpp
     ${KubeGraphicsDir}/CommandPool.cpp
+    ${KubeGraphicsDir}/CommandPool.ipp
 
     ${KubeGraphicsDir}/CommandPoolManager.hpp
     ${KubeGraphicsDir}/CommandPoolManager.cpp
+    ${KubeGraphicsDir}/CommandPoolManager.ipp
 
     ${KubeGraphicsDir}/Semaphore.hpp
     ${KubeGraphicsDir}/Semaphore.cpp
@@ -88,6 +92,7 @@ set(KubeGraphicsSources
 
     ${KubeGraphicsDir}/MemoryAllocator.hpp
     ${KubeGraphicsDir}/MemoryAllocator.cpp
+    ${KubeGraphicsDir}/MemoryAllocator.ipp
     ${KubeGraphicsDir}/MemoryAllocationModel.hpp
 )
 
