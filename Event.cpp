@@ -8,10 +8,10 @@
 
 using namespace kF;
 
-static void Graphics::Event::Wait(CommandHandle commandBuffer, const EventHandle * const begin, const EventHandle * const end)
-{
-    ::vkCmdWaitEvents(commandBuffer, std::distance(begin, end), begin, /* ... */);
-}
+// static void Graphics::Event::Wait(CommandHandle commandBuffer, const EventHandle * const begin, const EventHandle * const end)
+// {
+//     ::vkCmdWaitEvents(commandBuffer, std::distance(begin, end), begin, /* ... */);
+// }
 
 static void Graphics::Event::Reset(void)
 {
