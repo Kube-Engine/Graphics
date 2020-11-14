@@ -59,6 +59,9 @@ namespace kF::Graphics
     /** @brief Fence handle */
     using SemaphoreHandle = VkFence;
 
+    /** @brief Event handle */
+    using EventHandle = VkEvent;
+
 
     /** @brief A device pipeline */
     using PipelineHandle = VkPipeline;
