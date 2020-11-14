@@ -11,7 +11,7 @@ namespace kF::Graphics
 };
 
 
-/** @brief Describe how to create an image */
+/** @brief Describe how to create descriptor update copy command */
 struct kF::Graphics::DescriptorSetCopyModel : public VkWriteDescriptorSet
 {
     /** @brief Make a descriptor set copy model */

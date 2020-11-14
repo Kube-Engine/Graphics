@@ -11,7 +11,7 @@ namespace kF::Graphics
 };
 
 
-/** @brief Describe how to create an image */
+/** @brief Describe how to create descriptor update write command */
 struct kF::Graphics::DescriptorSetWriteModel : public VkWriteDescriptorSet
 {
     /** @brief Make a descriptor set write model for a buffer descriptor */
