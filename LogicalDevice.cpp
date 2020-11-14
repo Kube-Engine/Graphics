@@ -20,6 +20,11 @@ Graphics::LogicalDevice::~LogicalDevice(void) noexcept
     ::vkDestroyDevice(handle(), nullptr);
 }
 
+void Graphics::LogicalDevice::waitIdle(void) noexcept
+{
+    ::vkDeviceWaitIdle(handle());
+}
+
 void Graphics::LogicalDevice::createLogicalDevice(void)
 {
     auto extensions = getExtensions();

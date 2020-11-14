@@ -28,7 +28,7 @@ struct kF::Graphics::SubmitInfo : public VkSubmitInfo
             pNext: nullptr,
             waitSemaphoreCount: static_cast<std::uint32_t>(std::distance(waitBegin, waitEnd)),
             pWaitSemaphores: waitBegin,
-            pWaitDstStageMask: waitStagesBegin,
+            pWaitDstStageMask: reinterpret_cast<const VkPipelineStageFlags * const>(waitStagesBegin),
             commandBufferCount: static_cast<std::uint32_t>(std::distance(commandBegin, commandEnd)),
             pCommandBuffers: commandBegin,
             signalSemaphoreCount: static_cast<std::uint32_t>(std::distance(signalBegin, signalEnd)),

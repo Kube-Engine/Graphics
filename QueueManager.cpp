@@ -36,21 +36,9 @@ Graphics::QueueManager::QueueManager(void)
 #endif
 }
 
-void Graphics::QueueManager::retreiveQueuesHandlers(void) noexcept
+void Graphics::QueueManager::waitQueueIdle(const QueueType queueType) noexcept
 {
-    std::vector<QueueDescriptor *> past;
-
-    for (auto &desc : _array) {
-        auto it = std::find_if(past.begin(), past.end(), [&desc](const auto *p) {
-            return desc.queueFamilyIndex == p->queueFamilyIndex && desc.queueIndex == p->queueIndex;
-        });
-        if (it != past.end()) {
-            desc.queueHandle = (*it)->queueHandle;
-            continue;
-        }
-        ::vkGetDeviceQueue(parent().logicalDevice(), desc.queueFamilyIndex, desc.queueIndex, &desc.queueHandle);
-        past.emplace_back(&desc);
-    }
+    ::vkQueueWaitIdle(queue(queueType));
 }
 
 Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(void)
@@ -102,6 +90,23 @@ Graphics::QueueManager::QueueCreateInfos Graphics::QueueManager::registerQueues(
         }
     }
     return queues;
+}
+
+void Graphics::QueueManager::retreiveQueuesHandlers(void) noexcept
+{
+    std::vector<QueueDescriptor *> past;
+
+    for (auto &desc : _array) {
+        auto it = std::find_if(past.begin(), past.end(), [&desc](const auto *p) {
+            return desc.queueFamilyIndex == p->queueFamilyIndex && desc.queueIndex == p->queueIndex;
+        });
+        if (it != past.end()) {
+            desc.queueHandle = (*it)->queueHandle;
+            continue;
+        }
+        ::vkGetDeviceQueue(parent().logicalDevice(), desc.queueFamilyIndex, desc.queueIndex, &desc.queueHandle);
+        past.emplace_back(&desc);
+    }
 }
 
 void Graphics::QueueManager::retreiveFamilyQueueIndexes(void)

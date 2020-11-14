@@ -73,6 +73,10 @@ public:
         { return _array[static_cast<std::size_t>(type)].queueHandle; }
 
 
+    /** @brief Wait until a queue is IDLE */
+    void waitQueueIdle(const QueueType queueType) noexcept;
+
+
     /**
      * @brief Get a create info list of queues
      *  This function tries to give as much different queues as the hardware can manage

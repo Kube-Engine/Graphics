@@ -5,8 +5,10 @@
 
 #pragma once
 
+#include <optional>
+
+#include "PerFrameCache.hpp"
 #include "Semaphore.hpp"
-#include "Fence.hpp"
 #include "SubmitInfo.hpp"
 #include "CommandPool.hpp"
 
@@ -20,25 +22,21 @@ namespace kF::Graphics
 class alignas_double_cacheline kF::Graphics::CommandDispatcher : public CachedRendererObject
 {
 public:
-    static constexpr auto QueueCount = static_cast<std::size_t>(QueueType::Count);
-
     /** @brief Cache of semaphore handle */
     using SemaphoreCache = Core::TinyVector<SemaphoreHandle>;
 
-    /** @brief Cache of fence handle */
-    using FenceCache = Core::TinyVector<FenceHandle>;
-
     /** @brief An array of command sorted by queue types */
-    struct alignas_cacheline FrameCache
+    struct alignas_double_cacheline FrameCache
     {
-        std::array<SemaphoreCache, QueueCount> _perQueueSemaphoreCache {};
-        std::array<FenceCache, QueueCount> _perQueueFenceCache {};
-        SemaphoreCache _semaphoreCache {};
-        FenceCache _fenceCache {};
-        Semaphore _frameAvailable;
+        std::array<SemaphoreCache, QueueCount> perQueueSemaphoreCache {};
+        SemaphoreCache semaphoreCache {};
+        std::optional<Semaphore> frameAvailable {};
+
+        FrameCache(void) noexcept = default; // Default constructor not existing, optional bug ?
     };
 
-    static_assert_alignof_cacheline(FrameCache);
+    static_assert_fit_double_cacheline(FrameCache);
+
 
     /** @brief Construct the command dispatcher */
     CommandDispatcher(void) noexcept;
@@ -53,23 +51,33 @@ public:
     CommandDispatcher &operator=(CommandDispatcher &&other) noexcept = default;
 
 
+    /** @brief Get the frame available semaphore of the current frame */
+    [[nodiscard]] SemaphoreHandle currentFrameAvailableSemaphore(void) const noexcept { return _cachedFrames.currentCache().frameAvailable.value().handle(); }
+
     /** @brief Dispatch commands of a given queue (only thread safe if the underlying hardward queue is not already submitting) */
-    void dispatch(const QueueType queueType, const SubmitInfo * const submitBegin, const SubmitInfo * const submitEnd, const FenceHandle fence);
+    void dispatch(const QueueType queueType, const SubmitInfo * const submitBegin, const SubmitInfo * const submitEnd,
+            const FenceHandle fence);
+
+    /** @brief Add dependencies to presentation of current frame (thread safe for different queue type calls) */
+    void addPresentDependencies(const QueueType queueType, const SemaphoreHandle * const waitbegin, const SemaphoreHandle *waitEnd) noexcept;
 
 
     /** @brief Try to acquire the next frame */
     [[nodiscard]] bool tryAcquireNextFrame(void);
 
-
     /** @brief Prepare current presentation */
     void presentFrame(void);
 
 
-    /** @brief Clear every cached command of every frame */
+    /** @brief Clear everything */
     void clear(void) noexcept;
+
+    /** @brief Clear every cached command of every frame */
+    void onViewSizeChanged(void) noexcept { clear(); }
 
 private:
     PerFrameCache<FrameCache> _cachedFrames;
+    Core::TinyVector<Semaphore> _availableSemaphores {};
 };
 
 static_assert_fit_double_cacheline(kF::Graphics::CommandDispatcher);

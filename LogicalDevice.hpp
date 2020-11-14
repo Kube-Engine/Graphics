@@ -33,6 +33,10 @@ public:
     /** @brief Move assignment */
     LogicalDevice &operator=(LogicalDevice &&other) noexcept = default;
 
+
+    /** @brief Wait until logical device is IDLE */
+    void waitIdle(void) noexcept;
+
 private:
     /** @brief Create a logical device */
     void createLogicalDevice(void);

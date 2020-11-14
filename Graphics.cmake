@@ -38,6 +38,10 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/Swapchain.cpp
     ${KubeGraphicsDir}/Swapchain.ipp
 
+    ${KubeGraphicsDir}/CommandDispatcher.hpp
+    ${KubeGraphicsDir}/CommandDispatcher.cpp
+    ${KubeGraphicsDir}/CommandDispatcher.ipp
+
     ${KubeGraphicsDir}/Shader.hpp
     ${KubeGraphicsDir}/Shader.cpp
 
@@ -54,7 +58,6 @@ set(KubeGraphicsSources
 
     ${KubeGraphicsDir}/PipelineManager.hpp
     ${KubeGraphicsDir}/PipelineManager.cpp
-    ${KubeGraphicsDir}/PipelineManager.ipp
 
     ${KubeGraphicsDir}/Framebuffer.hpp
     ${KubeGraphicsDir}/Framebuffer.cpp

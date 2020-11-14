@@ -16,6 +16,14 @@ namespace kF::Graphics
     /** @brief Null handle alias */
     constexpr auto NullHandle = nullptr;
 
+
+    /** @brief Practical way to retreive queue count */
+    static constexpr auto QueueCount = static_cast<std::size_t>(QueueType::Count);
+
+    /** @brief An index sequence per queue type */
+    constexpr std::make_index_sequence<QueueCount> PerQueueIndexSequence {};
+
+
     /** @brief Index of a frame */
     using FrameIndex = std::size_t;
 
@@ -57,7 +65,7 @@ namespace kF::Graphics
     using FenceHandle = VkFence;
 
     /** @brief Fence handle */
-    using SemaphoreHandle = VkFence;
+    using SemaphoreHandle = VkSemaphore;
 
 
     /** @brief A device pipeline */

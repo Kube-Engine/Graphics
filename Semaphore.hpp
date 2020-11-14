@@ -12,13 +12,10 @@
 namespace kF::Graphics
 {
     class Semaphore;
-
-    /** @brief A list of semaphores */
-    using Semaphores = std::vector<Semaphore>;
 }
 
 /** @brief Abstraction of a low-level system semaphore */
-class kF::Graphics::Semaphore final : public VulkanHandle<VkSemaphore>
+class kF::Graphics::Semaphore final : public VulkanHandle<SemaphoreHandle>
 {
 public:
     /** @brief Construct a semaphore */
