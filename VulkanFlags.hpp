@@ -161,8 +161,7 @@ namespace kF::Graphics
     /** @brief Image view creation flags */
     enum class ImageViewCreateFlags : VkImageViewCreateFlags {
         None = 0x0,
-        Dynamic = VK_IMAGE_VIEW_CREATE_FRAGMENT_DENSITY_MAP_DYNAMIC_BIT_EXT,
-        Defered = VK_IMAGE_VIEW_CREATE_FRAGMENT_DENSITY_MAP_DEFERRED_BIT_EXT
+        Dynamic = VK_IMAGE_VIEW_CREATE_FRAGMENT_DENSITY_MAP_DYNAMIC_BIT_EXT
     };
 
     /** @brief Sampler creation flags */
