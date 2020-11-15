@@ -8,6 +8,7 @@
 #include <Kube/Core/StringLiteral.hpp>
 
 #include "Renderer.hpp"
+#include "Shader.hpp"
 
 using namespace kF;
 using namespace kF::Literal;

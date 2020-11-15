@@ -16,12 +16,12 @@ namespace kF::Graphics
 struct kF::Graphics::InputAssemblyModel : public VkPipelineInputAssemblyStateCreateInfo
 {
     /** @brief Initialize constructor */
-    InputAssemblyModel(const InputAssemblyCreateFlags flags_, const PrimitiveTopology topology_, const bool primitiveRestartEnable_)
+    InputAssemblyModel(const PrimitiveTopology topology_, const bool primitiveRestartEnable_ = false)
         noexcept
         : VkPipelineInputAssemblyStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
             pNext: nullptr,
-            flags: ToFlags(flags_),
+            flags: ToFlags(InputAssemblyCreateFlags::None),
             topology: static_cast<VkPrimitiveTopology>(topology_),
             primitiveRestartEnable: primitiveRestartEnable_
         } {}

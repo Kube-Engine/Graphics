@@ -16,12 +16,12 @@ namespace kF::Graphics
 struct kF::Graphics::TessellationModel : public VkPipelineTessellationStateCreateInfo
 {
     /** @brief Initialize constructor */
-    TessellationModel(const TessellationCreateFlags flags_, const std::uint32_t patchControlPoints_)
+    TessellationModel(const std::uint32_t patchControlPoints_)
         noexcept
         : VkPipelineTessellationStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,
             pNext: nullptr,
-            flags: ToFlags(flags_),
+            flags: ToFlags(TessellationCreateFlags::None),
             patchControlPoints: patchControlPoints_
         } {}
 

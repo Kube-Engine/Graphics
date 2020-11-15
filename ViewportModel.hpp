@@ -16,14 +16,13 @@ namespace kF::Graphics
 struct kF::Graphics::ViewportModel : public VkPipelineViewportStateCreateInfo
 {
     /** @brief Initialize constructor */
-    ViewportModel(const ViewportCreateFlags flags_,
-        const VkViewport * const viewportBegin, const VkViewport * const viewportEnd,
-        const VkRect2D * const scissorBegin, const VkRect2D * const scissorEnd)
+    ViewportModel(const Viewport * const viewportBegin, const Viewport * const viewportEnd,
+        const Rect2D * const scissorBegin, const Rect2D * const scissorEnd)
         noexcept
         : VkPipelineViewportStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
             pNext: nullptr,
-            flags: ToFlags(flags_),
+            flags: ToFlags(ViewportCreateFlags::None),
             viewportCount: static_cast<std::uint32_t>(std::distance(viewportBegin, viewportEnd)),
             pViewports: viewportBegin,
             scissorCount: static_cast<std::uint32_t>(std::distance(scissorBegin, scissorEnd)),

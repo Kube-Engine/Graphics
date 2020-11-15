@@ -16,13 +16,13 @@ namespace kF::Graphics
 struct kF::Graphics::ShaderStageModel : public VkPipelineShaderStageCreateInfo
 {
     /** @brief Initialize constructor */
-    ShaderStageModel(const ShaderStageCreateFlags flags_, const ShaderStageFlags stage_, const ShaderModuleHandle module_,
-            const char * const pName_, const ShaderSpecializationTable * const pSpecializationInfo_)
+    ShaderStageModel(const ShaderStageFlags stage_, const ShaderModuleHandle module_,
+            const char * const pName_ = "main", const ShaderSpecializationTable * const pSpecializationInfo_ = nullptr)
         noexcept
         : VkPipelineShaderStageCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             pNext: nullptr,
-            flags: ToFlags(flags_),
+            flags: ToFlags(ShaderStageCreateFlags::None),
             stage: static_cast<VkShaderStageFlagBits>(stage_),
             module: module_,
             pName: pName_,

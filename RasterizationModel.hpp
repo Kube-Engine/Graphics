@@ -16,14 +16,16 @@ namespace kF::Graphics
 struct kF::Graphics::RasterizationModel : public VkPipelineRasterizationStateCreateInfo
 {
     /** @brief Initialize constructor */
-    RasterizationModel(const RasterizationCreateFlags flags_, const bool depthClampEnable_, const bool rasterizerDiscardEnable_,
-            const PolygonMode polygonMode_, const CullModeFlags cullMode_, const FrontFace frontFace_, const bool depthBiasEnable_,
-            const float depthBiasConstantFactor_, const float depthBiasClamp_,const float depthBiasSlopeFactor_, const float lineWidth_)
+    RasterizationModel(
+            const PolygonMode polygonMode_, const CullModeFlags cullMode_, const FrontFace frontFace_,
+            const bool depthBiasEnable_ = false, const float depthBiasConstantFactor_ = 0.0f,
+            const float depthBiasClamp_ = 0.0f, const float depthBiasSlopeFactor_ = 0.0f,
+            const bool depthClampEnable_ = false, const bool rasterizerDiscardEnable_ = false, const float lineWidth_ = 1.0f)
         noexcept
         : VkPipelineRasterizationStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
             pNext: nullptr,
-            flags: ToFlags(flags_),
+            flags: ToFlags(RasterizationCreateFlags::None),
             depthClampEnable: depthClampEnable_,
             rasterizerDiscardEnable: rasterizerDiscardEnable_,
             polygonMode: static_cast<VkPolygonMode>(polygonMode_),

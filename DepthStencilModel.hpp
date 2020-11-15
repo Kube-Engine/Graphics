@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Vulkan.hpp"
+#include "StencilOpState.hpp"
 
 namespace kF::Graphics
 {
@@ -16,14 +16,14 @@ namespace kF::Graphics
 struct kF::Graphics::DepthStencilModel : public VkPipelineDepthStencilStateCreateInfo
 {
     /** @brief Initialize constructor */
-    DepthStencilModel(const DepthStencilCreateFlags flags_, const bool depthTestEnable_, const bool depthWriteEnable_,
-            const CompareOp depthCompareOp_, const bool depthBoundsTestEnable_, const bool stencilTestEnable_,
-            const StencilOpState front_, const StencilOpState back_, const float minDepthBounds_, const float maxDepthBounds_)
+    DepthStencilModel(const bool depthTestEnable_ = false, const bool depthWriteEnable_ = false,
+            const CompareOp depthCompareOp_ = CompareOp::Never, const bool depthBoundsTestEnable_ = false, const bool stencilTestEnable_ = false,
+            const StencilOpState front_ = StencilOpState(), const StencilOpState back_ = StencilOpState(), const float minDepthBounds_ = 0.0f, const float maxDepthBounds_ = 1.0f)
         noexcept
         : VkPipelineDepthStencilStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
             pNext: nullptr,
-            flags: ToFlags(flags_),
+            flags: ToFlags(DepthStencilCreateFlags::None),
             depthTestEnable: depthTestEnable_,
             depthWriteEnable: depthWriteEnable_,
             depthCompareOp: static_cast<VkCompareOp>(depthCompareOp_),

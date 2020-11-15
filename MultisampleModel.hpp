@@ -16,14 +16,14 @@ namespace kF::Graphics
 struct kF::Graphics::MultisampleModel : public VkPipelineMultisampleStateCreateInfo
 {
     /** @brief Initialize constructor */
-    MultisampleModel(const MultisampleCreateFlags flags_, const SampleCountFlags rasterizationSamples_,
-            const bool sampleShadingEnable_, const float minSampleShading_, const SampleMask * const pSampleMask_,
-            const bool alphaToCoverageEnable_, const bool alphaToOneEnable_)
+    MultisampleModel(const SampleCountFlags rasterizationSamples_, const bool sampleShadingEnable_ = false,
+            const float minSampleShading_ = 1.0f, const SampleMask * const pSampleMask_ = nullptr,
+            const bool alphaToCoverageEnable_ = false, const bool alphaToOneEnable_ = false)
         noexcept
         : VkPipelineMultisampleStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
             pNext: nullptr,
-            flags: ToFlags(flags_),
+            flags: ToFlags(MultisampleCreateFlags::None),
             rasterizationSamples: static_cast<VkSampleCountFlagBits>(rasterizationSamples_),
             sampleShadingEnable: sampleShadingEnable_,
             minSampleShading: minSampleShading_,

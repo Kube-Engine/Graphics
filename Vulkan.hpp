@@ -113,13 +113,6 @@ namespace kF::Graphics
     using PushConstantRange = VkPushConstantRange;
 
 
-    /** @brief Vertex input binding description */
-    using VertexInputBinding = VkVertexInputBindingDescription;
-
-    /** @brief Vertex input attribute description */
-    using VertexInputAttribute = VkVertexInputAttributeDescription;
-
-
     /** @brief Render pass handle */
     using RenderPassHandle = VkRenderPass;
 
@@ -138,6 +131,10 @@ namespace kF::Graphics
 
     /** @brief Device memory allocation */
     using MemoryAllocationHandle = VmaAllocation;
+
+
+    /** @brief Viewport */
+    using Viewport = VkViewport;
 
 
     /** @brief Vulkan buffer */
@@ -170,13 +167,6 @@ namespace kF::Graphics
     using SamplerHandle = VkSampler;
 
 
-    /** @brief Vertex input binding description */
-    using VertexInputBindingDescription = VkVertexInputBindingDescription;
-
-    /** @brief Vertex input attribute description */
-    using VertexInputAttributeDescription = VkVertexInputAttributeDescription;
-
-
     /** @brief Shader module */
     using ShaderModuleHandle = VkShaderModule;
 
@@ -186,14 +176,6 @@ namespace kF::Graphics
 
     /** @brief Sample mask */
     using SampleMask = VkSampleMask;
-
-
-    /** @brief Stencil operation state */
-    using StencilOpState = VkStencilOpState;
-
-
-    /** @brief Color blend attachment state */
-    using ColorBlendAttachmentState = VkPipelineColorBlendAttachmentState;
 
 
     /** @brief Get an error message from a vulkan result */

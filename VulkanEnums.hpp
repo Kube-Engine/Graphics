@@ -99,6 +99,28 @@ namespace kF::Graphics
         ArrayCube = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY
     };
 
+
+    /** @brief Types of shaders */
+    enum class ShaderType {
+        Vertex = VK_SHADER_STAGE_VERTEX_BIT,
+        TessellationControl = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
+        TessellationEvaluation = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
+        Geometry = VK_SHADER_STAGE_GEOMETRY_BIT,
+        Fragment = VK_SHADER_STAGE_FRAGMENT_BIT,
+        Compute = VK_SHADER_STAGE_COMPUTE_BIT,
+        AllGraphics = VK_SHADER_STAGE_ALL_GRAPHICS,
+        All = VK_SHADER_STAGE_ALL,
+        Raygen = VK_SHADER_STAGE_RAYGEN_BIT_NV,
+        AnyHit = VK_SHADER_STAGE_ANY_HIT_BIT_NV,
+        ClosestHit = VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV,
+        Miss = VK_SHADER_STAGE_MISS_BIT_NV,
+        Intersection = VK_SHADER_STAGE_INTERSECTION_BIT_NV,
+        Callable = VK_SHADER_STAGE_CALLABLE_BIT_NV,
+        Task = VK_SHADER_STAGE_TASK_BIT_NV,
+        Mesh = VK_SHADER_STAGE_MESH_BIT_NV
+    };
+
+
     /** @brief Image layout */
     enum class ImageLayout {
         Undefined = VK_IMAGE_LAYOUT_UNDEFINED,
@@ -290,6 +312,12 @@ namespace kF::Graphics
         IntCustomExt = VK_BORDER_COLOR_INT_CUSTOM_EXT
     };
 
+
+    /** @brief Vertex input rate */
+    enum class VertexInputRate {
+        Vertex = VK_VERTEX_INPUT_RATE_VERTEX,
+        Instance = VK_VERTEX_INPUT_RATE_INSTANCE
+    };
 
     /** @brief Primitive rendering topologies */
     enum class PrimitiveTopology {

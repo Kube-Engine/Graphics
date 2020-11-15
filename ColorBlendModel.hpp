@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Vulkan.hpp"
+#include "ColorBlendAttachement.hpp"
 
 namespace kF::Graphics
 {
@@ -16,14 +16,14 @@ namespace kF::Graphics
 struct kF::Graphics::ColorBlendModel : public VkPipelineColorBlendStateCreateInfo
 {
     /** @brief Initialize constructor */
-    ColorBlendModel(const ColorBlendCreateFlags flags_, const bool logicOpEnable_, const LogicOp logicOp_,
-            const ColorBlendAttachmentState * const attachmentBegin, const ColorBlendAttachmentState * const attachmentEnd,
-            const float blendRed, const float blendGreen, const float blendBlue, const float blendAlpha)
+    ColorBlendModel(const bool logicOpEnable_, const LogicOp logicOp_,
+            const ColorBlendAttachment * const attachmentBegin, const ColorBlendAttachment * const attachmentEnd,
+            const float blendRed = 0.0f, const float blendGreen = 0.0f, const float blendBlue = 0.0f, const float blendAlpha = 0.0f)
         noexcept
         : VkPipelineColorBlendStateCreateInfo {
             sType: VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
             pNext: nullptr,
-            flags: ToFlags(flags_),
+            flags: ToFlags(ColorBlendCreateFlags::None),
             logicOpEnable: logicOpEnable,
             logicOp: static_cast<VkLogicOp>(logicOp),
             attachmentCount: static_cast<std::uint32_t>(std::distance(attachmentBegin, attachmentEnd)),

@@ -221,28 +221,22 @@ namespace kF::Graphics
     /** @brief Shader stage flags */
     enum class ShaderStageFlags : VkShaderStageFlags {
         None = 0x0,
-        VertexBit = VK_SHADER_STAGE_VERTEX_BIT,
-        TessellationControlBit = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
-        TessellationEvaluationBit = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
-        GeometryBit = VK_SHADER_STAGE_GEOMETRY_BIT,
-        FragmentBit = VK_SHADER_STAGE_FRAGMENT_BIT,
-        ComputeBit = VK_SHADER_STAGE_COMPUTE_BIT,
+        Vertex = VK_SHADER_STAGE_VERTEX_BIT,
+        TessellationControl = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
+        TessellationEvaluation = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
+        Geometry = VK_SHADER_STAGE_GEOMETRY_BIT,
+        Fragment = VK_SHADER_STAGE_FRAGMENT_BIT,
+        Compute = VK_SHADER_STAGE_COMPUTE_BIT,
         AllGraphics = VK_SHADER_STAGE_ALL_GRAPHICS,
         All = VK_SHADER_STAGE_ALL,
-        RaygenBitKhr = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-        AnyHitBitKhr = VK_SHADER_STAGE_ANY_HIT_BIT_KHR,
-        ClosestHitBitKhr = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
-        MissBitKhr = VK_SHADER_STAGE_MISS_BIT_KHR,
-        IntersectionBitKhr = VK_SHADER_STAGE_INTERSECTION_BIT_KHR,
-        CallableBitKhr = VK_SHADER_STAGE_CALLABLE_BIT_KHR,
-        TaskBitNv = VK_SHADER_STAGE_TASK_BIT_NV,
-        MeshBitNv = VK_SHADER_STAGE_MESH_BIT_NV,
-        RaygenBitNv = RaygenBitKhr,
-        AnyHitBitNv = AnyHitBitKhr,
-        ClosestHitBitNv = ClosestHitBitKhr,
-        MissBitNv = MissBitKhr,
-        IntersectionBitNv = IntersectionBitKhr,
-        CallableBitNv = CallableBitKhr
+        RaygenKhr = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
+        AnyHitKhr = VK_SHADER_STAGE_ANY_HIT_BIT_KHR,
+        ClosestHitKhr = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
+        MissKhr = VK_SHADER_STAGE_MISS_BIT_KHR,
+        IntersectionKhr = VK_SHADER_STAGE_INTERSECTION_BIT_KHR,
+        CallableKhr = VK_SHADER_STAGE_CALLABLE_BIT_KHR,
+        TaskNv = VK_SHADER_STAGE_TASK_BIT_NV,
+        MeshNv = VK_SHADER_STAGE_MESH_BIT_NV
     };
 
 
@@ -271,7 +265,10 @@ namespace kF::Graphics
 
     /** @brief Cull mode flags */
     enum class CullModeFlags : VkCullModeFlags {
-        None = 0x0
+        None = 0x0,
+        Front = VK_CULL_MODE_FRONT_BIT,
+        Back = VK_CULL_MODE_BACK_BIT,
+        FrontAndBack = VK_CULL_MODE_FRONT_AND_BACK
     };
 
 
@@ -310,7 +307,8 @@ namespace kF::Graphics
         R = VK_COLOR_COMPONENT_R_BIT,
         G = VK_COLOR_COMPONENT_G_BIT,
         B = VK_COLOR_COMPONENT_B_BIT,
-        A = VK_COLOR_COMPONENT_A_BIT
+        A = VK_COLOR_COMPONENT_A_BIT,
+        RGBA = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
     };
 
 
@@ -332,7 +330,6 @@ namespace kF::Graphics
     enum class DescriptorPoolCreateFlags : VkDescriptorPoolCreateFlags {
         None = 0x0,
         FreeDescriptorSet = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-        UpdateAfterBind = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
-        UpdateAfterBindBit = UpdateAfterBind,
+        UpdateAfterBind = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT
     };
 }

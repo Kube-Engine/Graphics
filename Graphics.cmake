@@ -6,121 +6,117 @@ find_package(SDL2 REQUIRED)
 get_filename_component(KubeGraphicsDir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
 set(KubeGraphicsSources
-    ${KubeGraphicsDir}/VulkanFlags.hpp
-    ${KubeGraphicsDir}/VulkanEnums.hpp
-    ${KubeGraphicsDir}/Vulkan.hpp
-    ${KubeGraphicsDir}/Vulkan.cpp
-
-    ${KubeGraphicsDir}/VulkanHandle.hpp
-
-    ${KubeGraphicsDir}/RendererObject.hpp
-    ${KubeGraphicsDir}/RendererObject.cpp
-
-    ${KubeGraphicsDir}/Renderer.hpp
-    ${KubeGraphicsDir}/Renderer.cpp
-
-    ${KubeGraphicsDir}/Instance.hpp
-    ${KubeGraphicsDir}/Instance.cpp
-
-    ${KubeGraphicsDir}/Surface.hpp
-    ${KubeGraphicsDir}/Surface.cpp
-
-    ${KubeGraphicsDir}/PhysicalDevice.hpp
-    ${KubeGraphicsDir}/PhysicalDevice.cpp
-
-    ${KubeGraphicsDir}/QueueManager.hpp
-    ${KubeGraphicsDir}/QueueManager.cpp
-
-    ${KubeGraphicsDir}/LogicalDevice.hpp
-    ${KubeGraphicsDir}/LogicalDevice.cpp
-
-    ${KubeGraphicsDir}/Swapchain.hpp
-    ${KubeGraphicsDir}/Swapchain.cpp
-    ${KubeGraphicsDir}/Swapchain.ipp
-
-    ${KubeGraphicsDir}/CommandDispatcher.hpp
-    ${KubeGraphicsDir}/CommandDispatcher.cpp
-    ${KubeGraphicsDir}/CommandDispatcher.ipp
-
-    ${KubeGraphicsDir}/Shader.hpp
-    ${KubeGraphicsDir}/Shader.cpp
-
-    ${KubeGraphicsDir}/RenderPass.hpp
-    ${KubeGraphicsDir}/RenderPass.cpp
-    ${KubeGraphicsDir}/RenderPass.ipp
-
-    ${KubeGraphicsDir}/PipelineLayout.hpp
-    ${KubeGraphicsDir}/PipelineLayout.cpp
-    ${KubeGraphicsDir}/PipelineLayoutModel.hpp
-
-    ${KubeGraphicsDir}/Pipeline.hpp
-    ${KubeGraphicsDir}/Pipeline.cpp
-
-    ${KubeGraphicsDir}/PipelineManager.hpp
-    ${KubeGraphicsDir}/PipelineManager.cpp
-
-    ${KubeGraphicsDir}/Framebuffer.hpp
-    ${KubeGraphicsDir}/Framebuffer.cpp
-    ${KubeGraphicsDir}/FramebufferModel.hpp
-
-    ${KubeGraphicsDir}/FramebufferManager.hpp
-    ${KubeGraphicsDir}/FramebufferManager.cpp
-    ${KubeGraphicsDir}/FramebufferManager.ipp
-
-    ${KubeGraphicsDir}/CommandPool.hpp
-    ${KubeGraphicsDir}/CommandPool.cpp
-    ${KubeGraphicsDir}/CommandPool.ipp
-
-    ${KubeGraphicsDir}/CommandPoolManager.hpp
-    ${KubeGraphicsDir}/CommandPoolManager.cpp
-    ${KubeGraphicsDir}/CommandPoolManager.ipp
-
-    ${KubeGraphicsDir}/Semaphore.hpp
-    ${KubeGraphicsDir}/Semaphore.cpp
-
-    ${KubeGraphicsDir}/Fence.hpp
-    ${KubeGraphicsDir}/Fence.cpp
-
-    ${KubeGraphicsDir}/Event.hpp
-    ${KubeGraphicsDir}/Event.cpp
-
-    ${KubeGraphicsDir}/Buffer.hpp
+    ${KubeGraphicsDir}/BackendWindow.hpp
     ${KubeGraphicsDir}/Buffer.cpp
+    ${KubeGraphicsDir}/Buffer.hpp
     ${KubeGraphicsDir}/BufferModel.hpp
-
-    ${KubeGraphicsDir}/Image.hpp
-    ${KubeGraphicsDir}/Image.cpp
-    ${KubeGraphicsDir}/ImageModel.hpp
-
-    ${KubeGraphicsDir}/ImageView.hpp
-    ${KubeGraphicsDir}/ImageView.cpp
-    ${KubeGraphicsDir}/ImageViewModel.hpp
-
-    ${KubeGraphicsDir}/MemoryAllocator.hpp
-    ${KubeGraphicsDir}/MemoryAllocator.cpp
-    ${KubeGraphicsDir}/MemoryAllocator.ipp
-    ${KubeGraphicsDir}/MemoryAllocationModel.hpp
-
-    ${KubeGraphicsDir}/DescriptorPool.hpp
+    ${KubeGraphicsDir}/BufferModel.ipp
+    ${KubeGraphicsDir}/ColorBlendAttachement.hpp
+    ${KubeGraphicsDir}/ColorBlendModel.hpp
+    ${KubeGraphicsDir}/CommandDispatcher.cpp
+    ${KubeGraphicsDir}/CommandDispatcher.hpp
+    ${KubeGraphicsDir}/CommandDispatcher.ipp
+    ${KubeGraphicsDir}/CommandPool.cpp
+    ${KubeGraphicsDir}/CommandPool.hpp
+    ${KubeGraphicsDir}/CommandPool.ipp
+    ${KubeGraphicsDir}/CommandPoolManager.cpp
+    ${KubeGraphicsDir}/CommandPoolManager.hpp
+    ${KubeGraphicsDir}/CommandPoolManager.ipp
+    ${KubeGraphicsDir}/CommandRecording.hpp
+    ${KubeGraphicsDir}/DepthStencilModel.hpp
     ${KubeGraphicsDir}/DescriptorPool.cpp
+    ${KubeGraphicsDir}/DescriptorPool.hpp
     ${KubeGraphicsDir}/DescriptorPoolModel.hpp
     ${KubeGraphicsDir}/DescriptorPoolSize.hpp
-
-    ${KubeGraphicsDir}/DescriptorSetLayout.hpp
+    ${KubeGraphicsDir}/DescriptorSetCopyModel.hpp
     ${KubeGraphicsDir}/DescriptorSetLayout.cpp
+    ${KubeGraphicsDir}/DescriptorSetLayout.hpp
     ${KubeGraphicsDir}/DescriptorSetLayout.ipp
-    ${KubeGraphicsDir}/DescriptorSetLayoutModel.hpp
-
     ${KubeGraphicsDir}/DescriptorSetLayoutBinding.hpp
     ${KubeGraphicsDir}/DescriptorSetLayoutBinding.ipp
-
-    ${KubeGraphicsDir}/DescriptorSetWriteModel.hpp
-    ${KubeGraphicsDir}/DescriptorSetCopyModel.hpp
-
-    ${KubeGraphicsDir}/DescriptorSetUpdate.hpp
+    ${KubeGraphicsDir}/DescriptorSetLayoutModel.hpp
     ${KubeGraphicsDir}/DescriptorSetUpdate.cpp
-
-
+    ${KubeGraphicsDir}/DescriptorSetUpdate.hpp
+    ${KubeGraphicsDir}/DescriptorSetWriteModel.hpp
+    ${KubeGraphicsDir}/DynamicStateModel.hpp
+    ${KubeGraphicsDir}/Event.cpp
+    ${KubeGraphicsDir}/Event.hpp
+    ${KubeGraphicsDir}/Fence.cpp
+    ${KubeGraphicsDir}/Fence.hpp
+    ${KubeGraphicsDir}/Framebuffer.cpp
+    ${KubeGraphicsDir}/Framebuffer.hpp
+    ${KubeGraphicsDir}/FramebufferManager.cpp
+    ${KubeGraphicsDir}/FramebufferManager.hpp
+    ${KubeGraphicsDir}/FramebufferManager.ipp
+    ${KubeGraphicsDir}/FramebufferModel.hpp
+    ${KubeGraphicsDir}/Graphics.cmake
+    ${KubeGraphicsDir}/Image.cpp
+    ${KubeGraphicsDir}/Image.hpp
+    ${KubeGraphicsDir}/ImageModel.hpp
+    ${KubeGraphicsDir}/ImageView.cpp
+    ${KubeGraphicsDir}/ImageView.hpp
+    ${KubeGraphicsDir}/ImageViewModel.hpp
+    ${KubeGraphicsDir}/InputAssemblyModel.hpp
+    ${KubeGraphicsDir}/Instance.cpp
+    ${KubeGraphicsDir}/Instance.hpp
+    ${KubeGraphicsDir}/LICENSE
+    ${KubeGraphicsDir}/LogicalDevice.cpp
+    ${KubeGraphicsDir}/LogicalDevice.hpp
+    ${KubeGraphicsDir}/Matrixes.hpp
+    ${KubeGraphicsDir}/MemoryAllocation.hpp
+    ${KubeGraphicsDir}/MemoryAllocationModel.hpp
+    ${KubeGraphicsDir}/MemoryAllocationModel.ipp
+    ${KubeGraphicsDir}/MemoryAllocator.cpp
+    ${KubeGraphicsDir}/MemoryAllocator.hpp
+    ${KubeGraphicsDir}/MemoryAllocator.ipp
+    ${KubeGraphicsDir}/MultisampleModel.hpp
+    ${KubeGraphicsDir}/PerFrameCache.hpp
+    ${KubeGraphicsDir}/PhysicalDevice.cpp
+    ${KubeGraphicsDir}/PhysicalDevice.hpp
+    ${KubeGraphicsDir}/Pipeline.cpp
+    ${KubeGraphicsDir}/Pipeline.hpp
+    ${KubeGraphicsDir}/PipelineLayout.cpp
+    ${KubeGraphicsDir}/PipelineLayout.hpp
+    ${KubeGraphicsDir}/PipelineLayoutModel.hpp
+    ${KubeGraphicsDir}/PipelineManager.cpp
+    ${KubeGraphicsDir}/PipelineManager.hpp
+    ${KubeGraphicsDir}/PipelineModel.hpp
+    ${KubeGraphicsDir}/QueueManager.cpp
+    ${KubeGraphicsDir}/QueueManager.hpp
+    ${KubeGraphicsDir}/RasterizationModel.hpp
+    ${KubeGraphicsDir}/Renderer.cpp
+    ${KubeGraphicsDir}/Renderer.hpp
+    ${KubeGraphicsDir}/RendererObject.cpp
+    ${KubeGraphicsDir}/RendererObject.hpp
+    ${KubeGraphicsDir}/RenderPass.cpp
+    ${KubeGraphicsDir}/RenderPass.hpp
+    ${KubeGraphicsDir}/RenderPass.ipp
+    ${KubeGraphicsDir}/RenderPassBeginInfo.hpp
+    ${KubeGraphicsDir}/Sampler.cpp
+    ${KubeGraphicsDir}/Sampler.hpp
+    ${KubeGraphicsDir}/SamplerModel.hpp
+    ${KubeGraphicsDir}/Semaphore.cpp
+    ${KubeGraphicsDir}/Semaphore.hpp
+    ${KubeGraphicsDir}/Shader.cpp
+    ${KubeGraphicsDir}/Shader.hpp
+    ${KubeGraphicsDir}/ShaderStageModel.hpp
+    ${KubeGraphicsDir}/StencilOpState.hpp
+    ${KubeGraphicsDir}/SubmitInfo.hpp
+    ${KubeGraphicsDir}/Surface.cpp
+    ${KubeGraphicsDir}/Surface.hpp
+    ${KubeGraphicsDir}/Swapchain.cpp
+    ${KubeGraphicsDir}/Swapchain.hpp
+    ${KubeGraphicsDir}/Swapchain.ipp
+    ${KubeGraphicsDir}/TessellationModel.hpp
+    ${KubeGraphicsDir}/VertexInputAttribute.hpp
+    ${KubeGraphicsDir}/VertexInputBinding.hpp
+    ${KubeGraphicsDir}/VertexInputModel.hpp
+    ${KubeGraphicsDir}/ViewportModel.hpp
+    ${KubeGraphicsDir}/Vulkan.cpp
+    ${KubeGraphicsDir}/Vulkan.hpp
+    ${KubeGraphicsDir}/VulkanEnums.hpp
+    ${KubeGraphicsDir}/VulkanFlags.hpp
+    ${KubeGraphicsDir}/VulkanHandle.hpp
 )
 
 add_library(${PROJECT_NAME} ${KubeGraphicsSources})

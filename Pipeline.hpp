@@ -6,7 +6,6 @@
 #pragma once
 
 #include "VulkanHandle.hpp"
-#include "Shader.hpp"
 #include "PipelineModel.hpp"
 
 namespace kF::Graphics
