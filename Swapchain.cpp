@@ -12,25 +12,19 @@
 using namespace kF;
 using namespace kF::Literal;
 
-Graphics::Swapchain::Swapchain(void)
-{
-    createSwapchain();
-    createImageViews(retreiveImages());
-#if KUBE_DEBUG_BUILD
-    std::cout << "PresentMode: " << PresentModeName(presentMode()) << std::endl;
-    std::cout << "Extent2D: " << extent().width << ", " << extent().height << std::endl;
-    std::cout << "Images: " << _imagePairs.size() << std::endl;
-#endif
-}
-
-void Graphics::Swapchain::createSwapchain(void)
+void Graphics::Swapchain::createSwapchain(const SwapchainHandle oldSwapchain)
 {
     const auto surfaceFormat = parent().surface().getSurfaceFormat();
     const auto presentMode = parent().surface().getPresentMode();
     const auto capabilites = parent().surface().getSurfaceCapabilities();
     const auto extent = parent().surface().getExtent(capabilites);
-    const auto imageCount = std::min(capabilites.minImageCount + 1, capabilites.maxImageCount ? capabilites.maxImageCount : capabilites.minImageCount);
-    VkSwapchainCreateInfoKHR swapchainInfo {
+    const auto imageCount = [](const auto &capabilites) {
+        if (capabilites.maxImageCount)
+            return capabilites.maxImageCount;
+        else
+            return capabilites.minImageCount + 1;
+    }(capabilites);
+    const VkSwapchainCreateInfoKHR swapchainInfo {
         sType: VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         pNext: nullptr,
         flags: VkSwapchainCreateFlagsKHR(),
@@ -48,14 +42,23 @@ void Graphics::Swapchain::createSwapchain(void)
         compositeAlpha: VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
         presentMode: static_cast<VkPresentModeKHR>(presentMode),
         clipped: true,
-        oldSwapchain: VkSwapchainKHR()
+        oldSwapchain: oldSwapchain
     };
 
-    if (auto res = ::vkCreateSwapchainKHR(parent().logicalDevice(), &swapchainInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateSwapchainKHR(parent().logicalDevice(), &swapchainInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Swapchain::createSwapchain: Couldn't create swapchain '"s + ErrorMessage(res) + '\'');
+    if (oldSwapchain != NullHandle)
+        ::vkDestroySwapchainKHR(parent().logicalDevice(), oldSwapchain, nullptr);
     _extent = extent;
     _surfaceFormat = surfaceFormat;
     _presentMode = presentMode;
+    createImageViews(retreiveImages());
+#if KUBE_DEBUG_BUILD
+    std::cout << "Swapchain creation:" << std::endl;
+    std::cout << "\tPresentMode: " << PresentModeName(_presentMode) << std::endl;
+    std::cout << "\tExtent2D: " << _extent.width << ", " << _extent.height << std::endl;
+    std::cout << "\tImages: " << _imagePairs.size() << std::endl;
+#endif
 }
 
 void Graphics::Swapchain::destroySwapchain(void) noexcept
@@ -68,7 +71,7 @@ Core::Vector<Graphics::ImageHandle> Graphics::Swapchain::retreiveImages(void)
 {
     Core::Vector<ImageHandle> images;
 
-    if (auto res = FillVkContainer(images, &::vkGetSwapchainImagesKHR, parent().logicalDevice(), handle()); res != VK_SUCCESS)
+    if (const auto res = FillVkContainer(images, &::vkGetSwapchainImagesKHR, parent().logicalDevice(), handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Swapchain::createImageViews: Couldn't retreive swapchain images '"s + ErrorMessage(res) + '\'');
     return images;
 }

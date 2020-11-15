@@ -18,6 +18,6 @@ Graphics::Pipeline::~Pipeline(void) noexcept
 
 void Graphics::Pipeline::createPipeline(const PipelineModel &model)
 {
-    if (auto res = ::vkCreateGraphicsPipelines(parent().logicalDevice(), VkPipelineCache(), 1u, &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateGraphicsPipelines(parent().logicalDevice(), VkPipelineCache(), 1u, &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Pipeline::createPipeline: Couldn't create pipeline '"s + ErrorMessage(res) + '\'');
 }

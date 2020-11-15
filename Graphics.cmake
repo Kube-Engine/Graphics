@@ -22,7 +22,7 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/CommandPoolManager.cpp
     ${KubeGraphicsDir}/CommandPoolManager.hpp
     ${KubeGraphicsDir}/CommandPoolManager.ipp
-    ${KubeGraphicsDir}/CommandRecording.hpp
+    ${KubeGraphicsDir}/CommandRecorder.hpp
     ${KubeGraphicsDir}/DepthStencilModel.hpp
     ${KubeGraphicsDir}/DescriptorPool.cpp
     ${KubeGraphicsDir}/DescriptorPool.hpp
@@ -86,6 +86,7 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/RasterizationModel.hpp
     ${KubeGraphicsDir}/Renderer.cpp
     ${KubeGraphicsDir}/Renderer.hpp
+    ${KubeGraphicsDir}/Renderer.ipp
     ${KubeGraphicsDir}/RendererObject.cpp
     ${KubeGraphicsDir}/RendererObject.hpp
     ${KubeGraphicsDir}/RenderPass.cpp

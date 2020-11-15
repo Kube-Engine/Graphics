@@ -31,21 +31,3 @@ Graphics::Renderer::Renderer(BackendWindow * const window, const Version applica
     _instance(applicationVersion)
 {
 }
-
-void Graphics::Renderer::dispatchFrameAcquired(const FrameIndex frameIndex)
-{
-    _framebufferManager.onFrameAquired(frameIndex);
-    _commandPoolManager.onFrameAquired(frameIndex);
-    _frameAcquiredDispatcher.dispatch(frameIndex);
-}
-
-void Graphics::Renderer::dispatchViewSizeChanged(void)
-{
-    // _drawer.waitAllDrawCompleted();
-    _swapchain.onViewSizeChanged();
-    _renderPass.onViewSizeChanged();
-    _pipelineManager.onViewSizeChanged();
-    _framebufferManager.onViewSizeChanged();
-    // _commandPoolManager.onViewSizeChanged();
-    _viewSizeDispatcher.dispatch();
-}

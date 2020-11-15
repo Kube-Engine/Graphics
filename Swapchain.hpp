@@ -18,7 +18,7 @@ class alignas_cacheline kF::Graphics::Swapchain final : public CachedVulkanHandl
 {
 public:
     /** @brief Construct the swapchain */
-    Swapchain(void);
+    Swapchain(void) { createSwapchain(NullHandle); }
 
     /** @brief Move constructor */
     Swapchain(Swapchain &&other) noexcept = default;
@@ -66,7 +66,7 @@ private:
     PresentMode _presentMode { PresentMode::ImmediateKhr };
 
     /** @brief Create the swapchain */
-    void createSwapchain(void);
+    void createSwapchain(const SwapchainHandle oldSwapchain);
 
     /** @brief Destroy the swapchain */
     void destroySwapchain(void) noexcept;

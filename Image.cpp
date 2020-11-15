@@ -18,6 +18,6 @@ Graphics::Image::~Image(void) noexcept
 
 void Graphics::Image::createImage(const ImageModel &model)
 {
-    if (auto res = ::vkCreateImage(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateImage(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Image::createImage: Couldn't create image '"s + ErrorMessage(res) + '\'');
 }

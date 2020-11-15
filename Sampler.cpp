@@ -18,6 +18,6 @@ Graphics::Sampler::~Sampler(void) noexcept
 
 void Graphics::Sampler::createSampler(const SamplerModel &model)
 {
-    if (auto res = ::vkCreateSampler(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateSampler(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Sampler::createSampler: Couldn't create sampler '"s + ErrorMessage(res) + '\'');
 }

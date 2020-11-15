@@ -24,8 +24,8 @@ struct kF::Graphics::ColorBlendModel : public VkPipelineColorBlendStateCreateInf
             sType: VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
             pNext: nullptr,
             flags: ToFlags(ColorBlendCreateFlags::None),
-            logicOpEnable: logicOpEnable,
-            logicOp: static_cast<VkLogicOp>(logicOp),
+            logicOpEnable: logicOpEnable_,
+            logicOp: static_cast<VkLogicOp>(logicOp_),
             attachmentCount: static_cast<std::uint32_t>(std::distance(attachmentBegin, attachmentEnd)),
             pAttachments: attachmentBegin,
             blendConstants: {

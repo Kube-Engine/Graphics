@@ -12,7 +12,7 @@ using namespace kF::Literal;
 
 bool Graphics::Fence::Wait(const FenceHandle * const begin, const FenceHandle * const end, const bool waitAll, const std::uint64_t timeout)
 {
-    if (auto res = ::vkWaitForFences(Parent().logicalDevice(), std::distance(begin, end), begin, waitAll, timeout); res == VK_TIMEOUT)
+    if (const auto res = ::vkWaitForFences(Parent().logicalDevice(), std::distance(begin, end), begin, waitAll, timeout); res == VK_TIMEOUT)
         return false;
     else if (res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Fence::Wait: Error on waiting fence(s) '"s + ErrorMessage(res) + '\'');
@@ -37,6 +37,6 @@ void Graphics::Fence::createFence(void)
         flags: VK_FENCE_CREATE_SIGNALED_BIT
     };
 
-    if (auto res = ::vkCreateFence(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateFence(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Fence::createFence: Couldn't create semaphore '"s + ErrorMessage(res) + '\'');
 }

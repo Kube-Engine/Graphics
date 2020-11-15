@@ -45,7 +45,7 @@ Graphics::SurfaceFormat Graphics::Surface::getSurfaceFormat(void) const
 {
     std::vector<SurfaceFormat> formats;
 
-    if (auto res = FillVkContainer(formats, &::vkGetPhysicalDeviceSurfaceFormatsKHR, parent().physicalDevice(), handle()); res != VK_SUCCESS || formats.empty())
+    if (const auto res = FillVkContainer(formats, &::vkGetPhysicalDeviceSurfaceFormatsKHR, parent().physicalDevice(), handle()); res != VK_SUCCESS || formats.empty())
         throw std::runtime_error("Graphics::Surface::surfaceFormat: Couldn't retreive physical device surface format '"s + ErrorMessage(res) + '\'');
     for (const auto &format : formats) {
         if (format.format != VK_FORMAT_B8G8R8A8_UNORM || format.colorSpace != VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
@@ -60,7 +60,7 @@ Graphics::PresentMode Graphics::Surface::getPresentMode(void) const
 {
     std::vector<VkPresentModeKHR> modes;
 
-    if (auto res = FillVkContainer(modes, &::vkGetPhysicalDeviceSurfacePresentModesKHR, parent().physicalDevice(), handle()); res != VK_SUCCESS)
+    if (const auto res = FillVkContainer(modes, &::vkGetPhysicalDeviceSurfacePresentModesKHR, parent().physicalDevice(), handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Surface::getPresentMode: Couldn't retreive physical device present modes");
     for (const auto &mode : modes) {
         if (static_cast<PresentMode>(mode) == PresentMode::MailboxKhr)
@@ -73,7 +73,7 @@ Graphics::SurfaceCapabilities Graphics::Surface::getSurfaceCapabilities(void) co
 {
     SurfaceCapabilities capabilities {};
 
-    if (auto res = ::vkGetPhysicalDeviceSurfaceCapabilitiesKHR(parent().physicalDevice(), handle(), &capabilities); res != VK_SUCCESS)
+    if (const auto res = ::vkGetPhysicalDeviceSurfaceCapabilitiesKHR(parent().physicalDevice(), handle(), &capabilities); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Surface::surfaceCapabilities: Couldn't retreive physical device surface capabilities '"s + ErrorMessage(res) + '\'');
     return capabilities;
 }

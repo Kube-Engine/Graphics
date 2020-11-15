@@ -29,12 +29,12 @@ inline void kF::Graphics::CommandPool::add(const Lifecycle lifecycle, const Comm
     };
 
     constexpr auto Begin = [](const CommandHandle command, const VkCommandBufferBeginInfo &commandBeginInfo) {
-        if (auto res = ::vkBeginCommandBuffer(command, &commandBeginInfo); res != VK_SUCCESS)
+        if (const auto res = ::vkBeginCommandBuffer(command, &commandBeginInfo); res != VK_SUCCESS)
             throw std::runtime_error("Graphics::CommandPool::add: Couldn't begin command buffer '" + std::string(ErrorMessage(res)) + '\'');
     };
 
     constexpr auto End = [](const CommandHandle command) {
-        if (auto res = ::vkEndCommandBuffer(command); res != VK_SUCCESS)
+        if (const auto res = ::vkEndCommandBuffer(command); res != VK_SUCCESS)
             throw std::runtime_error("Graphics::CommandPool::add: Couldn't begin command buffer '" + std::string(ErrorMessage(res)) + '\'');
     };
 

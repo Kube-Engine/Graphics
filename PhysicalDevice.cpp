@@ -33,7 +33,7 @@ Graphics::PhysicalDevice::Devices Graphics::PhysicalDevice::getDevices(void) con
 {
     Devices devices;
 
-    if (auto res = FillVkContainer(devices, &::vkEnumeratePhysicalDevices, parent().instance()); res != VK_SUCCESS)
+    if (const auto res = FillVkContainer(devices, &::vkEnumeratePhysicalDevices, parent().instance()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::PhysicalDevice::PhysicalDevice: Couldn't enumerate physical devices '"s + ErrorMessage(res) + '\'');
     return devices;
 }

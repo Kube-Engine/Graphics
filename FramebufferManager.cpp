@@ -23,7 +23,7 @@ void Graphics::FramebufferManager::createFramebuffers(void)
     const auto count = parent().cachedFrameCount();
     auto &extent = parent().swapchain().extent();
     ImageViewHandle imageViewHandle { NullHandle };
-    FramebufferModel model(
+    const FramebufferModel model(
         FramebufferCreateFlags::None,
         parent().renderPass(),
         &imageViewHandle, &imageViewHandle + 1,

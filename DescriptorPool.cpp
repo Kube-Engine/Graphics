@@ -18,7 +18,7 @@ Graphics::DescriptorPool::~DescriptorPool(void) noexcept
 
 void Graphics::DescriptorPool::createDescriptorPool(const DescriptorPoolModel &model)
 {
-    if (auto res = ::vkCreateDescriptorPool(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateDescriptorPool(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::DescriptorPool::createDescriptorPool: Couldn't create descriptor pool '"s + ErrorMessage(res) + '\'');
 }
 

@@ -18,6 +18,6 @@ Graphics::Framebuffer::~Framebuffer(void)
 
 void Graphics::Framebuffer::createFramebuffer(const FramebufferModel &model)
 {
-    if (auto res = ::vkCreateFramebuffer(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateFramebuffer(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::FramebufferManager::createFramebuffers: Couldn't create framebuffer '"s + ErrorMessage(res) + '\'');
 }

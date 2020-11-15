@@ -18,6 +18,6 @@ Graphics::Buffer::~Buffer(void) noexcept
 
 void Graphics::Buffer::createBuffer(const BufferModel &model)
 {
-    if (auto res = ::vkCreateBuffer(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateBuffer(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Buffer::createBuffer: Couldn't create buffer '"s + ErrorMessage(res) + '\'');
 }

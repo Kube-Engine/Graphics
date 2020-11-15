@@ -25,6 +25,6 @@ void Graphics::Semaphore::createSemaphore(void)
         flags: VkSemaphoreCreateFlags()
     };
 
-    if (auto res = ::vkCreateSemaphore(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateSemaphore(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Semaphore::createSemaphore: Couldn't create semaphore '"s + ErrorMessage(res) + '\'');
 }

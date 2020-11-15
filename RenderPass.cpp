@@ -51,7 +51,7 @@ void Graphics::RenderPass::createRenderPass(void)
         pDependencies: nullptr
     };
 
-    if (auto res = ::vkCreateRenderPass(parent().logicalDevice(), &renderPassInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateRenderPass(parent().logicalDevice(), &renderPassInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::RenderPass::createRenderPass: Couldn't create render pass '"s + ErrorMessage(res) + '\'');
 }
 

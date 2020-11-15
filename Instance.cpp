@@ -48,7 +48,7 @@ void Graphics::Instance::createInstance(const Version applicationVersion)
         ppEnabledExtensionNames: extensions.data()
     };
 
-    if (auto res = ::vkCreateInstance(&instanceInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateInstance(&instanceInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Instance::Instance: Couldn't create instance '"s + ErrorMessage(res) + '\'');
 #if KUBE_DEBUG_BUILD
     std::cout << "Extensions:" << std::endl;
@@ -67,12 +67,12 @@ Graphics::Instance::Layers Graphics::Instance::getLayers(void) const
     std::uint32_t count = 0;
     std::vector<VkLayerProperties> avaible;
 
-    if (auto res = ::vkEnumerateInstanceLayerProperties(&count, nullptr); res != VK_SUCCESS)
+    if (const auto res = ::vkEnumerateInstanceLayerProperties(&count, nullptr); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Instance::getLayers: Couldn't enumerate instances layers properties"s + ErrorMessage(res) + '\'');
     if (!count)
         return layers;
     avaible.resize(count + layers.size());
-    if (auto res = ::vkEnumerateInstanceLayerProperties(&count, avaible.data()); res != VK_SUCCESS)
+    if (const auto res = ::vkEnumerateInstanceLayerProperties(&count, avaible.data()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Instance::getLayers: Couldn't enumerate instances layers properties"s + ErrorMessage(res) + '\'');
     for (auto it = layers.begin(); it != layers.end();) {
         bool found = false;

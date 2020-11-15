@@ -6,7 +6,7 @@
 #pragma once
 
 #include "VulkanHandle.hpp"
-#include "CommandRecording.hpp"
+#include "CommandRecorder.hpp"
 
 namespace kF::Graphics
 {
@@ -16,7 +16,7 @@ namespace kF::Graphics
 
     template<typename Recorder>
     concept RecorderRequirements = requires {
-        std::declval<Recorder>().operator()(std::declval<const CommandHandle>());
+        std::declval<Recorder>().operator()(std::declval<CommandRecorder &>());
     };
 }
 

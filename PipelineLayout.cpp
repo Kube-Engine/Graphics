@@ -18,6 +18,6 @@ Graphics::PipelineLayout::~PipelineLayout(void)
 
 void Graphics::PipelineLayout::createPipelineLayout(const PipelineLayoutModel &model)
 {
-    if (auto res = ::vkCreatePipelineLayout(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreatePipelineLayout(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::PipelineLayout::createPipelineLayout: Couldn't create pipeline layout '"s + ErrorMessage(res) + '\'');
 }

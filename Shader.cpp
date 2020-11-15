@@ -42,6 +42,6 @@ void Graphics::Shader::createShaderModule(const std::string &path)
         pCode: binary.data()
     };
 
-    if (auto res = ::vkCreateShaderModule(parent().logicalDevice(), &shaderModuleInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateShaderModule(parent().logicalDevice(), &shaderModuleInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Shader::createShaderModule: Couldn't create shader module '"s + ErrorMessage(res) + "' at path '" + path + '\'');
 }

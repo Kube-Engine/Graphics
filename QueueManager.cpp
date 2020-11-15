@@ -117,7 +117,7 @@ void Graphics::QueueManager::retreiveFamilyQueueIndexes(void)
 
     FillVkContainer(properties, &::vkGetPhysicalDeviceQueueFamilyProperties, parent().physicalDevice());
     for (auto &property : properties) {
-        if (auto res = ::vkGetPhysicalDeviceSurfaceSupportKHR(parent().physicalDevice(), queueFamilyIndex, parent().surface(), &isPresent); res != VK_SUCCESS)
+        if (const auto res = ::vkGetPhysicalDeviceSurfaceSupportKHR(parent().physicalDevice(), queueFamilyIndex, parent().surface(), &isPresent); res != VK_SUCCESS)
             throw std::runtime_error("Graphics::QueueManager::registerQueues: Couldn't get physical device surface support '"s + ErrorMessage(res) + '\'');
         if (isPresent)
             _candidates[static_cast<std::size_t>(QueueType::Present)].push(queueFamilyIndex, property.queueCount);

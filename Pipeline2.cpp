@@ -47,7 +47,7 @@ void Graphics::Pipeline::createPipeline(const PipelineModel &model)
         basePipelineIndex: -1
     };
 
-    if (auto res = ::vkCreateGraphicsPipelines(parent().logicalDevice(), VkPipelineCache(), 1, &pipelineInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateGraphicsPipelines(parent().logicalDevice(), VkPipelineCache(), 1, &pipelineInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::Pipeline::createPipeline: Couldn't create pipeline '"s + ErrorMessage(res) + '\'');
 }
 

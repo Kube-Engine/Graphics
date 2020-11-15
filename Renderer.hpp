@@ -143,3 +143,5 @@ private:
 };
 
 static_assert_alignof_double_cacheline(kF::Graphics::Renderer);
+
+#include "Renderer.ipp"

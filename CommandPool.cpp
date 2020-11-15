@@ -54,7 +54,7 @@ void Graphics::CommandPool::createCommandPool(const QueueType queueType, const L
         queueFamilyIndex: parent().queueManager().queueDescriptor(QueueType::Graphics).queueFamilyIndex
     };
 
-    if (auto res = ::vkCreateCommandPool(parent().logicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateCommandPool(parent().logicalDevice(), &commandPoolInfo, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::CommandPool::createCommandPool: Couldn't create command pool '"s + ErrorMessage(res) + '\'');
 }
 
@@ -68,6 +68,6 @@ void Graphics::CommandPool::allocateCommands(const CommandLevel level, CommandHa
         commandBufferCount: static_cast<std::uint32_t>(std::distance(commandFrom, commandTo))
     };
 
-    if (auto res = ::vkAllocateCommandBuffers(parent().logicalDevice(), &commandInfo, commandFrom); res != VK_SUCCESS)
+    if (const auto res = ::vkAllocateCommandBuffers(parent().logicalDevice(), &commandInfo, commandFrom); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::CommandPool::allocateCommands: Couldn't allocate command buffers '"s + ErrorMessage(res) + '\'');
 }

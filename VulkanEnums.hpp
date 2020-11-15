@@ -381,6 +381,23 @@ namespace kF::Graphics
         StencilOpExt = VK_DYNAMIC_STATE_STENCIL_OP_EXT
     };
 
+
+    /** @brief Subpass contents */
+    enum class SubpassContents {
+        Inline = VK_SUBPASS_CONTENTS_INLINE,
+        SecondaryCommandBuffers = VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS
+    };
+
+
+    /** @brief Pipeline bind point */
+    enum class PipelineBindPoint {
+        Graphics = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        Compute = VK_PIPELINE_BIND_POINT_COMPUTE,
+        RayTracingKhr = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR,
+        RayTracingNv = VK_PIPELINE_BIND_POINT_RAY_TRACING_NV
+    };
+
+
     /** @brief All supported bytes formats */
     enum class Format {
         Undefined = VK_FORMAT_UNDEFINED,

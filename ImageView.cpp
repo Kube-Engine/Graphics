@@ -18,6 +18,6 @@ Graphics::ImageView::~ImageView(void) noexcept
 
 void Graphics::ImageView::createImageView(const ImageViewModel &model)
 {
-    if (auto res = ::vkCreateImageView(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
+    if (const auto res = ::vkCreateImageView(parent().logicalDevice(), &model, nullptr, &handle()); res != VK_SUCCESS)
         throw std::runtime_error("Graphics::ImageView::createImageView: Couldn't create image view '"s + ErrorMessage(res) + '\'');
 }

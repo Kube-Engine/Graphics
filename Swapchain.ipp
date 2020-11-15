@@ -14,6 +14,6 @@ inline void kF::Graphics::Swapchain::swap(Swapchain &other) noexcept
 
 inline void kF::Graphics::Swapchain::onViewSizeChanged(void)
 {
-    destroySwapchain();
-    createSwapchain();
+    _imagePairs.clear();
+    createSwapchain(handle());
 }
