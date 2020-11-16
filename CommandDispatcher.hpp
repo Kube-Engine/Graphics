@@ -60,9 +60,19 @@ public:
     /** @brief Get the frame available semaphore of the current frame */
     [[nodiscard]] SemaphoreHandle currentFrameAvailableSemaphore(void) const noexcept { return _cachedFrames.currentCache().frameAvailable.value().handle(); }
 
+
+    /** @brief Dispatch a single command of a given queue (only thread safe if the underlying hardward queue is not already submitting) */
+    void dispatch(const QueueType queueType, const SubmitInfo &submit, const FenceHandle fence)
+        { dispatch(queueType, &submit, &submit + 1, fence); }
+
     /** @brief Dispatch commands of a given queue (only thread safe if the underlying hardward queue is not already submitting) */
     void dispatch(const QueueType queueType, const SubmitInfo * const submitBegin, const SubmitInfo * const submitEnd,
             const FenceHandle fence);
+
+
+    /** @brief Add single semaphore and fence dependencies to presentation of current frame (thread safe for different queue type calls) */
+    void addPresentDependencies(const QueueType queueType, const SemaphoreHandle semaphore, const FenceHandle fence) noexcept
+        { addPresentDependencies(queueType, &semaphore, &semaphore + 1, &fence, &fence + 1); }
 
     /** @brief Add dependencies to presentation of current frame (thread safe for different queue type calls) */
     void addPresentDependencies(const QueueType queueType,

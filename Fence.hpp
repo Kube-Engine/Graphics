@@ -26,7 +26,7 @@ public:
 
 
     /** @brief Construct the fence */
-    Fence(void) { createFence(); }
+    Fence(const bool signaled = true) { createFence(signaled); }
 
     /** @brief Move constructor */
     Fence(Fence &&other) noexcept = default;
@@ -48,5 +48,5 @@ public:
 
 private:
     /** @brief Create the fence */
-    void createFence(void);
+    void createFence(const bool signaled);
 };

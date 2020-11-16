@@ -34,9 +34,20 @@ public:
     };
 
 
+    /** @brief Make a shared memory allocation model */
+    template<MemoryBindable Bindable>
+    [[nodiscard]] static inline MemoryAllocationModel MakeStaging(const Bindable toBind) noexcept
+        { return MemoryAllocationModel(toBind, MemoryUsage::CpuToGpu); }
+
+    /** @brief Make a local (GPU only) memory allocation model */
+    template<MemoryBindable Bindable>
+    [[nodiscard]] static inline MemoryAllocationModel MakeLocal(const Bindable toBind) noexcept
+        { return MemoryAllocationModel(toBind, MemoryUsage::GpuOnly); }
+
+
     /** @brief Construct a new memory allocation */
     template<MemoryBindable Type>
-    MemoryAllocationModel(const Type &value, const MemoryUsage usage) noexcept;
+    MemoryAllocationModel(const Type value, const MemoryUsage usage) noexcept;
 
     /** @brief Copy constructor */
     MemoryAllocationModel(const MemoryAllocationModel &other) noexcept = default;

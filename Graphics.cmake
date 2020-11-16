@@ -64,6 +64,8 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/LogicalDevice.hpp
     ${KubeGraphicsDir}/Matrixes.hpp
     ${KubeGraphicsDir}/MemoryAllocation.hpp
+    ${KubeGraphicsDir}/MemoryAllocation.cpp
+    ${KubeGraphicsDir}/MemoryAllocation.ipp
     ${KubeGraphicsDir}/MemoryAllocationModel.hpp
     ${KubeGraphicsDir}/MemoryAllocationModel.ipp
     ${KubeGraphicsDir}/MemoryAllocator.cpp
@@ -78,8 +80,6 @@ set(KubeGraphicsSources
     ${KubeGraphicsDir}/PipelineLayout.cpp
     ${KubeGraphicsDir}/PipelineLayout.hpp
     ${KubeGraphicsDir}/PipelineLayoutModel.hpp
-    ${KubeGraphicsDir}/PipelineManager.cpp
-    ${KubeGraphicsDir}/PipelineManager.hpp
     ${KubeGraphicsDir}/PipelineModel.hpp
     ${KubeGraphicsDir}/QueueManager.cpp
     ${KubeGraphicsDir}/QueueManager.hpp

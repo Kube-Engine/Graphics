@@ -52,3 +52,5 @@ struct kF::Graphics::BufferModel : public VkBufferCreateInfo
     BufferModel &operator=(const BufferModel &other) noexcept = default;
     BufferModel &operator=(BufferModel &&other) noexcept = default;
 };
+
+#include "BufferModel.ipp"

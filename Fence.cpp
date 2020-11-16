@@ -29,12 +29,12 @@ Graphics::Fence::~Fence(void) noexcept
     ::vkDestroyFence(parent().logicalDevice(), handle(), nullptr);
 }
 
-void Graphics::Fence::createFence(void)
+void Graphics::Fence::createFence(const bool signaled)
 {
     VkFenceCreateInfo semaphoreInfo {
         sType: VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
         pNext: nullptr,
-        flags: VK_FENCE_CREATE_SIGNALED_BIT
+        flags: signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0u
     };
 
     if (const auto res = ::vkCreateFence(parent().logicalDevice(), &semaphoreInfo, nullptr, &handle()); res != VK_SUCCESS)

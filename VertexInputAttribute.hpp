@@ -16,7 +16,7 @@ namespace kF::Graphics
 struct kF::Graphics::VertexInputAttribute : public VkVertexInputAttributeDescription
 {
     /** @brief Initialize constructor */
-    VertexInputAttribute(const std::uint32_t location_, const std::uint32_t binding_,
+    VertexInputAttribute(const std::uint32_t binding_, const std::uint32_t location_,
             const Format format_, const std::uint32_t offset_)
         noexcept
         : VkVertexInputAttributeDescription {

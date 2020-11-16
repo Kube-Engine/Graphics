@@ -11,7 +11,16 @@ inline kF::Graphics::MemoryAllocationHandle kF::Graphics::MemoryAllocator::alloc
     return allocation;
 }
 
-inline void kF::Graphics::MemoryAllocator::deallocate(const MemoryAllocationHandle allocation)
+template<typename Type>
+inline Type *kF::Graphics::MemoryAllocator::beginMemoryMap(const MemoryAllocationHandle allocation) const
 {
-    deallocate(&allocation, &allocation + 1);
+    void *target { nullptr };
+    if (const auto res = ::vmaMapMemory(handle(), allocation, &target); res != VK_SUCCESS)
+        throw std::runtime_error("Graphics::MemoryAllocator::beginMemoryMap: Couldn't map allocation memory '" + std::string(ErrorMessage(res)) + '\'');
+    return reinterpret_cast<Type *>(target);
+}
+
+inline void kF::Graphics::MemoryAllocator::endMemoryMap(const MemoryAllocationHandle allocation) const
+{
+    ::vmaUnmapMemory(handle(), allocation);
 }

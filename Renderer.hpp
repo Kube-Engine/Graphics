@@ -14,11 +14,11 @@
 #include "QueueManager.hpp"
 #include "LogicalDevice.hpp"
 #include "Swapchain.hpp"
-#include "PipelineManager.hpp"
 #include "RenderPass.hpp"
 #include "FramebufferManager.hpp"
 #include "CommandPoolManager.hpp"
 #include "CommandDispatcher.hpp"
+#include "MemoryAllocator.hpp"
 
 namespace kF::Graphics
 {
@@ -88,10 +88,6 @@ public:
     [[nodiscard]] RenderPass &renderPass(void) noexcept { return _renderPass; }
     [[nodiscard]] const RenderPass &renderPass(void) const noexcept { return _renderPass; }
 
-    /** @brief Get the pipeline pool */
-    [[nodiscard]] PipelineManager &pipelineManager(void) noexcept { return _pipelineManager; }
-    [[nodiscard]] const PipelineManager &pipelineManager(void) const noexcept { return _pipelineManager; }
-
     /** @brief Get the framebuffer handler */
     [[nodiscard]] FramebufferManager &framebufferManager(void) noexcept { return _framebufferManager; }
     [[nodiscard]] const FramebufferManager &framebufferManager(void) const noexcept { return _framebufferManager; }
@@ -103,6 +99,10 @@ public:
     /** @brief Get the command dispatcher */
     [[nodiscard]] CommandDispatcher &commandDispatcher(void) noexcept { return _commandDispatcher; }
     [[nodiscard]] const CommandDispatcher &commandDispatcher(void) const noexcept { return _commandDispatcher; }
+
+    /** @brief Get the memory allocator */
+    [[nodiscard]] MemoryAllocator &memoryAllocator(void) noexcept { return _memoryAllocator; }
+    [[nodiscard]] const MemoryAllocator &memoryAllocator(void) const noexcept { return _memoryAllocator; }
 
 
     /** @brief Get the number of cached frame */
@@ -131,10 +131,10 @@ private:
     LogicalDevice _logicalDevice {};
     Swapchain _swapchain {};
     RenderPass _renderPass {};
-    PipelineManager _pipelineManager {};
     FramebufferManager _framebufferManager {};
     CommandPoolManager _commandPoolManager {};
     CommandDispatcher _commandDispatcher {};
+    MemoryAllocator _memoryAllocator {};
     Core::TrivialDispatcher<void(const FrameIndex)> _frameAcquiredDispatcher {};
     Core::TrivialDispatcher<void(void)> _viewSizeDispatcher {};
 

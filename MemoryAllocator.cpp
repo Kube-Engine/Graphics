@@ -6,10 +6,13 @@
 #define VMA_IMPLEMENTATION
 #include <vk_mem_alloc.h>
 
+#include <Kube/Core/StringLiteral.hpp>
+
 #include "Renderer.hpp"
 #include "MemoryAllocator.hpp"
 
 using namespace kF;
+using namespace kF::Literal;
 
 Graphics::MemoryAllocator::~MemoryAllocator(void) noexcept
 {
