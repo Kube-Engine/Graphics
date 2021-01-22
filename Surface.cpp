@@ -27,10 +27,6 @@ const char *Graphics::PresentModeName(const PresentMode type) noexcept
         return "FifoKhr";
     case PresentMode::FifoRelaxedKhr:
         return "FifoRelaxedKhr";
-    case PresentMode::SharedDemandRefreshKhr:
-        return "SharedDemandRefreshKhr";
-    case PresentMode::SharedContinuousRefreshKhr:
-        return "SharedContinuousRefreshKhr";
     default:
         return "UnknownPresentMode";
     }

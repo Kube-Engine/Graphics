@@ -54,18 +54,7 @@ namespace kF::Graphics
         BottomOfPipe = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
         Host = VK_PIPELINE_STAGE_HOST_BIT,
         AllGraphics = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
-        AllCommands = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        TransformFeedbackExt = VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT,
-        ConditionalRenderingExt = VK_PIPELINE_STAGE_CONDITIONAL_RENDERING_BIT_EXT,
-        RayTracingShaderKhr = VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR,
-        AccelerationStructureBuildKhr = VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
-        ShadingRateImageNv = VK_PIPELINE_STAGE_SHADING_RATE_IMAGE_BIT_NV,
-        TaskShaderNv = VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV,
-        MeshShaderNv = VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV,
-        FragmentDensityProcessExt = VK_PIPELINE_STAGE_FRAGMENT_DENSITY_PROCESS_BIT_EXT,
-        CommandPreprocessNv = VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,
-        RayTracingShaderNv = VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_NV,
-        AccelerationStructureBuildNv = VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV
+        AllCommands = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT
     };
 
 
@@ -78,8 +67,7 @@ namespace kF::Graphics
     /** @brief Frame buffer creation flags */
     enum class FramebufferCreateFlags : VkFramebufferCreateFlags {
         None = 0x0,
-        Imageless = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT,
-        ImagelessKhr = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT_KHR
+        Imageless = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT
     };
 
 
@@ -90,9 +78,7 @@ namespace kF::Graphics
         SparseResidency = VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT,
         SparseAliased = VK_BUFFER_CREATE_SPARSE_ALIASED_BIT,
         Protected = VK_BUFFER_CREATE_PROTECTED_BIT,
-        DeviceAddressCaptureReplay = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT,
-        DeviceAddressCaptureReplayExt = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_EXT,
-        DeviceAddressCaptureReplayKhr = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR
+        DeviceAddressCaptureReplay = VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT
     };
 
     /** @brief Buffer usage flags */
@@ -106,14 +92,7 @@ namespace kF::Graphics
         IndexBuffer = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
         VertexBuffer = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
         IndirectBuffer = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
-        ShaderDeviceAddress = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-        TransformFeedbackBufferExt = VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT,
-        TransformFeedbackCounterBufferExt = VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT,
-        ConditionalRenderingExt = VK_BUFFER_USAGE_CONDITIONAL_RENDERING_BIT_EXT,
-        RayTracingKhr = VK_BUFFER_USAGE_RAY_TRACING_BIT_KHR,
-        RayTracingNv = VK_BUFFER_USAGE_RAY_TRACING_BIT_NV,
-        ShaderDeviceAddressExt = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT_EXT,
-        ShaderDeviceAddressKhr = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT_KHR
+        ShaderDeviceAddress = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT
     };
 
 
@@ -131,16 +110,7 @@ namespace kF::Graphics
         BlockTexelViewCompatible = VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT,
         ExtendedUsage = VK_IMAGE_CREATE_EXTENDED_USAGE_BIT,
         Protected = VK_IMAGE_CREATE_PROTECTED_BIT,
-        Disjoint = VK_IMAGE_CREATE_DISJOINT_BIT,
-        CornerSampledNv = VK_IMAGE_CREATE_CORNER_SAMPLED_BIT_NV,
-        SampleLocationsCompatibleDepthExt = VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT,
-        SubsampledExt = VK_IMAGE_CREATE_SUBSAMPLED_BIT_EXT,
-        SplitInstanceBindRegionsKhr = VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR,
-        Array2DCompatibleKhr = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT_KHR,
-        BlockTexelViewCompatibleKhr = VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT_KHR,
-        ExtendedUsageKhr = VK_IMAGE_CREATE_EXTENDED_USAGE_BIT_KHR,
-        DisjointKhr = VK_IMAGE_CREATE_DISJOINT_BIT_KHR,
-        AliasKhr = VK_IMAGE_CREATE_ALIAS_BIT_KHR
+        Disjoint = VK_IMAGE_CREATE_DISJOINT_BIT
     };
 
     /** @brief Image usage flags */
@@ -152,9 +122,7 @@ namespace kF::Graphics
         ColorAttachment = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
         DepthStencilAttachment = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
         TransientAttachment = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT,
-        InputAttachment = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
-        ShadingRateImageNv = VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV,
-        FragmentDensityMapExt = VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT
+        InputAttachment = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT
     };
 
 
@@ -188,20 +156,7 @@ namespace kF::Graphics
         AllowDerivatives = VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT,
         Derivative = VK_PIPELINE_CREATE_DERIVATIVE_BIT,
         ViewIndexFromDeviceIndex = VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT,
-        DispatchBase = VK_PIPELINE_CREATE_DISPATCH_BASE_BIT,
-        RayTracingNoNullAnyHitShadersKhr = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_ANY_HIT_SHADERS_BIT_KHR,
-        RayTracingNoNullClosestHitShadersKhr = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_CLOSEST_HIT_SHADERS_BIT_KHR,
-        RayTracingNoNullMissShadersKhr = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_MISS_SHADERS_BIT_KHR,
-        RayTracingNoNullIntersectionShadersKhr = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_INTERSECTION_SHADERS_BIT_KHR,
-        RayTracingSkipTrianglesKhr = VK_PIPELINE_CREATE_RAY_TRACING_SKIP_TRIANGLES_BIT_KHR,
-        RayTracingSkipAabbsKhr = VK_PIPELINE_CREATE_RAY_TRACING_SKIP_AABBS_BIT_KHR,
-        DeferCompileNv = VK_PIPELINE_CREATE_DEFER_COMPILE_BIT_NV,
-        CaptureStatisticsKhr = VK_PIPELINE_CREATE_CAPTURE_STATISTICS_BIT_KHR,
-        CaptureInternalRepresentationsKhr = VK_PIPELINE_CREATE_CAPTURE_INTERNAL_REPRESENTATIONS_BIT_KHR,
-        IndirectBindableNv = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV,
-        LibraryKhr = VK_PIPELINE_CREATE_LIBRARY_BIT_KHR,
-        FailOnPipelineCompileRequiredExt = VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_EXT,
-        EarlyReturnOnFailureExt = VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT_EXT
+        DispatchBase = VK_PIPELINE_CREATE_DISPATCH_BASE_BIT
     };
 
     /** @brief Vertex input state creation flags */
@@ -212,9 +167,7 @@ namespace kF::Graphics
 
     /** @brief Shader stage creation flags */
     enum class ShaderStageCreateFlags : VkPipelineShaderStageCreateFlags {
-        None = 0x0,
-        AllowVaryingSubgroupSizeExt = VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT,
-        RequireFullSubgroupsExt = VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT
+        None = 0x0
     };
 
     /** @brief Shader stage flags */
@@ -227,15 +180,7 @@ namespace kF::Graphics
         Fragment = VK_SHADER_STAGE_FRAGMENT_BIT,
         Compute = VK_SHADER_STAGE_COMPUTE_BIT,
         AllGraphics = VK_SHADER_STAGE_ALL_GRAPHICS,
-        All = VK_SHADER_STAGE_ALL,
-        RaygenKhr = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-        AnyHitKhr = VK_SHADER_STAGE_ANY_HIT_BIT_KHR,
-        ClosestHitKhr = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
-        MissKhr = VK_SHADER_STAGE_MISS_BIT_KHR,
-        IntersectionKhr = VK_SHADER_STAGE_INTERSECTION_BIT_KHR,
-        CallableKhr = VK_SHADER_STAGE_CALLABLE_BIT_KHR,
-        TaskNv = VK_SHADER_STAGE_TASK_BIT_NV,
-        MeshNv = VK_SHADER_STAGE_MESH_BIT_NV
+        All = VK_SHADER_STAGE_ALL
     };
 
 
@@ -320,9 +265,7 @@ namespace kF::Graphics
     /** @brief Descriptor set layout creation flags */
     enum class DescriptorSetLayoutCreateFlags : VkDescriptorSetLayoutCreateFlags {
         None = 0x0,
-        UpdateAfterBindPool = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT,
-        PushDescriptorKhr = VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR,
-        UpdateAfterBindPoolExt = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT
+        UpdateAfterBindPool = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT
     };
 
     /** @brief Descriptor pool creation flags */
