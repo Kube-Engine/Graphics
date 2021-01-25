@@ -12,4 +12,5 @@ using namespace kF;
 TEST(Renderer, InitDestroy)
 {
     auto renderer = MakeRenderer();
+    ASSERT_TRUE(false);
 }

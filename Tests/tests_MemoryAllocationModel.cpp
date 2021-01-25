@@ -1,6 +1,6 @@
 /**
  * @ Author: Matthieu Moinvaziri
- * @ Description: Unit tests of renderer
+ * @ Description: Unit tests of GPU memory allocator
  */
 
 #include <gtest/gtest.h>
